@@ -35,11 +35,31 @@ jobs:
           args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
           latexmk_shell_escape: false
 
-      - name: Commit PDF to repository
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          file_pattern: ESE3700_Proj2_Marhguy.pdf
-          add_options: "-f"
-          commit_message: "chore(docs): regenerate compiled PDF [skip ci]"
-          commit_user_name: Tyrone Marhguy
-          commit_user_email: tmarhguy@gmail.com
+      - name: Commit and push PDF
+        shell: bash
+        run: |
+          set -euo pipefail
+          BRANCH="${GITHUB_REF_NAME}"
+
+          git config user.name "Tyrone Marhguy"
+          git config user.email "tmarhguy@gmail.com"
+
+          git add -f ESE3700_Proj2_Marhguy.pdf
+          if git diff --cached --quiet; then
+            echo "No PDF changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore(docs): regenerate compiled PDF [skip ci]"
+
+          # Rebase on latest remote branch before push to avoid non-fast-forward.
+          git fetch origin "${BRANCH}"
+          git pull --rebase origin "${BRANCH}"
+
+          # One retry in case branch moved between rebase and push.
+          if ! git push origin "HEAD:${BRANCH}"; then
+            echo "Initial push failed; rebasing once more and retrying."
+            git fetch origin "${BRANCH}"
+            git pull --rebase origin "${BRANCH}"
+            git push origin "HEAD:${BRANCH}"
+          fi
