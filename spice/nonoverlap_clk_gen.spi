@@ -1,0 +1,55 @@
+*** SPICE deck for cell nonoverlap_clk_gen{sch} from library proj2
+*** Created on Tue May 05, 2026 17:17:32
+*** Last revised on Tue May 05, 2026 17:54:11
+*** Written on Tue May 05, 2026 17:54:17 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+*** SUBCIRCUIT proj2__invX2 FROM CELL invX2{sch}
+.SUBCKT proj2__invX2 a y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 y a gnd gnd N L=2 W=2
+Mpmos@0 y a vdd vdd P L=2 W=4
+.ENDS proj2__invX2
+
+*** SUBCIRCUIT proj2__inv_X4 FROM CELL inv_X4{sch}
+.SUBCKT proj2__inv_X4 A Y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 Y A gnd gnd N L=2 W=4
+Mpmos@0 Y A vdd vdd P L=2 W=8
+.ENDS proj2__inv_X4
+
+*** SUBCIRCUIT proj2__nand2 FROM CELL nand2{sch}
+.SUBCKT proj2__nand2 a b y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@2 net@69 b gnd gnd N L=2 W=2
+Mnmos@3 y a net@69 gnd N L=2 W=2
+Mpmos@1 y a vdd vdd P L=2 W=2
+Mpmos@2 y b vdd vdd P L=2 W=2
+.ENDS proj2__nand2
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: nonoverlap_clk_gen{sch}
+XinvX2@0 net@6 net@5 proj2__invX2
+XinvX2@1 phi2 WL_EN proj2__invX2
+XinvX2@4 CLK net@1 proj2__invX2
+XinvX2@6 net@6 phi2 proj2__invX2
+XinvX2@8 net@5 net@7 proj2__invX2
+XinvX2@9 net@27 WD_EN proj2__invX2
+XinvX2@10 net@43 net@39 proj2__invX2
+XinvX2@11 net@39 net@11 proj2__invX2
+XinvX2@12 net@43 phi1 proj2__invX2
+Xinv_X4@0 phi1 PCH_b proj2__inv_X4
+Xnand2@2 CLK net@11 net@6 proj2__nand2
+Xnand2@3 net@1 net@7 net@43 proj2__nand2
+Xnand2@5 phi2 WE net@27 proj2__nand2
+.END

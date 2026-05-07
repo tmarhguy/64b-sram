@@ -1,0 +1,20 @@
+*** SPICE deck for cell tristate_inv{sch} from library proj2
+*** Created on Tue May 05, 2026 12:49:55
+*** Last revised on Tue May 05, 2026 12:54:06
+*** Written on Tue May 05, 2026 12:54:16 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: tristate_inv{sch}
+Mnmos@0 y en net@2 gnd N L=2 W=8
+Mnmos@1 net@2 x gnd gnd N L=2 W=8
+Mpmos@0 vdd x net@0 vdd P L=2 W=16
+Mpmos@1 net@0 en_b y vdd P L=2 W=16
+.END

@@ -1,0 +1,67 @@
+*** SPICE deck for cell write_driver{sch} from library proj2
+*** Created on Tue May 05, 2026 12:54:55
+*** Last revised on Thu May 07, 2026 00:38:46
+*** Written on Thu May 07, 2026 00:38:49 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+*** SUBCIRCUIT proj2__invX2 FROM CELL invX2{sch}
+.SUBCKT proj2__invX2 a y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 y a gnd gnd N L=1 W=1
+Mpmos@0 y a vdd vdd P L=1 W=1
+.ENDS proj2__invX2
+
+*** SUBCIRCUIT proj2__tristate_inv FROM CELL tristate_inv{sch}
+.SUBCKT proj2__tristate_inv en en_b x y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 y en net@2 gnd N L=2 W=8
+Mnmos@1 net@2 x gnd gnd N L=2 W=8
+Mpmos@0 vdd x net@0 vdd P L=2 W=16
+Mpmos@1 net@0 en_b y vdd P L=2 W=16
+.ENDS proj2__tristate_inv
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: write_driver{sch}
+XinvX2@0 din net@25 proj2__invX2
+XinvX2@2 wd_en net@35 proj2__invX2
+Xtristate@3 wd_en net@35 net@25 bl proj2__tristate_inv
+Xtristate@4 wd_en net@35 din blb proj2__tristate_inv
+
+* Spice Code nodes in cell cell 'write_driver{sch}'
+Vdd vdd 0 DC 1.0
+Cbitline bl 0 13f
+Cbitline_b blb 0 13f
+* Write enable stays high
+Vwen wd_en 0 DC 1.0 
+* Data toggles: write 1, then write 0, then write 1 again
+Vin din 0 PULSE(0 1.0 100p 10p 10p 900p 2n)
+.control
+tran 5p 4n
+* Measure write 1 (din rising → bl should rise)
+meas tran t_write_rise trig v(din) val=0.5 rise=1 targ v(bl) val=0.5 rise=1
+* Measure write 0 (din falling → bl should fall)
+meas tran t_write_fall trig v(din) val=0.5 fall=1 targ v(bl) val=0.5 fall=1
+echo " "
+echo "========================================"
+echo "    WRITE DRIVER (13fF Bitline Load)"
+echo "========================================"
+echo "Write 1 delay (din↑ → bl↑):"
+print t_write_rise
+echo "Write 0 delay (din↓ → bl↓):"
+print t_write_fall
+echo "========================================"
+echo " "
+set hcopydevtype=svg
+hardcopy waveforms/write_driver.svg v(wd_en)+4 v(din)+2 v(bl) v(blb)-2 title 'Write Driver'
+plot v(wd_en)+4 v(din)+2 v(bl) v(blb)-2 title 'Write Driver'
+.endc
+.END

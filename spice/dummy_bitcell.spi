@@ -1,0 +1,22 @@
+*** SPICE deck for cell dummy_bitcell{sch} from library proj2
+*** Created on Tue May 05, 2026 19:17:13
+*** Last revised on Tue May 05, 2026 19:18:28
+*** Written on Tue May 05, 2026 19:18:38 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: dummy_bitcell{sch}
+Mnmos@0 vdd gnd gnd gnd N L=2 W=2
+Mnmos@1 gnd vdd gnd gnd N L=2 W=2
+Mnmos@2 BL WL gnd gnd N L=2 W=1
+Mnmos@3 BLB WL vdd gnd N L=2 W=1
+Mpmos@0 vdd gnd vdd vdd P L=2 W=1
+Mpmos@1 gnd vdd vdd vdd P L=2 W=1
+.END

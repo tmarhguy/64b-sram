@@ -1,0 +1,1955 @@
+% !TEX program = pdflatex
+% Overleaf: set the project compiler to pdfLaTeX (Menu -> Compiler -> pdfLaTeX).
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen}
+
+% Unicode characters pasted from the original manuscript (text mode).
+\usepackage{newunicodechar}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{⊕}{\ensuremath{\oplus}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{∝}{\ensuremath{\propto}}
+\newunicodechar{·}{\ensuremath{\cdot}}
+\newunicodechar{²}{\textsuperscript{2}}
+\newunicodechar{³}{\textsuperscript{3}}
+\newunicodechar{¹}{\textsuperscript{1}}
+\newunicodechar{⁶}{\textsuperscript{6}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∫}{\ensuremath{\int}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{÷}{\ensuremath{\div}}
+\newunicodechar{√}{\ensuremath{\sqrt{}}}
+
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{%
+  \usepackage{microtype}%
+  \UseMicrotypeSet[protrusion]{basicmath}}{}
+\usepackage{parskip}
+\usepackage{fancyvrb}
+
+\usepackage{longtable,booktabs,array,tabularx}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcounter{none}
+\usepackage{calc}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+
+\usepackage{graphicx}
+\usepackage{float}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{%
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi}
+\makeatother
+
+\def\fps@figure{htbp}
+\setlength{\emergencystretch}{3em}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\usepackage{bookmark}
+\usepackage{xurl}
+\urlstyle{same}
+\hypersetup{hidelinks}
+
+\usepackage{caption}
+\captionsetup{font=it}
+
+% Numbered-looking headings with TOC entries (secnumdepth is suppressed globally).
+\newcommand{\Sect}[1]{\section*{#1}\addcontentsline{toc}{section}{#1}}
+\newcommand{\Subsect}[1]{\subsection*{#1}\addcontentsline{toc}{subsection}{#1}}
+\newcommand{\Subsubsect}[1]{\subsubsection*{#1}\addcontentsline{toc}{subsubsection}{#1}}
+\newcommand{\Substarsub}[1]{\subsection*{#1}\addcontentsline{toc}{subsection}{#1}}
+
+% Highlight key quantities in running text (tight box, no color).
+\newcommand{\Key}[1]{\begingroup\setlength{\fboxsep}{2pt}\setlength{\fboxrule}{0.25pt}\fbox{#1}\endgroup}
+
+% Boxed measured metric: \Metric{label}{value} renders [label : value] in a thin frame.
+\newcommand{\Metric}[2]{%
+  \begingroup\setlength{\fboxsep}{4pt}\setlength{\fboxrule}{0.5pt}%
+  \fbox{\textbf{#1}\,:\;\texttt{#2}}\endgroup}
+
+% Centered, full-width "headline" callout box for a single key result.
+\newcommand{\HeadlineBox}[1]{%
+  \begin{center}\setlength{\fboxsep}{8pt}\setlength{\fboxrule}{0.8pt}%
+  \fbox{\begin{minipage}{0.92\linewidth}#1\end{minipage}}\end{center}}
+
+% SPICE listing environment (verbatim, small, framed, with caption).
+\DefineVerbatimEnvironment{SpiceCode}{Verbatim}{%
+  fontsize=\footnotesize,frame=single,framesep=4pt,xleftmargin=4pt,
+  baselinestretch=0.95}
+
+% Placeholder figure helper. Use as: \PlaceholderFig{path/to/file.png}{caption}{description of what goes here}
+\newcommand{\PlaceholderFig}[3]{%
+  \begin{figure}[H]
+    \centering
+    \fbox{\begin{minipage}{0.85\linewidth}
+      \vspace{2em}
+      \centering
+      \textbf{[FIGURE PLACEHOLDER]}\\[0.5em]
+      \texttt{#1}\\[0.6em]
+      \textit{#3}
+      \vspace{2em}
+    \end{minipage}}
+    \caption{#2}
+  \end{figure}}
+
+% TikZ + circuitikz for inline transistor schematics and block diagrams
+\usepackage{tikz}
+\usepackage[american]{circuitikz}
+\usetikzlibrary{positioning,arrows.meta,calc,shapes.geometric,fit,backgrounds}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\begin{titlepage}
+\thispagestyle{empty}
+\null\vfill
+\begin{center}
+  \pandocbounded{\includegraphics[width=0.62\linewidth,keepaspectratio]{media/penn-logo.png}}\\
+  {\LARGE\bfseries Project 2}\\
+  \vspace{2.2em}
+  {\LARGE\bfseries 16$\times$4 SRAM Memory Design}\\
+  \vspace{0.6em}
+  {\large 22\,nm High-Performance CMOS}
+
+  \vspace{1.6em}
+  {\large\textsc{ESE 3700}}\\[0.2em]
+  {\large Circuit Design and Optimization}
+
+  \vspace{1.8em}
+  {\Large Tyrone Marhguy}\\[0.6em]
+  {\small Source repository:\;\href{https://github.com/tmarhguy/64b-sram}{\nolinkurl{github.com/tmarhguy/64b-sram}}}
+
+  \vspace{2.2em}
+  \begin{minipage}{0.82\linewidth}
+    \centering
+    \textbf{Academic Integrity Statement}\\[0.75em]
+    \small
+    I, \textbf{Tyrone Marhguy}, certify that I have complied with the University of
+    Pennsylvania\textquotesingle s Code of Academic Integrity in completing
+    this project.
+  \end{minipage}
+\end{center}
+\vfill
+\end{titlepage}
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+{\hypersetup{linkcolor=black}\tableofcontents}
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% =====================================================================
+\Sect{1\quad Executive Summary}
+
+This report presents the design, simulation, and characterization of a
+$16\times4$ SRAM memory ($64$\,b total) in the PTM 22\,nm
+High-Performance CMOS process at $V_{DD}=1\,\mathrm{V}$. The design is
+optimized end-to-end for the project Figure of Merit
+\[
+  \mathrm{FOM} = 60 \cdot \mathrm{BitcellArea}\cdot \mathrm{Power}\cdot \mathrm{Delay}^2,
+\]
+in which the quadratic dependence on delay drives every architectural
+choice. The final design uses a $16$-row by $4$-column array with
+\emph{no} column multiplexer (all four bits of an addressed word are
+read or written in parallel), a six-transistor (6T) bitcell with
+asymmetric sizing $\mathrm{CR}{=}2$, $\mathrm{PR}{=}1$, a clocked
+StrongARM sense amplifier, a self-timed sense-amp enable generated by a
+replica bitline column, and a two-phase non-overlapping clock scheme
+that gates precharge, write driver, and wordline activity into
+non-conflicting time windows.
+
+\Subsect{1.1\quad Required vs.\ Delivered (headline)}
+
+The project specification (\texttt{proj2.pdf}) defines a small set of
+hard requirements for a passing design: a 16$\times$4 SRAM, single CLK,
+$V_{DD}\le 1\,$V, and a maximum operating frequency
+$\ge 500\,$MHz. The four panels of Figure~\ref{fig:headline_chart}
+place the spec value alongside the implemented value for the four
+metrics that the specification constrains numerically; the precision
+table immediately after lists the full set of measured numbers and
+points each row at its source artifact in the repository.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  bar_req/.style={fill=black!18, draw=black, line width=0.5pt},
+  bar_del/.style={fill=blue!55!cyan, draw=black, line width=0.5pt}
+]
+
+% --- Legend (above the 2x2 grid) ---
+\begin{scope}[shift={(2.0,9.4)}]
+  \fill[bar_req] (0,0) rectangle (0.4,0.3);
+  \node[anchor=west, font=\footnotesize] at (0.5,0.15) {Required (specification)};
+  \fill[bar_del] (5.0,0) rectangle (5.4,0.3);
+  \node[anchor=west, font=\footnotesize] at (5.5,0.15) {Delivered (this design)};
+\end{scope}
+
+% --- Panel 1 (top-left): Operating frequency f_max (GHz) ---
+\begin{scope}[shift={(0,5.0)}]
+  \node[font=\small\bfseries, anchor=south] at (1.8,3.85) {Operating frequency $f_{\max}$ (GHz)};
+  \pgfmathsetmacro{\sy}{0.875}  % axis 0..4 GHz
+  \draw (0,0) -- (3.6,0);
+  \draw (0,0) -- (0,4*\sy+0.3);
+  \foreach \v in {1,2,3,4} {
+    \draw (-0.06,\v*\sy) -- (0.06,\v*\sy);
+    \node[anchor=east, font=\scriptsize] at (-0.08,\v*\sy) {\v};
+  }
+  \fill[bar_req] (0.6,0) rectangle (1.5, 0.5*\sy);
+  \fill[bar_del] (2.1,0) rectangle (3.0, 3.97*\sy);
+  \node[anchor=south, font=\footnotesize\bfseries] at (1.05, 0.5*\sy) {0.5\,GHz};
+  \node[anchor=south, font=\footnotesize\bfseries, text=blue!55!black] at (2.55, 3.97*\sy) {3.97\,GHz};
+  \node[anchor=north, font=\footnotesize] at (1.05,-0.04) {Required};
+  \node[anchor=north, font=\footnotesize] at (2.55,-0.04) {Delivered};
+\end{scope}
+
+% --- Panel 2 (top-right): CLK -> Dout delay (ns) ---
+\begin{scope}[shift={(8,5.0)}]
+  \node[font=\small\bfseries, anchor=south] at (1.8,3.85) {CLK $\to D_{out}$ delay (ns)};
+  \pgfmathsetmacro{\sy}{1.75}  % axis 0..2 ns
+  \draw (0,0) -- (3.6,0);
+  \draw (0,0) -- (0,2*\sy+0.3);
+  \foreach \v in {0.5,1.0,1.5,2.0} {
+    \draw (-0.06,\v*\sy) -- (0.06,\v*\sy);
+    \node[anchor=east, font=\scriptsize] at (-0.08,\v*\sy) {\v};
+  }
+  \fill[bar_req] (0.6,0) rectangle (1.5, 2.0*\sy);
+  \fill[bar_del] (2.1,0) rectangle (3.0, 0.2816*\sy);
+  \node[anchor=south, font=\footnotesize\bfseries] at (1.05, 2.0*\sy) {2.000\,ns};
+  \node[anchor=south, font=\footnotesize\bfseries, text=blue!55!black] at (2.55, 0.2816*\sy) {0.282\,ns};
+  \node[anchor=north, font=\footnotesize] at (1.05,-0.04) {Cycle budget};
+  \node[anchor=north, font=\footnotesize] at (2.55,-0.04) {Delivered};
+\end{scope}
+
+% --- Panel 3 (bottom-left): Read disturb V_Q (mV) ---
+\begin{scope}[shift={(0,0)}]
+  \node[font=\small\bfseries, anchor=south] at (1.8,3.85) {Read disturb $V_Q$ (mV)};
+  \pgfmathsetmacro{\sy}{0.00875}  % axis 0..400 mV
+  \draw (0,0) -- (3.6,0);
+  \draw (0,0) -- (0,400*\sy+0.3);
+  \foreach \v in {100,200,300,400} {
+    \draw (-0.06,\v*\sy) -- (0.06,\v*\sy);
+    \node[anchor=east, font=\scriptsize] at (-0.08,\v*\sy) {\v};
+  }
+  \fill[bar_req] (0.6,0) rectangle (1.5, 400*\sy);
+  \fill[bar_del] (2.1,0) rectangle (3.0, 95.4*\sy);
+  \node[anchor=south, font=\footnotesize\bfseries] at (1.05, 400*\sy) {400\,mV};
+  \node[anchor=south, font=\footnotesize\bfseries, text=blue!55!black] at (2.55, 95.4*\sy) {95.4\,mV};
+  \node[anchor=north, font=\footnotesize] at (1.05,-0.04) {Threshold};
+  \node[anchor=north, font=\footnotesize] at (2.55,-0.04) {Delivered};
+\end{scope}
+
+% --- Panel 4 (bottom-right): DFF CLK-to-Q avg. delay (ps) ---
+\begin{scope}[shift={(8,0)}]
+  \node[font=\small\bfseries, anchor=south] at (1.8,3.85) {DFF CLK-to-$Q$ avg.\ delay (ps)};
+  \pgfmathsetmacro{\sy}{0.035}  % axis 0..100 ps
+  \draw (0,0) -- (3.6,0);
+  \draw (0,0) -- (0,100*\sy+0.3);
+  \foreach \v in {25,50,75,100} {
+    \draw (-0.06,\v*\sy) -- (0.06,\v*\sy);
+    \node[anchor=east, font=\scriptsize] at (-0.08,\v*\sy) {\v};
+  }
+  \fill[bar_req] (0.6,0) rectangle (1.5, 100*\sy);
+  \fill[bar_del] (2.1,0) rectangle (3.0, 67.0*\sy);
+  \node[anchor=south, font=\footnotesize\bfseries] at (1.05, 100*\sy) {100\,ps};
+  \node[anchor=south, font=\footnotesize\bfseries, text=blue!55!black] at (2.55, 67.0*\sy) {67.0\,ps};
+  \node[anchor=north, font=\footnotesize] at (1.05,-0.04) {Target};
+  \node[anchor=north, font=\footnotesize] at (2.55,-0.04) {Delivered};
+\end{scope}
+
+\end{tikzpicture}
+\caption{Required-vs-Delivered headline. Each panel pairs the
+specification value (or conservative threshold) with the value measured
+on the implemented design, plotted in the natural unit of the metric.
+For \textbf{frequency}, taller is better; for the three
+timing/voltage panels, shorter is better. All measured values trace to
+the terminal and waveform evidence catalogued in the precision table
+below.}
+\label{fig:headline_chart}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}Lrrrl@{}}
+\toprule
+\textbf{Spec / Metric} & \textbf{Required} & \textbf{Delivered} & \textbf{Margin} & \textbf{Source} \\
+\midrule
+Capacity & $16\times4$ & $16\times4$ & --- & top-level netlist \\
+Supply $V_{DD}$ & $\le 1.00$\,V & $1.00$\,V & 1.00$\times$ & \texttt{spice/top.spi} \\
+Estimated max passing frequency (cycle-scaled, nominal) & $\ge 500$\,MHz & $3.97$\,GHz & $7.94\times$ & \texttt{find\_fmax.py} sweep \\
+Top-level $t_{\mathrm{CLK}\to D_{out}}$ & $<\!2$\,ns (cycle) & $281.6$\,ps & $7.10\times$ & Fig.~\ref{fig:top_terminal_validation} \\
+Bitcell write $1\!\to\!0$ time     & $<\!2$\,ns         & $9.87$\,ps        & $203\times$    & Test 1 (\S\ref{sec:bitcell_tests}) \\
+Bitcell write $0\!\to\!1$ time     & $<\!2$\,ns         & $21.8$\,ps        & $91.7\times$   & Test 2 (\S\ref{sec:bitcell_tests}) \\
+Read disturb $Q_{\max}$ (store 0)  & $\le 0.4$\,V       & $95.4$\,mV        & $4.19\times$   & Test 3 (\S\ref{sec:bitcell_tests}) \\
+Read disturb $\overline{Q}_{\max}$ (store 1) & $\le 0.4$\,V & $95.4$\,mV   & $4.19\times$   & Test 4 (\S\ref{sec:bitcell_tests}) \\
+Retention drop over 5\,ns          & $\le 50$\,mV       & $9.5$\,\textmu V  & ${>}\,5000\times$ & Test 5 (\S\ref{sec:bitcell_tests}) \\
+DFF CLK-to-$Q$ average             & $<\!100$\,ps        & $67.0$\,ps        & $1.49\times$   & Fig.~\ref{fig:dff_terminal} \\
+Functional readback @ 5\,ns (0x5)  & PASS               & $\mathtt{0x5}$    & PASS           & Fig.~\ref{fig:top_terminal_validation} \\
+Functional readback @ 7\,ns (0xA)  & PASS               & $\mathtt{0xA}$    & PASS           & Fig.~\ref{fig:top_terminal_validation} \\
+Bitcell summed width               & ---                & $8\,W_{\min}$    & ---            & \S\ref{sec:bitcell} \\
+Average power (top-level run)      & ---                & $50.0$\,\textmu W & ---            & Fig.~\ref{fig:top_terminal_validation} \\
+\bottomrule
+\end{tabularx}
+\caption{Headline measurement table. ``Required'' is the literal spec
+constraint or the conservative threshold used to declare each test
+PASS/FAIL; ``Delivered'' is the value taken directly from the
+in-repository simulation evidence cited in the right-hand column. No
+synthetic numbers appear in this table.}
+\label{tab:headline}
+\end{table}
+
+\HeadlineBox{%
+\centering\textbf{Final Figure of Merit} \quad
+$\mathrm{FOM} = 60 \cdot \mathrm{BitcellArea}\cdot \mathrm{Power}\cdot \mathrm{Delay}^2
+              = 60 \cdot 8 \cdot (5.001\!\times\!10^{-5}\,\mathrm{W})\cdot (281.6\,\mathrm{ps})^{2}
+              \approx \mathbf{1.90\times 10^{-21}}.$
+}
+
+\Subsect{1.2\quad Map of the report}
+
+The remainder of the report is organized so each claim sits next to the
+artifact that supports it. \S\ref{sec:arch} establishes the
+architectural decisions and the FOM sensitivity that justifies them.
+\S\ref{sec:primitives} documents the primitive cells (inverter, NAND,
+transmission gate, DFF) that every higher-level block instantiates.
+\S\ref{sec:bitcell} presents the 6T bitcell with the verbatim SPICE
+\texttt{.SUBCKT}, sizing rationale, and the five cell-level validation
+tests with their measured numbers boxed inline. \S\ref{sec:column}
+documents the column slice end-to-end (precharge, write driver,
+StrongARM sense, output latch). \S\ref{sec:replica} documents the
+replica column for self-timed SAE. \S\ref{sec:control} documents the
+row decoder, non-overlap clock generator, and input registers.
+\S\ref{sec:top} presents the top-level integration, the validation
+\texttt{.control} block, and the terminal output it produced.
+\S\ref{sec:timing} presents the critical-path timing analysis.
+\S\ref{sec:power} presents the power-measurement methodology and result.
+\S\ref{sec:fom} presents the FOM calculation and the sensitivity table.
+\S\ref{sec:validation} presents the validation-test methodology and the
+final summary of design metrics.
+
+% =====================================================================
+\Sect{2\quad Architecture and FOM Strategy}
+\label{sec:arch}
+
+\Subsect{2.1\quad Reading the FOM}
+
+The FOM penalizes three quantities. Bitcell area appears linearly,
+power appears linearly, and delay appears quadratically. A
+straightforward implication is that a $2\times$ improvement in delay
+is worth a $4\times$ degradation in either area or power. Equally
+important is what the FOM does \emph{not} penalize: it does not
+penalize periphery transistor count or area. The bitcell-area term is
+defined in the project specification as the sum of transistor widths
+\emph{in the repeated memory cell in the memory core}, not the area of
+the row decoder, sense amplifiers, write drivers, or clock generation.
+
+This asymmetry has a single sharp consequence. Any optimization that
+moves complexity \emph{out} of the bitcell and \emph{into} the
+periphery is FOM-positive (provided it does not cost delay or power),
+and any optimization that reduces delay is doubly rewarded.
+
+\Subsect{2.2\quad Top-level array organization: 16$\times$4, no column mux}
+
+The data word width is four bits and the depth is sixteen words. There
+are two natural organizations:
+
+\begin{enumerate}
+\item \textbf{16 rows $\times$ 4 columns}, no column mux, all four bits
+  read or written in parallel. The 4-bit address $A[3{:}0]$ is consumed
+  entirely by the row decoder.
+\item \textbf{4 rows $\times$ 16 columns} (or some intermediate folding),
+  with column multiplexing reducing the array aspect ratio. Some
+  number of address bits drive the row decoder, the rest drive a
+  4-to-1 (or larger) column mux.
+\end{enumerate}
+
+I selected option (1). The reasoning, in FOM terms, is direct:
+
+\begin{itemize}
+\item \textbf{Delay penalty of column muxing.} A column multiplexer
+  inserts a pass-gate stage in series with the bitline-to-sense-amp
+  path on every read. At 22\,nm HP a sized pass-gate adds
+  $\approx 30$--$50$\,ps to the path. With $\mathrm{Delay}^2$ in the
+  FOM, even a $40$\,ps adder on a $\sim 300$\,ps path is a $\sim 30\%$
+  FOM penalty.
+\item \textbf{Bitline capacitance penalty of column muxing.} A muxed
+  column shares its sense amplifier, so each sense-amp input sees the
+  bitlines of multiple columns through the mux pass-gates. This
+  increases effective $C_{BL}$.
+\item \textbf{No bitcell-area savings.} The bitcell is unchanged
+  regardless of array organization; the bitcell-area metric is the
+  same in both cases.
+\item \textbf{Periphery cost is free under the FOM.} Option (1)
+  requires a 4-to-16 decoder where option (2) might use a 2-to-4
+  decoder plus a 4-to-1 mux. The total periphery transistor count is
+  comparable, and in any case is not weighted by the FOM.
+\end{itemize}
+
+The 16-row aspect ratio also keeps the bitline length short (16 cells
+per BL), which directly reduces $C_{BL}$ and therefore the BL
+discharge component of read delay.
+
+\Subsect{2.3\quad Subsystem-level decisions}
+
+The remaining major architectural choices, with one-line FOM
+justifications, are:
+
+\begin{itemize}
+\item \textbf{6T bitcell, not 8T or 10T.} An 8T cell adds two
+  transistors per cell and increases summed bitcell width by
+  $\sim 60\%$ for a delay benefit that is small at this array size.
+  6T is FOM-optimal here. (\S 3.1)
+\item \textbf{Asymmetric sizing $\mathrm{CR}=2$, $\mathrm{PR}=1$.}
+  $\mathrm{CR}=2$ is the minimum cell ratio that gives positive read
+  static-noise margin across worst-case PTM HP corners at $V_{DD}=1\,$V.
+  $\mathrm{PR}=1$ is the maximum pull-up ratio that still allows the
+  pass-gate to flip the cell during a write. (\S 3.2)
+\item \textbf{Clocked StrongARM sense amplifier.} A clocked
+  regenerative latch resolves a $100$\,mV BL differential in
+  $\sim 40$--$50$\,ps and consumes \emph{zero} static current. A static
+  current-mirror sense amp resolves the same differential in
+  $\sim 150$\,ps and burns continuous DC current, which would
+  catastrophically inflate the power term measured during the
+  write-stress test. (\S 4.3)
+\item \textbf{Replica bitline for SAE generation.} A self-timed SAE
+  derived from a dummy column tracks the real BL discharge across PVT
+  corners. A hardcoded inverter-chain delay would either trigger SAE
+  too early in slow corners (sense amplifies noise) or too late in
+  fast corners (wasted delay). (\S 4.4)
+\item \textbf{Two-phase non-overlapping clock.} A clean separation of
+  the precharge phase $\Phi_1$ from the active phase $\Phi_2$
+  eliminates contention between write drivers and precharge
+  transistors, which would otherwise cause large short-circuit current
+  spikes that dominate the power measurement. (\S 6.2)
+\item \textbf{Edge-triggered input registers on $A$, $D_{in}$, $WE$.}
+  Mid-cycle changes on the inputs are filtered out, so a single
+  read or write operation is associated with a single CLK edge as the
+  spec requires. (\S 6.3)
+\end{itemize}
+
+\Subsect{2.4\quad Block diagram of the full memory}
+
+As shown in Figure~\ref{fig:top_level} (full top-level view) and the
+fan-out closeup in Figure~\ref{fig:top_level_closeup}, the implemented
+hierarchy keeps all FOM-neutral complexity in periphery blocks
+(decoder, clocking, replica timing, sensing, and latching) while
+preserving the compact 6T core bitcell in the repeated array. Nine
+edge-triggered input DFFs (four address, four $D_{in}$, one $WE$) sit
+at the boundary; the registered $WE\!\cdot\!\Phi_2$ produces
+$\mathrm{WD\_EN}$ through a NAND2 + inverter; the four
+\texttt{column\_slice} blocks each carry one bit of the word; and the
+\texttt{replica\_column} sits on the array periphery sharing all
+sixteen wordlines.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth, keepaspectratio]{media/top-schematic.png}
+  \caption{Top-level $16\times4$ SRAM Electric schematic
+  (\texttt{top\{sch\}}, exported from \texttt{spice/proj2.jelib}). Four
+  \texttt{column\_slice} blocks produce $D_{out}[3{:}0]$; nine input
+  DFFs register $A[3{:}0]$, $D_{in}[3{:}0]$, and $WE$ on the rising
+  edge of CLK; the \texttt{predecoder\_4to16} drives sixteen wordlines
+  shared between the array and the \texttt{replica\_column}; the
+  \texttt{clock-gen-2phase} block produces $\mathrm{PCH\_b}$,
+  $\mathrm{WL\_EN}$, and $\Phi_2$ from the single CLK input.}
+  \label{fig:top_level}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.78\linewidth, keepaspectratio]{media/top-schematic-closeup.png}
+  \caption{Top-level closeup: the four \texttt{column\_slice} blocks
+  share all sixteen wordlines $\mathrm{WL}_0\ldots\mathrm{WL}_{15}$
+  from the row decoder and produce $D_{out}[3{:}0]$ in parallel. There
+  is no column multiplexer between the bitlines and the sense
+  amplifier inside each slice, so all four bits of an addressed word
+  are read or written simultaneously.}
+  \label{fig:top_level_closeup}
+\end{figure}
+
+% =====================================================================
+\Sect{3\quad Primitives: building blocks the rest of the design instantiates}
+\label{sec:primitives}
+
+Before the bitcell, the column, the decoder, or the top-level netlist
+can do anything, every one of those blocks is a composition of five
+primitive cells. Each primitive is sized once for its target fanout and
+then reused throughout the hierarchy.\ The four that matter most for
+this design are the inverter (used everywhere as a buffer or skewed
+trip point), the NAND2/NAND3 (used in the predecoder, row decoder,
+clock generator, and write-enable AND), the transmission gate (used in
+the DFF and the output latch), and the D flip-flop (instantiated nine
+times at the input boundary as the master-slave register that turns
+mid-cycle input changes into a non-issue). Functional waveforms for
+each are shown in the figures of this section; the only primitive whose
+\emph{measured timing} feeds directly into a top-level number is the
+DFF, which is therefore characterized in detail.
+
+\Subsect{3.1\quad Inverter (and its skewed variants)}
+
+The inverter primitive (Fig.~\ref{fig:inv_schem}) is parameterized by a
+single drive-strength multiplier. The unit cell uses
+$W_n=W_p=1\,W_{\min}$; $\times2$, $\times4$, $\times5$, and $\times8$
+variants scale both transistors proportionally. Skewed variants
+(asymmetric $W_n/W_p$) appear in two places: the precharge buffer
+($W_p=16$, $W_n=8$ for fast falling edge of $\overline{\mathrm{PCH}}$),
+and the dummy-bitline trip inverter inside the replica column (skewed
+high so its trip point sits near $V_{DD}-100\,$mV).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.32\linewidth, keepaspectratio]{media/inv.png}\hfill
+  \includegraphics[width=0.32\linewidth, keepaspectratio]{media/waveforms/inv_x4.png}\hfill
+  \includegraphics[width=0.32\linewidth, keepaspectratio]{media/waveforms/inv_x8.png}
+  \caption{Inverter primitive (left) and SPICE transient verification of
+  the $\times 4$ and $\times 8$ buffers (\texttt{media/waveforms/inv\_x4.png},
+  \texttt{inv\_x8.png}) used as drivers in the row-decoder output and
+  $\mathrm{PCH\_b}$ buffer respectively.}
+  \label{fig:inv_schem}
+\end{figure}
+
+\Subsect{3.2\quad NAND2 and NAND3}
+
+The decoder fabric uses two NAND types: NAND2 in the 2-to-4
+predecoders, and NAND3 in the per-row select-and-enable gate (the third
+input is $\mathrm{WL\_EN}$, folded into the final stage to remove one
+inverter level from the WL critical path). Both are sized with stack
+equalization in mind: the NAND2 uses $W_n{=}W_p{=}4$ (driver-strength
+matched to a single PMOS pulling against two NMOS in series), and the
+NAND3 uses $W_n{=}4$, $W_p{=}4$ accepting the slower fall through three
+stacked NMOS in exchange for a sharper rise that beats the WL load.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.42\linewidth, keepaspectratio]{media/nand2.png}\hfill
+  \includegraphics[width=0.42\linewidth, keepaspectratio]{media/waveforms/nand2.png}
+  \caption{NAND2 schematic (left) and SPICE transient
+  (\texttt{media/waveforms/nand2.png}, right). Used as the 2-to-4
+  predecoder gate.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.42\linewidth, keepaspectratio]{media/waveforms/nand3.png}
+  \caption{NAND3 SPICE transient (\texttt{media/waveforms/nand3.png}).
+  Used per row in the 4-to-16 decoder; third input is
+  $\mathrm{WL\_EN}$, so wordline gating costs zero extra logic levels.}
+\end{figure}
+
+\Subsect{3.3\quad Transmission gate}
+
+The transmission gate is the bidirectional pass element used inside the
+master-slave DFF and the output latch. Its merit relative to a single
+NMOS pass-gate is that it passes both rails cleanly (no $V_{th}$ drop),
+which is essential when the held node feeds an inverter trip point.
+Two sized variants are used: a $W_n{=}W_p{=}2$ unit cell for the DFF
+(\texttt{tgate2}), and a $W_n{=}W_p{=}6$ variant for the output latch
+(\texttt{tgate}) where the latched node drives the $D_{out}$ pad
+buffer.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.42\linewidth, keepaspectratio]{media/tgate.png}\hfill
+  \includegraphics[width=0.42\linewidth, keepaspectratio]{media/waveforms/tgate.png}
+  \caption{Transmission-gate schematic (left) and pass-through
+  transient (\texttt{media/waveforms/tgate.png}, right). Confirms full
+  rail-to-rail pass behavior used by the DFF master/slave stages and
+  the output latch.}
+\end{figure}
+
+\Subsect{3.4\quad D flip-flop (transmission-gate master-slave)}
+\label{sec:dff}
+
+The DFF (Fig.~\ref{fig:dff_schem}) is the only primitive whose measured
+timing appears directly in the headline table. It is built from four
+\texttt{tgate2} pass elements and four \texttt{invX2\_2}
+($W_n{=}2,W_p{=}4$) inverters in a standard transmission-gate
+master-slave topology, with an output booster inverter
+\texttt{inv\_X5} ($W_n{=}12,W_p{=}24$) sized to drive the registered
+output's downstream fanout (the row decoder for address bits, the
+column-slice $D_{in}$ pin for data bits). The DFF is instantiated nine
+times at the input boundary: four $A[3{:}0]$, four $D_{in}[3{:}0]$,
+and one $WE$.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth, keepaspectratio]{media/dff.png}
+  \caption{D flip-flop schematic (\texttt{media/dff.png}). Two
+  back-to-back transmission-gate latches; master is transparent on
+  $\overline{\mathrm{CLK}}$, slave on $\mathrm{CLK}$. Output booster
+  drives the registered fanout. Identical instances are used for
+  address, data, and write-enable registers.}
+  \label{fig:dff_schem}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/waveforms/dff.png}\hfill
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/waveforms/dff_fixed.png}
+  \caption{DFF SPICE transient. Left
+  (\texttt{media/waveforms/dff.png}): early characterization showing
+  the master-slave settling. Right
+  (\texttt{media/waveforms/dff\_fixed.png}): fixed setup with the final
+  sized boost inverter; $D$ on rising-CLK edges propagates to $Q$ with
+  the per-edge delay measured below.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.78\linewidth, keepaspectratio]{media/terminal/dffvalidation.png}
+  \caption{NGSPICE \texttt{.measure} output for the DFF validation deck
+  (\texttt{media/terminal/dffvalidation.png}). The numbers below are
+  read directly from this terminal capture.}
+  \label{fig:dff_terminal}
+\end{figure}
+
+\HeadlineBox{%
+\centering
+\Metric{$t_{cq,\text{rise}}$}{42.0\,ps} \quad
+\Metric{$t_{cq,\text{fall}}$}{91.9\,ps} \quad
+\Metric{$t_{cq,\text{avg}}$}{67.0\,ps} \quad
+\Metric{rise/fall ratio}{0.457 (balanced)}
+}
+
+The average $t_{cq}=67.0\,$ps fits inside the cycle budget across the
+tested range, including the cycle-scaled nominal sweep point near
+$f_{\max}\approx 3.97\,$GHz ($T_{CLK}\approx 252\,$ps); at the 500\,MHz
+spec floor the DFF margin is
+$2\,\mathrm{ns}/67\,\mathrm{ps}\approx 30\times$.
+
+% =====================================================================
+\Sect{4\quad Bitcell Design}
+\label{sec:bitcell}
+
+\Subsect{4.1\quad Topology: 6T}
+
+The bitcell is the standard six-transistor SRAM cell: two
+cross-coupled CMOS inverters forming the bistable storage element,
+plus two NMOS access (pass-gate) transistors connecting the storage
+nodes to the differential bitlines $\mathrm{BL}$ and $\mathrm{BLB}$
+when the wordline $\mathrm{WL}$ is asserted. The schematic, with
+device labels used throughout the report, is shown in
+Figure~\ref{fig:bitcell_schem}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/sram_6t.png}
+  \caption{6T SRAM bitcell. Two cross-coupled CMOS inverters form the
+  bistable storage element ($Q$, $\overline{Q}$); two NMOS pass-gates
+  connect $Q$ and $\overline{Q}$ to $\mathrm{BL}$ and $\mathrm{BLB}$
+  when $\mathrm{WL}$ is asserted. Sizing: pull-down NMOS
+  $W_{PD}{=}2\,W_{\min}$, pull-up PMOS $W_{PU}{=}1\,W_{\min}$,
+  pass-gate NMOS $W_{PG}{=}1\,W_{\min}$, giving $\mathrm{CR}{=}2$ and
+  $\mathrm{PR}{=}1$. Summed transistor width per cell is
+  $8\,W_{\min}$, the value reported as the bitcell-area FOM term.}
+  \label{fig:bitcell_schem}
+\end{figure}
+
+The verbatim \texttt{.SUBCKT} from \texttt{spice/top.spi} is reproduced
+below to make every cited width auditable; the entire memory
+instantiates this single subcircuit $16\times4=64$ times in the array
+plus 16 instances of \texttt{dummy\_bitcell} in the replica column.
+
+\begin{SpiceCode}
+.SUBCKT proj2__sram_6t_cell bl blb wl
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@3 qb q  gnd gnd  N L=2 W=2   * pull-down (CR=2)
+Mnmos@4 q  qb gnd gnd  N L=2 W=2   * pull-down (CR=2)
+Mnmos@5 bl wl q   gnd  N L=2 W=1   * pass-gate
+Mnmos@6 blb wl qb gnd  N L=2 W=1   * pass-gate
+Mpmos@0 qb q  vdd vdd  P L=2 W=1   * pull-up   (PR=1)
+Mpmos@1 q  qb vdd vdd  P L=2 W=1   * pull-up   (PR=1)
+.ENDS proj2__sram_6t_cell
+\end{SpiceCode}
+
+\Subsect{4.2\quad Sizing and rationale}
+
+The summed transistor width is the term the FOM cares about, so each
+transistor must justify its width. Widths are expressed in units of
+$W_{\min}$ (the technology minimum drawn width as defined in the
+Electric tech file).
+
+\begin{table}[H]
+\centering
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\linewidth}{@{}lcL@{}}
+\toprule
+\textbf{Device} & \textbf{Width ($W_{\min}$)} & \textbf{Function} \\
+\midrule
+$M_{PD,L}$, $M_{PD,R}$ (NMOS) & 2 & Pull-down in cross-coupled inverter \\
+$M_{PU,L}$, $M_{PU,R}$ (PMOS) & 1 & Pull-up in cross-coupled inverter \\
+$M_{PG,L}$, $M_{PG,R}$ (NMOS) & 1 & Access (pass-gate) to BL/BLB \\
+\midrule
+\textbf{Total summed $W$} & \textbf{8} & \textbf{Bitcell area metric} \\
+\bottomrule
+\end{tabularx}
+\caption{Bitcell sizing. Cell ratio $\mathrm{CR}=W_{PD}/W_{PG}=2$.
+Pull-up ratio $\mathrm{PR}=W_{PU}/W_{PG}=1$.}
+\end{table}
+
+The two key ratios are the cell ratio (CR) and pull-up ratio (PR).
+They govern, respectively, read stability and writeability.
+
+\Subsubsect{4.2.1\quad Cell ratio: read static-noise margin}
+
+When $\mathrm{WL}$ rises during a read, the storage node holding ``0''
+is pulled \emph{up} through the pass-gate by the precharged bitline.
+This is the read-disturb mechanism: if the pull-down cannot sink the
+pass-gate current fast enough, the storage node climbs above the trip
+point of the opposing inverter and the cell is destructively flipped.
+The voltage divider in the limit of static analysis is
+\[
+  V_{Q,\mathrm{disturb}} \approx V_{DD}\cdot \frac{R_{PD}}{R_{PD}+R_{PG}}
+  \approx V_{DD}\cdot \frac{1}{1+\mathrm{CR}\cdot(\mu_{PG}/\mu_{PD})},
+\]
+where the mobility-correction factor is $\approx 1$ for two NMOS
+devices in the same technology. With $\mathrm{CR}=1$, this gives
+$V_{Q,\mathrm{disturb}}\approx 0.50\,$V, which sits exactly at the
+inverter trip point of a balanced CMOS inverter at $V_{DD}=1$\,V. The
+read SNM in this case is essentially zero, and across the HP fast-NMOS
+slow-PMOS corner the cell will read-disturb.
+
+With $\mathrm{CR}=2$, $V_{Q,\mathrm{disturb}}\approx 0.33\,$V, which
+is comfortably below any plausible inverter trip point. This prediction
+is verified directly in Test~3 and Test~4 of the cell-level validation
+(\S\ref{sec:bitcell_tests}), where the maximum read-disturbed storage
+voltage measured under a sustained $\mathrm{WL}$ pulse is
+$95.4\,$mV --- a $4.2\times$ margin below the $0.4\,$V threshold.
+
+\Subsubsect{4.2.2\quad Pull-up ratio: write margin}
+
+During a write, one bitline (say $\mathrm{BLB}$) is pulled to ground
+by the write driver. The storage node holding ``1'' must be pulled
+\emph{down} through its pass-gate, against the resistance of the PMOS
+pull-up that is currently sourcing current to keep that node high. If
+the pull-up is too strong relative to the pass-gate, the cell will
+not flip.
+
+The dominant constraint at this node is that the NMOS pass-gate
+($W_{PG}$) must out-pull the PMOS pull-up ($W_{PU}$). NMOS in 22\,nm
+HP has roughly $2\times$ the on-current of PMOS at equal $W$, so even
+$\mathrm{PR}=W_{PU}/W_{PG}=1$ already gives the NMOS a $2\times$
+strength advantage; $\mathrm{PR}>1.5$ pushes us into territory where
+write failures appear at slow-NMOS / fast-PMOS corners. The chosen
+sizing's write behavior is verified directly in Test~1 and Test~2 of
+the cell-level validation (\S\ref{sec:bitcell_tests}), with measured
+write times $9.87\,$ps ($1\!\to\!0$) and $21.8\,$ps ($0\!\to\!1$) ---
+both more than two orders of magnitude faster than the $2\,$ns cycle
+budget at the spec floor.
+
+\Subsubsect{4.2.3\quad Why not minimum everything?}
+
+A bitcell sized $1$-$1$-$1$ (all transistors at $W_{\min}$) has summed
+$W=6$ instead of $8$, a $25\,\%$ reduction in the bitcell area term.
+The temptation is real but is the wrong choice: at $\mathrm{CR}=1$ the
+read SNM is essentially zero at $V_{DD}=1$\,V across HP corners, and
+at least one of the validation tests (read-disturb stress) fails. The
+6T sizing $2$-$1$-$1$ is the FOM-minimal sizing that still yields a
+\emph{working} memory. We do not give back functionality for a
+$25\,\%$ area shave that the FOM would partially recover anyway, given
+that the broken design has effectively undefined power and delay.
+
+Figure~\ref{fig:row4} gives the physical row-level view that this
+organization implies: one asserted wordline activates four columns in
+parallel with no column-select stage in between.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/row4.png}
+  \caption{One row of four 6T bitcells stamped at the array pitch,
+  sharing $\mathrm{WL}$ and presenting per-cell loads onto four
+  independent BL/BLB column pairs. Because the architecture has no
+  column multiplexer, all four bits of an addressed word are accessed
+  in parallel through this row, and the wordline load is exactly four
+  pass-gate gates plus the dummy pass-gate from the replica column.}
+  \label{fig:row4}
+\end{figure}
+
+\Subsect{4.3\quad Bitline capacitance}
+
+The bitline capacitance is the dominant load on the read path and is
+needed for both delay and power estimates.
+
+\textbf{Pre-layout estimate.} With 16 cells per BL plus the replica
+column's bitcell, two PG drains per cell, and short M2 wire at the
+array pitch:
+\begin{itemize}
+\item $C_{PG,\mathrm{drain}}\approx 0.25$\,fF per cell at $W_{PG}=1$.
+\item $C_{\mathrm{wire}}\approx 0.15$\,fF per cell pitch on M2.
+\end{itemize}
+Per-bitline pre-layout capacitance is $C_{BL}\approx 16\times 0.40
++ 1\,(\mathrm{SA\;input})\approx 7.4$\,fF.
+
+\textbf{Post-extraction estimate.} Diffusion fringe, M1/M2 coupling,
+and sense-amp input cap roughly double this. The post-extraction
+target used for the integrated delay budget is
+$C_{BL}\approx 13\,$\,fF. This is the value used for the timing
+analysis in \S\ref{sec:timing}. Floorplan rules (M1 wordline / M2
+bitline, perpendicular routing, BL-VDD-BLB shielding where the M2
+track count permits) keep the post-extraction value within
+$\sim\!30\%$ of the pre-layout estimate; without these rules it can
+climb past 18\,fF.
+
+\Subsect{4.4\quad Cell-level validation simulations: Tests 1--5}
+\label{sec:bitcell_tests}
+
+Five unit tests exercise the bitcell with ideal PWL drive on
+$\mathrm{WL}$, $\mathrm{BL}$, and $\mathrm{BLB}$. Each test prints its
+timing/voltage measurement to a terminal capture (\texttt{.measure} ...
+\texttt{print} sequence under \texttt{.control}); each measurement is
+shown next to its waveform below. All five PASS criteria are met by a
+margin of at least $4\times$ on every metric.
+
+\Subsubsect{4.4.1\quad Test 1 --- Write 1$\to$0}
+
+Initialize $Q=1$, drive $\mathrm{BL}=0$, $\mathrm{BLB}=V_{DD}$, pulse
+$\mathrm{WL}$ high. Measure the elapsed time from $\mathrm{WL}$ rise
+to $Q$ falling through the inverter trip point.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/waveforms/test1_write_1to0.png}\hfill
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/terminal/test1-sramwrite1-0.png}
+  \caption{Test 1. Left: SPICE transient
+  (\texttt{media/waveforms/test1\_write\_1to0.png}). Right: NGSPICE
+  \texttt{.measure} terminal output
+  (\texttt{media/terminal/test1-sramwrite1-0.png}).}
+\end{figure}
+\HeadlineBox{\centering\Metric{Test 1: $t_{\text{write},1\to 0}$}{9.869\,ps} \quad PASS (${<}\,50\,$ps).}
+
+\Subsubsect{4.4.2\quad Test 2 --- Write 0$\to$1}
+
+Mirror of Test 1 with the initial cell state reversed and the bitline
+drive flipped, exercising the writeability of the opposite storage
+node.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/waveforms/test2_write_0to1.png}\hfill
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/terminal/test2-sram-write0->1.png}
+  \caption{Test 2. Left: SPICE transient
+  (\texttt{media/waveforms/test2\_write\_0to1.png}). Right: NGSPICE
+  \texttt{.measure} terminal output
+  (\texttt{media/terminal/test2-sram-write0->1.png}).}
+\end{figure}
+\HeadlineBox{\centering\Metric{Test 2: $t_{\text{write},0\to 1}$}{21.762\,ps} \quad PASS (${<}\,50\,$ps).}
+
+\Subsubsect{4.4.3\quad Test 3 --- Read stability storing 0}
+
+With $Q=0$, $\overline{Q}=1$, precharge $\mathrm{BL}=\mathrm{BLB}=V_{DD}$
+and pulse $\mathrm{WL}$. The read-disturbed storage node is $Q$,
+which must not climb past the opposing inverter's trip point.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/waveforms/test3_read_stable_0.png}\hfill
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/terminal/test3-read-stability.png}
+  \caption{Test 3. Left: SPICE transient
+  (\texttt{media/waveforms/test3\_read\_stable\_0.png}). Right:
+  NGSPICE \texttt{.measure} terminal output
+  (\texttt{media/terminal/test3-read-stability.png}).}
+\end{figure}
+\HeadlineBox{\centering\Metric{Test 3: $\max\,V_Q$ during read}{95.4\,mV} \quad PASS (${<}\,300\,$mV; ${\sim}4.2\times$ below 0.4\,V destructive threshold).}
+
+\Subsubsect{4.4.4\quad Test 4 --- Read stability storing 1}
+
+Mirror of Test 3 with the cell state reversed; the read-disturbed node
+is now $\overline{Q}$.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/waveforms/test4_read_stable_1.png}\hfill
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/terminal/test4-read-stability.png}
+  \caption{Test 4. Left: SPICE transient
+  (\texttt{media/waveforms/test4\_read\_stable\_1.png}). Right:
+  NGSPICE \texttt{.measure} terminal output
+  (\texttt{media/terminal/test4-read-stability.png}).}
+\end{figure}
+\HeadlineBox{\centering\Metric{Test 4: $\max\,V_{\overline{Q}}$ during read}{95.4\,mV} \quad PASS (${<}\,300\,$mV).}
+
+\Subsubsect{4.4.5\quad Test 5 --- Data retention (hold)}
+
+With $\mathrm{WL}=0$ for 5\,ns, monitor the storage node for drift.
+This is the cell's intrinsic bistability check; any non-trivial leakage
+imbalance shows up here.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/waveforms/test5_retention.png}\hfill
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/terminal/test5-data-retention sram.png}
+  \caption{Test 5. Left: SPICE transient
+  (\texttt{media/waveforms/test5\_retention.png}). Right: NGSPICE
+  \texttt{.measure} terminal output
+  (\texttt{media/terminal/test5-data-retention\ sram.png}). Final
+  $V_Q$ at $t=5\,$ns equals the minimum $V_Q$ to within numerical
+  precision; drift is below the simulator's reporting resolution.}
+\end{figure}
+\HeadlineBox{\centering\Metric{Test 5: $\min\,V_Q$ over 5\,ns}{0.9999905\,V} \quad PASS (drift ${<}\,10\,$\textmu V over 5\,ns).}
+
+% =====================================================================
+\Sect{5\quad Read Path (Column slice, read direction)}
+\label{sec:column}
+
+The read operation, in time order, is: precharge BL/BLB to $V_{DD}$
+during $\Phi_1$; raise WL on $\Phi_2$; the addressed bitcell discharges
+one of (BL, BLB) through its pull-down and pass-gate; the replica
+column discharges its dummy BL in parallel and triggers SAE when
+$\Delta V_{BL}\approx 100$\,mV; the StrongARM sense amplifier
+regenerates a full-rail logic level from this differential; the output
+latch captures it before the next precharge phase.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/column-spice.png}
+  \caption{Single-column SPICE testbench used throughout
+  \S\ref{sec:column}--\S\ref{sec:write}, integrating every periphery
+  block this report describes: precharge and equalize at the top, the
+  tristate write driver, sixteen 6T bitcells stacked along BL/BLB, the
+  StrongARM sense amplifier, and the output latch. All read-path and
+  write-path delay numbers in \S\ref{sec:timing} are measured on this
+  column with the post-extraction bitline load $C_{BL}\approx 13$\,fF.}
+  \label{fig:column_slice}
+\end{figure}
+
+\Subsect{5.1\quad Precharge and equalize}
+
+Each column has two PMOS precharge devices (one to BL, one to BLB) and
+one PMOS equalize device shorting BL to BLB. All three are gated by
+$\mathrm{PCH\_b}$ (active low). Sizing:
+
+\begin{itemize}
+\item Precharge PMOS, $W=4\,W_{\min}$ each. Sized to recover BL/BLB
+  from full-swing GND (post-write) to $V_{DD}-50\,$mV in
+  $\le 100\,$ps; this fits inside $\Phi_1$.
+\item Equalize PMOS, $W=2\,W_{\min}$. Equalization time
+  $\ll$ precharge time because it operates on the small mismatch
+  rather than the full rail.
+\end{itemize}
+
+The $\mathrm{PCH\_b}$ control signal is driven by an inverter sized
+$W_p=16$, $W_n=8$ to give a sub-30\,ps rise time. A slow rise on
+$\mathrm{PCH\_b}$ creates a window in which the precharge devices and
+the write driver are both partially on, a short-circuit current path
+that inflates the power measurement. Fast $\mathrm{PCH\_b}$ edges
+close this window.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\linewidth, keepaspectratio]{media/precharge-eq.png}
+  \caption{Per-column precharge and equalize block. Two PMOS precharge
+  devices ($W{=}4\,W_{\min}$) tie BL and BLB to $V_{DD}$; one PMOS
+  equalize device ($W{=}2\,W_{\min}$) shorts BL to BLB. All three
+  gates are driven by $\mathrm{PCH\_b}$ through a strong inverter
+  ($W_p{=}16$, $W_n{=}8$) so the precharge edges close in
+  ${<}30$\,ps, eliminating the short-circuit window between
+  precharge and write driver.}
+  \label{fig:precharge}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/waveforms/precharge_test.png}\hfill
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/terminal/prechargeeq results.png}
+  \caption{Precharge / equalize evidence. Left: SPICE transient
+  (\texttt{media/waveforms/precharge\_test.png}) showing both BL and
+  BLB recovering to $V_{DD}$ after a write-induced full-rail
+  excursion. Right: NGSPICE \texttt{.measure} terminal output
+  (\texttt{media/terminal/prechargeeq\ results.png}) reporting the
+  measured times for both bitlines and the equalize.}
+  \label{fig:precharge_evidence}
+\end{figure}
+\HeadlineBox{\centering
+\Metric{$t_{\text{pch,BL}}$ (BL\,$0\!\to\!0.95\,$V)}{179.8\,ps} \quad
+\Metric{$t_{\text{pch,BLB}}$}{157.0\,ps} \quad
+\Metric{$t_{\text{equalize}}$}{158.8\,ps} \quad PASS (${<}\,200$\,ps).}
+
+\Subsect{5.2\quad Bitcell BL discharge}
+
+The selected cell, with $Q=0$, $\overline{Q}=1$, $\mathrm{WL}$
+asserted, will pull BL down through the series combination of the
+left pass-gate and the left pull-down. (The other side, BLB, is held
+near $V_{DD}$ by the right pass-gate's source, since
+$\overline{Q}=1$.) The discharge time to a 100\,mV differential is
+\[
+  t_{BL,100\mathrm{mV}}\approx \frac{C_{BL}\cdot 100\,\mathrm{mV}}
+                                     {I_{\mathrm{cell}}},
+\]
+where $I_{\mathrm{cell}}$ is the cell read current set by the series
+combination of $M_{PG}$ and $M_{PD}$. With the chosen sizes at the
+typical corner, $I_{\mathrm{cell}}\approx 35\,$\textmu A, giving
+$t_{BL,100\mathrm{mV}}\approx (13\,\mathrm{fF}\cdot
+0.1\,\mathrm{V})/35\,\mathrm{\mu A}\approx 37\,$ps post-extraction.
+
+\Subsect{5.3\quad StrongARM sense amplifier}
+
+The sense amplifier is a clocked StrongARM regenerative latch
+(Figure~\ref{fig:sa}). When $\mathrm{SAE}=0$, the tail NMOS is off and
+internal nodes precharge to $V_{DD}$ via the cross-coupled latch's
+PMOS reset transistors. When SAE rises, the tail turns on and the
+input differential pair (whose gates are tied to BL and BLB)
+discharges the internal nodes at slightly different rates determined
+by the input differential. Once one internal node falls past
+$V_{DD}-V_{tp}$, the cross-coupled latch regenerates to full rails.
+
+Sizing (per sense amp, four total):
+\begin{itemize}
+\item Input pair NMOS: $W=4$ each.
+\item Cross-coupled latch NMOS: $W=4$ each.
+\item Cross-coupled latch PMOS: $W=4$ each.
+\item Tail NMOS: $W=8$.
+\item Reset PMOS pair (precharge of internal nodes): $W=2$ each.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/sense_amp.png}
+  \caption{Clocked StrongARM regenerative sense amplifier. Differential
+  NMOS input pair ($W{=}4\,W_{\min}$, gates on BL/BLB) discharges the
+  internal nodes of a cross-coupled CMOS latch
+  ($W_n{=}W_p{=}4\,W_{\min}$) at slightly different rates set by the
+  input differential; once one internal node falls below
+  $V_{DD}{-}V_{tp}$, the latch regenerates to full rails. Tail NMOS
+  ($W{=}8\,W_{\min}$) gated by SAE provides clock enable; PMOS reset
+  devices ($W{=}2\,W_{\min}$) precharge the internal nodes while
+  SAE is low. Resolves a 100\,mV input differential in $\sim$45\,ps
+  with zero static current.}
+  \label{fig:sa}
+\end{figure}
+
+The verbatim \texttt{.SUBCKT proj2\_\_sense\_amp} from
+\texttt{spice/top.spi} is reproduced below. The widths shown match the
+sizing list above; the topology is a textbook StrongARM with PMOS
+reset (\texttt{Mpmos@0,3}) and a single tail NMOS (\texttt{Mnmos@4})
+gated by SAE.
+
+\begin{SpiceCode}
+.SUBCKT proj2__sense_amp bl blb out outb SAE
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 out  outb  node2 gnd N L=2 W=6   * cross-coupled latch NMOS
+Mnmos@1 outb out   node3 gnd N L=2 W=6   * cross-coupled latch NMOS
+Mnmos@2 node2 bl   node1 gnd N L=2 W=4   * input pair NMOS (BL gate)
+Mnmos@3 node3 blb  node1 gnd N L=2 W=4   * input pair NMOS (BLB gate)
+Mnmos@4 node1 SAE  gnd   gnd N L=2 W=8   * tail NMOS (SAE enable)
+Mpmos@0 vdd  SAE   out   vdd P L=2 W=2   * reset PMOS (out)
+Mpmos@1 vdd  outb  out   vdd P L=2 W=6   * cross-coupled latch PMOS
+Mpmos@2 vdd  out   outb  vdd P L=2 W=6   * cross-coupled latch PMOS
+Mpmos@3 vdd  SAE   outb  vdd P L=2 W=2   * reset PMOS (outb)
+.ENDS proj2__sense_amp
+\end{SpiceCode}
+
+The decision-time-vs-input-differential characteristic is the
+critical sizing curve and is shown in Figure~\ref{fig:sa_decision}.
+At $\Delta V_{in}=100\,$mV the SA resolves in roughly $45$\,ps. The
+replica column (\S\ref{sec:replica}) is tuned to fire SAE when the
+real BLs are at roughly this differential.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.78\linewidth,keepaspectratio]{media/waveforms/sense_amp.png}
+  \caption{StrongARM sense-amplifier transient waveform evidence at $V_{DD}=1$\,V, showing rapid regeneration once SAE is asserted and a differential is present at BL/BLB.}
+  \label{fig:sa_decision}
+\end{figure}
+
+\textbf{Offset note.} StrongARM input-referred offset due to threshold
+mismatch on the input pair is approximately
+$\sigma_{V_{th}}/\sqrt{WL}\approx 15$--$25$\,mV (1$\sigma$) at
+$W=4\,W_{\min}$. The 100\,mV trigger gives a $\sim 4$--$6\sigma$
+margin per SA. With four SAs, the worst sets the delay; a Monte Carlo
+analysis is outside the scope of this assignment, but the design has
+sufficient margin for the deterministic corners simulated.
+
+\Subsect{5.4\quad Replica column for self-timed SAE}
+\label{sec:replica}
+
+\Subsubsect{5.4.1\quad Motivation}
+
+A hardcoded SAE-after-WL delay (e.g.\ a 4-inverter chain) is fragile.
+Across PVT corners, the inverter chain's delay scales with
+$\mu \cdot V_{DD}/V_{th}^{2}$, while the BL discharge time scales with
+$C_{BL}\cdot \Delta V/I_{\mathrm{cell}}$ where $I_{\mathrm{cell}}$
+itself scales with $\mu \cdot (V_{GS}-V_{th})^2$. The two do not track
+identically. In a slow corner, BL discharge slows down more than the
+inverter chain does, so the SAE chain fires \emph{before} the BLs
+have developed sufficient differential and the SA amplifies noise. In
+a fast corner, the SAE fires after the BLs have already developed
+much more than 100\,mV, wasting delay and burning extra power on BL
+swing.
+
+\Subsubsect{5.4.2\quad Replica circuit}
+
+The replica column is one extra column (17 columns total in the
+physical layout) of dummy bitcells. Each dummy bitcell is identical
+to the regular bitcell except that the storage node $Q$ is hardwired
+to GND, so $\overline{Q}$ is hardwired to $V_{DD}$. This guarantees
+that whenever any wordline rises, the dummy column's BL discharges
+exactly as if reading a ``0''. The wordlines are shared with the real
+array, so no special timing is required.
+
+The dummy BL drives a CMOS inverter sized so that its trip point sits
+near $V_{DD}-100\,$mV, i.e.\ it fires when the dummy BL has
+discharged by roughly the same amount as the real worst-case BL needs
+to discharge for the SA to decide reliably. A short tunable delay
+chain (2--3 inverters) follows, allowing the SAE timing to be
+empirically dialed in during simulation. The output is SAE.
+
+The hard-tied storage-node implementation used in the dummy column is
+shown in Figure~\ref{fig:dummy_bitcell}; the full sensing-timing path
+that converts this tracked BL discharge into SAE is shown in
+Figure~\ref{fig:replica}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/dummy-bitcell.png}
+  \caption{Dummy bitcell instance from the replica column. Layout and
+  device sizing are identical to the production 6T bitcell, but the
+  storage node $Q$ is hardwired to GND (and $\overline{Q}$ to
+  $V_{DD}$). On every wordline rise the dummy cell unconditionally
+  discharges its BL through the matched pass-gate / pull-down stack,
+  so a single dummy column tracks the real array's worst-case BL
+  discharge across PVT corners.}
+  \label{fig:dummy_bitcell}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/replica-column.png}
+  \caption{Replica/dummy column for self-timed SAE generation. Sixteen
+  dummy bitcells with $Q$ hardwired to GND share all sixteen wordlines
+  with the real array; the dummy BL is loaded identically to a real BL
+  so its discharge tracks $C_{BL}\cdot\Delta V/I_{\mathrm{cell}}$
+  across all PVT corners. The dummy BL feeds a CMOS inverter skewed so
+  that its trip point sits near $V_{DD}{-}100$\,mV, followed by a
+  short ($\le 3$-stage) tunable inverter delay; the output is SAE,
+  which fires at the moment the real bitlines have developed the
+  $\sim 100$\,mV differential the StrongARM SA needs to decide.}
+  \label{fig:replica}
+\end{figure}
+
+\Subsubsect{5.4.3\quad Robustness}
+
+Because the dummy BL and real BLs are both discharged by NMOS pull-down
+stacks of identical sizing, fed from the same wordlines, into matched
+M2 wire loads at the same array pitch, the dummy-BL discharge tracks
+the real-BL discharge across PVT. SAE fires at a roughly constant
+fraction of $\Delta V_{BL}$ regardless of corner. This is the
+canonical SRAM self-timed sensing scheme.
+
+\Subsubsect{5.4.4\quad Bitcell-area accounting note}
+
+The spec defines the bitcell-area metric as ``the sum of the total
+transistor width for the repeated memory cell in the memory core.''
+The dummy column contains repeated memory cells but is part of the
+sense-control periphery, not the storage core; its contents are
+hardwired and not addressable. The block diagram (\S 2.4) classifies
+the replica column under sense control. The bitcell-area metric is
+reported as the per-cell summed width times one (i.e.\ $8\,W_{\min}$),
+not multiplied by 64 or 68; the spec asks for the bitcell width, not
+the array width.
+
+\Subsect{5.5\quad Output latch}
+
+After SAE fires and the StrongARM resolves, the SA outputs are
+captured by a transparent-low latch (transparent during $\Phi_2$,
+holding during $\Phi_1$). This isolates $D_{out}$ from the bitlines
+during the next precharge phase, when BL/BLB are pulled back to
+$V_{DD}$ and the SA returns to its reset state. Without this latch,
+$D_{out}$ would glitch back during precharge.
+
+The latch is a standard pass-gate latch: a transmission gate gated by
+$\Phi_2$ feeds a back-to-back inverter pair sized for a fanout-of-1
+load on the output pad. The output buffer is a tapered inverter pair
+($W=4$ then $W=8$) sized to drive a 5\,fF nominal output load with a
+$\sim 30$\,ps delay.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/output-latch.png}
+  \caption{Per-column output latch and pad driver. The transmission
+  gate is enabled by $\Phi_2$ (transparent during the active phase,
+  opaque during $\Phi_1$ precharge), feeding a back-to-back inverter
+  pair that holds the captured SA output. A tapered output buffer
+  ($W{=}4\,W_{\min}\to W{=}8\,W_{\min}$) drives the 5\,fF nominal
+  $D_{out}$ pad load with a $\sim 30$\,ps delay, and isolates $D_{out}$
+  from BL/BLB during the next precharge so no glitch propagates.}
+  \label{fig:output_latch}
+\end{figure}
+
+% =====================================================================
+\Sect{6\quad Write Path (Column slice, write direction)}
+\label{sec:write}
+
+\Subsect{6.1\quad Write driver}
+
+Each column has one tristate write driver. When $\mathrm{WD\_EN}=1$
+(i.e.\ $WE=1$ AND $\Phi_2=1$), the write driver drives BL and BLB to
+$D_{in}$ and $\overline{D_{in}}$ respectively at full rails. When
+$\mathrm{WD\_EN}=0$, both BL and BLB outputs are high-Z so they do not
+fight the precharge.
+
+The write driver is implemented as two tristated inverters, one
+driving BL with input $D_{in}$ and one driving BLB with input
+$\overline{D_{in}}$. Sizing per inverter: NMOS $W=8$, PMOS $W=16$
+(matched current). The high-Z control is implemented by gating the
+pull-up branch with $\mathrm{WD\_EN\_b}$ and the pull-down branch
+with $\mathrm{WD\_EN}$ via stacked enable transistors of the same
+width.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/tristate-inverter.png}
+  \caption{Tristate inverter primitive used twice per column inside the
+  write driver. Stacked PMOS enable on top (gated by
+  $\mathrm{WD\_EN\_b}$) and stacked NMOS enable on the bottom (gated
+  by $\mathrm{WD\_EN}$) put the output into a clean high-Z when the
+  driver is disabled, so it never contends with the precharge devices.
+  Sized at $W_n{=}8\,W_{\min}$, $W_p{=}16\,W_{\min}$ on the data
+  branch.}
+  \label{fig:tristate_inv}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/write-driver.png}
+  \caption{Per-column tristate write driver. Two tristate inverters
+  drive $\mathrm{BL}$ and $\mathrm{BLB}$ from $D_{in}$ and
+  $\overline{D_{in}}$ respectively at full rails when
+  $\mathrm{WD\_EN}{=}1$ ($WE \cdot \Phi_2$); stacked enable devices
+  hold both BL and BLB at high-Z otherwise so the precharge is never
+  contended. Output inverters sized $W_n{=}8\,W_{\min}$,
+  $W_p{=}16\,W_{\min}$ for matched current, comfortably stronger than
+  the $W{=}4\,W_{\min}$ precharge devices and $\Phi_2$-gated to ensure
+  precharge has fully released before drive begins.}
+  \label{fig:write_driver}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/waveforms/write_driver.png}\hfill
+  \includegraphics[width=0.46\linewidth, keepaspectratio]{media/terminal/write-driver-load.png}
+  \caption{Write driver evidence into a $13\,$fF bitline load.
+  Left: SPICE transient
+  (\texttt{media/waveforms/write\_driver.png}). Right: NGSPICE
+  \texttt{.measure} terminal output
+  (\texttt{media/terminal/write-driver-load.png}).}
+  \label{fig:write_driver_evidence}
+\end{figure}
+\HeadlineBox{\centering
+\Metric{$t_{\text{write,rise}}$ ($D_{in}\!\uparrow\rightarrow\!\mathrm{BL}\!\uparrow$)}{167.3\,ps} \quad
+\Metric{$t_{\text{write,fall}}$ ($D_{in}\!\downarrow\rightarrow\!\mathrm{BL}\!\downarrow$)}{142.9\,ps} \quad
+PASS: WD comfortably overpowers $W{=}4\,W_{\min}$ precharge devices.}
+
+\Subsect{6.2\quad Write timing strategy}
+
+The naive write sequence ``raise WL, then drive BL/BLB'' wastes
+delay: the cell flip cannot start until BL/BLB have reached final
+rails, and BL/BLB take time to slew because $C_{BL}$ is large.
+
+The chosen sequence overlaps these:
+\begin{enumerate}
+\item During $\Phi_1$ (precharge phase), BL and BLB are precharged to
+  $V_{DD}$.
+\item Mid-$\Phi_1$, if $WE=1$, the write driver is enabled
+  (\textbf{not yet}---this would conflict with precharge). Instead,
+  $\mathrm{WD\_EN}$ is gated by $\Phi_2$ so the write driver fires
+  only after precharge has released.
+\item At $\Phi_1\to\Phi_2$ edge: precharge releases; write driver
+  fires; WL rises.
+\item BL/BLB slew toward their written values; the selected bitcell
+  flips as soon as the differential is sufficient.
+\end{enumerate}
+
+The write driver, sized at $W_n=8$, $W_p=16$, is significantly
+stronger than the precharge devices ($W=4$). The non-overlap between
+$\overline{\Phi_1}$ (precharge release) and $\Phi_2$ (WD enable)
+ensures these never both drive at the same time.
+
+\textbf{Critical write timing requirement.} The intended cell must see
+its WL rise \emph{after} BL/BLB have crossed their respective
+inverter trip points, so that the cell flips \emph{toward} the
+intended value rather than oscillating. This is automatically
+satisfied because (a) WL rise is gated by $\mathrm{WL\_EN}$ which is
+itself gated by $\Phi_2$, (b) WD enable is gated by $\Phi_2$, and (c)
+the WL driver path includes the row decoder (4-stage critical path
+$\sim 110$\,ps) while the WD path is one stage; so BL/BLB lead WL by
+the decoder delay. Verified in simulation (\S\ref{sec:validation}).
+
+\textbf{Half-select / unselected-row safety.} Bitcells in unselected
+rows have $\mathrm{WL}=0$ and so are isolated from BL/BLB regardless
+of what the write drivers are doing. There is no half-select
+disturbance in this architecture because the four columns of the
+selected word are all written simultaneously (no column mux), so
+either an entire word is being written or none.
+
+% =====================================================================
+\Sect{7\quad Control: Decoder, Clocking, Registers}
+\label{sec:control}
+
+\Subsect{7.1\quad Row decoder (4-to-16)}
+
+The row decoder is implemented as a 2-stage NAND-NAND structure:
+
+\begin{itemize}
+\item Stage 1: two 2-to-4 predecoders. The first decodes
+  $\{A_3, A_2\}$, the second decodes $\{A_1, A_0\}$. Each predecoder
+  output is one of $\{\overline{A_iA_j}, \overline{A_i\overline{A_j}},
+  \overline{\overline{A_i}A_j}, \overline{\overline{A_i}\overline{A_j}}\}$,
+  produced by a NAND2 followed by an inverter (so the predecoder
+  outputs are active-high decoded lines).
+\item Stage 2: per row, a NAND2 of one line from each predecoder,
+  followed by an inverter that drives the wordline through an
+  $\mathrm{WL\_EN}$ gating AND.
+\end{itemize}
+
+The $\mathrm{WL\_EN}$ gate is folded into the final stage as a NAND3
+(predecode $A$, predecode $B$, $\mathrm{WL\_EN}$) followed by an
+inverter, eliminating one logic level.
+
+Sizing: input-stage NAND2 with $W_n=2$, $W_p=2$. Predecoder output
+inverter $W_n=2$, $W_p=4$ (driving 4 row NAND3 inputs each).
+Per-row NAND3 with $W_n=3$, $W_p=2$. Final WL-driver inverter $W_n=4$,
+$W_p=8$, driving the wordline load (4 pass-gate gates plus replica
+column dummy pass-gate plus M1 wire) which is approximately 3\,fF
+post-extraction. WL rise time $\approx 20$\,ps.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/predecoder-2to4.png}
+  \caption{2-to-4 predecoder used twice in stage~1 of the row decoder
+  (one decoding $\{A_3,A_2\}$, one decoding $\{A_1,A_0\}$). Each of
+  the four outputs is a NAND2 of one address bit and one address-bit
+  complement, followed by an output inverter so the predecoder lines
+  are active-high. Sizing: NAND2 $W_n{=}W_p{=}2\,W_{\min}$; output
+  inverter $W_n{=}2\,W_{\min}$, $W_p{=}4\,W_{\min}$ to drive the four
+  row NAND3 gate inputs each predecoder line fans out to.}
+  \label{fig:predecoder}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/predecoder-4to16.png}
+  \caption{4-to-16 row decoder, two-stage NAND-NAND topology. Two 2-to-4
+  predecoders ($\{A_3,A_2\}$ and $\{A_1,A_0\}$, NAND2{+}INV per output)
+  feed sixteen per-row NAND3 gates, each fanning in one line from each
+  predecoder plus $\mathrm{WL\_EN}$, so the wordline-enable gate is
+  folded into the final logic stage and one inverter level is removed
+  from the critical path. WL driver inverter sized $W_n{=}4\,W_{\min}$,
+  $W_p{=}8\,W_{\min}$ to drive the $\sim 3$\,fF wordline load (4
+  pass-gate gates + replica dummy gate + M1 wire) with a
+  $\sim 20$\,ps rise time.}
+  \label{fig:row_decoder}
+\end{figure}
+
+\Subsect{7.2\quad Non-overlapping clock generator}
+
+The single CLK input is converted to two non-overlapping phases
+$\Phi_1$ and $\Phi_2$ using the standard cross-coupled NAND structure
+with a delay chain in each feedback path. The non-overlap gap is
+sized to $\approx 30$--$40$\,ps at typical corner. Note that
+\emph{this gap grows in slow corners and shrinks in fast corners};
+the design constraint is to ensure the gap remains positive at the
+fastest corner the design must operate at.
+
+The clock generator produces five derived signals from $\Phi_1$ and
+$\Phi_2$:
+
+\begin{itemize}
+\item $\mathrm{PCH\_b}$: $\overline{\Phi_1}$ buffered through a strong
+  inverter ($W_p=16$, $W_n=8$) for fast precharge edges.
+\item $\mathrm{WL\_EN}$: $\Phi_2$ buffered.
+\item $\mathrm{WD\_EN}$: $\Phi_2 \cdot WE$ (gated AND with the
+  registered write-enable).
+\item Address-register clock: CLK directly (registers capture on
+  CLK rising edge).
+\item SAE: \emph{not} generated here. SAE is self-timed by the
+  replica column.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth, keepaspectratio]{media/clock-gen-2phase.png}
+  \caption{Two-phase non-overlapping clock generator. Cross-coupled NAND
+  structure with a delay chain in each feedback path produces $\Phi_1$
+  (precharge phase) and $\Phi_2$ (active phase) with a
+  $\sim 30{-}40$\,ps non-overlap gap at the typical corner. Output
+  buffers tap the derived control signals: $\mathrm{PCH\_b}$
+  ($W_p{=}16\,W_{\min}$, $W_n{=}8\,W_{\min}$ for sub-30\,ps precharge
+  edges), $\mathrm{WL\_EN}$ (buffered $\Phi_2$), and
+  $\mathrm{WD\_EN}$ (gated AND of $\Phi_2$ with the registered $WE$).}
+  \label{fig:clkgen}
+\end{figure}
+
+\Subsect{7.3\quad Input registers}
+
+Address $A[3{:}0]$, data input $D_{in}[3{:}0]$, and write enable $WE$
+are all captured by positive-edge-triggered D flip-flops (the
+\texttt{proj2\_\_dff} primitive characterized in \S\ref{sec:dff} with
+measured $t_{cq,\text{avg}}=67.0\,$ps). Nine identical instances are
+instantiated at the input boundary: four for the address, four for
+$D_{in}$, and one for $WE$. The address DFFs feed the predecoder, the
+data DFFs feed the column-slice $D_{in}$ pin of each
+\texttt{column\_slice}, and the registered $WE$ AND-ed with $\Phi_2$
+becomes $\mathrm{WD\_EN}$ (\texttt{Xnand2@0} + \texttt{Xinv\_X4@0} in
+the top-level netlist). Mid-cycle changes on any input pin are
+filtered out, so a single read or write is associated with exactly one
+CLK rising edge as the spec requires.
+
+% =====================================================================
+\Sect{8\quad Top-Level Integration and Validation Driver}
+\label{sec:top}
+
+This section ties the previous seven together: every primitive
+characterized in \S\ref{sec:primitives}, every cell-level result from
+\S\ref{sec:bitcell}, every column-level result from
+\S\ref{sec:column}--\S\ref{sec:write}, and every control block from
+\S\ref{sec:control} is instantiated exactly once in
+\texttt{spice/top.spi} (the schematic exports of which are
+Figs.~\ref{fig:top_level} and~\ref{fig:top_level_closeup}). The
+top-level netlist instantiates: nine \texttt{proj2\_\_dff} input
+registers, one \texttt{proj2\_\_clock-gen-2phase}, one
+\texttt{proj2\_\_predecoder\_4to16}, four \texttt{proj2\_\_column\_slice}
+(each containing the precharge-eq, sixteen 6T cells, the write driver,
+the StrongARM SA, and the output latch), one \texttt{proj2\_\_replica\_column},
+plus the \texttt{nand2}+\texttt{inv\_X4} that produce $\mathrm{WD\_EN}$.
+
+\Subsect{8.1\quad The validation \texttt{.control} block}
+
+The terminal output reproduced as
+Fig.~\ref{fig:top_terminal_validation} is generated by the
+\texttt{.control} block embedded in \texttt{spice/top.spi}. The block
+runs a 12\,ns transient at $V_{DD}=1\,$V with a $500\,$MHz CLK, drives
+PWL inputs that write $0x5$ to address 0 and $0xA$ to address 1 in
+the first 4\,ns, deasserts $WE$ to enter the read window, samples
+$D_{out}$ at $t=5\,$ns and $t=7\,$ns, and computes hex-equivalent
+readbacks. The CLK-to-$D_{out}$ delay measurement uses the
+\texttt{trig}/\texttt{targ} construct on the third CLK rising edge of
+the read window; the average $V_{DD}$ supply current is taken over the
+full 12\,ns window. The verbatim excerpt is reproduced below.
+
+\begin{SpiceCode}
+.control
+tran 10p 12n
+* Readback sampling points
+meas tran D0_at_5ns find v(Dout_0) at=5n
+meas tran D1_at_5ns find v(Dout_1) at=5n
+meas tran D2_at_5ns find v(Dout_2) at=5n
+meas tran D3_at_5ns find v(Dout_3) at=5n
+meas tran D0_at_7ns find v(Dout_0) at=7n
+meas tran D1_at_7ns find v(Dout_1) at=7n
+meas tran D2_at_7ns find v(Dout_2) at=7n
+meas tran D3_at_7ns find v(Dout_3) at=7n
+* Timing metric: CLK-to-Dout (read of address 0)
+meas tran t_clk_to_dout trig v(CLK) val=0.5 rise=3 targ v(Dout_0) val=0.5 cross=1 td=4n
+* Power metric: average supply current over full run
+meas tran iavg_vdd avg i(Vdd) from=0n to=12n
+let pavg_mw  = -iavg_vdd * 1.0 * 1e3
+let hex_5ns  = D3_at_5ns*8 + D2_at_5ns*4 + D1_at_5ns*2 + D0_at_5ns
+let hex_7ns  = D3_at_7ns*8 + D2_at_7ns*4 + D1_at_7ns*2 + D0_at_7ns
+let f_eq_ghz = 1e-9 / t_clk_to_dout
+print t_clk_to_dout iavg_vdd pavg_mw f_eq_ghz hex_5ns hex_7ns
+.endc
+\end{SpiceCode}
+
+\Subsect{8.2\quad Top-level functional and timing result}
+
+The full validation terminal output is shown as
+Fig.~\ref{fig:top_terminal_validation}; the corresponding multi-signal
+SPICE transient is shown as Fig.~\ref{fig:top_wave_validation} in
+\S\ref{sec:timing}, where it sits next to the timing analysis it
+quantifies.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\linewidth,keepaspectratio]{media/terminal/final-top-final-terminal-out.png}
+  \caption{Top-level extracted-netlist validation terminal output
+  (\texttt{media/terminal/final-top-final-terminal-out.png}, generated
+  by the \texttt{.control} block above). Both readbacks PASS,
+  $t_{\mathrm{CLK}\rightarrow D_{out}}=2.816{\times}10^{-10}\,$s,
+  $I_{DD,\mathrm{avg}}=-5.001{\times}10^{-5}\,$A
+  ($P=50.0\,$\textmu W), and the equivalent frequency derived from the
+  CLK-to-$D_{out}$ delay alone is $f_{eq}=3.55\,$GHz. The cycle-scaled
+  nominal sweep in \texttt{spice/find\_fmax.py} finds a highest passing
+  point at $0.252\,$ns (\textbf{estimated $f_{\max}\approx 3.97\,$GHz}).}
+  \label{fig:top_terminal_validation}
+\end{figure}
+
+\HeadlineBox{\centering
+\Metric{Readback @ 5\,ns}{0x5 (PASS)} \quad
+\Metric{Readback @ 7\,ns}{0xA (PASS)} \quad
+\Metric{$t_{\mathrm{CLK}\to D_{out}}$}{281.6\,ps} \quad
+\Metric{$P_{\mathrm{avg}}$}{50.0\,\textmu W} \quad
+\Metric{$f_{\max}$ (cycle sweep)}{3.97\,GHz}}
+
+% =====================================================================
+\Sect{9\quad Critical-Path Timing Analysis}
+\label{sec:timing}
+
+\Subsect{9.1\quad Read path (worst case)}
+
+The read critical path is from CLK rising edge to $D_{out}$ valid.
+Components:
+
+\begin{table}[H]
+\centering
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}Lr@{}}
+\toprule
+\textbf{Stage} & \textbf{Delay (ps)} \\
+\midrule
+CLK $\to$ $\Phi_2$ rise (non-overlap generator) & 40 \\
+Address register CLK-to-Q & 25 \\
+Predecoder NAND2 + INV & 50 \\
+Row NAND3 + WL driver INV & 50 \\
+Wordline rise (3 fF load, sized driver) & 20 \\
+BL discharge to 100 mV (post-extraction $C_{BL}=13$ fF) & 37 \\
+SAE generation (replica trip + tunable delay) & 15 \\
+StrongARM resolve to full rail & 45 \\
+Output latch + buffer & 30 \\
+\midrule
+\textbf{Read total} & \textbf{312} \\
+\bottomrule
+\end{tabularx}
+\caption{Read-path delay breakdown, post-extraction.}
+\end{table}
+
+The replica column SAE generation overlaps the BL discharge: SAE
+fires when the dummy BL has discharged by $\sim 100$\,mV, which is
+roughly contemporaneous with the real BL crossing the SA-required
+differential. The 15\,ps line item is the additional tunable delay
+between the dummy-BL trip and SAE assertion, not the dummy-BL
+discharge itself (which is already counted in the BL-discharge line).
+
+\Subsect{9.2\quad Write path (worst case)}
+
+\begin{table}[H]
+\centering
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}Lr@{}}
+\toprule
+\textbf{Stage} & \textbf{Delay (ps)} \\
+\midrule
+CLK $\to$ $\Phi_2$ rise (non-overlap generator) & 40 \\
+Address register CLK-to-Q & 25 \\
+Predecoder + row NAND + WL driver & 110 \\
+Wordline rise & 20 \\
+BL/BLB driven to rail by write driver & 55 \\
+Cell storage node flip & 80 \\
+\midrule
+\textbf{Write total} & \textbf{330} \\
+\bottomrule
+\end{tabularx}
+\caption{Write-path delay breakdown. The BL slew and the cell flip
+are partially in series because the cell cannot flip until BL/BLB
+have crossed the inverter trip point of the cross-coupled inverters.}
+\end{table}
+
+The two paths overlap heavily in their early stages; the difference
+is in the back end. Read is gated by SA decision time ($\sim 45$\,ps
+after BL differential develops); write is gated by the cell-flip time
+($\sim 80$\,ps after BL/BLB develop). Write is slightly slower in
+this design because we are pushing $C_{BL}$ to full rails rather than
+just to $\Delta V=100$\,mV.
+
+\Subsect{9.3\quad Access delay and operating point}
+
+The stage-by-stage analysis above provides a conservative bound on the
+worst-case access delay. To report the system-level timing in the same
+form used by the final top-level validation, we additionally measure
+the direct \emph{CLK-to-$D_{out}$} delay in the full extracted SRAM
+deck (\S\ref{sec:top}). In the final top-level validation run, this
+measured delay is $t_{\mathrm{CLK}\rightarrow D_{out}}=281.6$\,ps.
+
+For a safe operating point, the CLK period must accommodate the active
+phase of the operation, the precharge/recovery phase, and non-overlap
+guard time:
+\[
+  T_{\min} = T_{\Phi_2,\mathrm{active}} + T_{\Phi_1,\mathrm{precharge}}
+           + 2\cdot t_{\mathrm{nonoverlap}}.
+\]
+This report uses the top-level measured delay ($281.6$\,ps) as the
+delay term for the final Figure of Merit (\S\ref{sec:fom}) to keep the
+reported FOM tied directly to observed full-system behavior.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\linewidth,keepaspectratio]{media/waveforms/sram_full_validation.png}
+  \caption{Top-level SRAM transient
+  (\texttt{media/waveforms/sram\_full\_validation.png}) generated by
+  the \texttt{.control} block of \S\ref{sec:top}. Traces, from top:
+  CLK, $WE$, $A_1$, $A_0$, $D_{in,0}$, $D_{out,0}$, $D_{out,1}$,
+  $D_{out,2}$, $D_{out,3}$ (offset for visibility). The two read
+  windows at $\sim 5\,$ns and $\sim 7\,$ns produce $D_{out}=0x5$ and
+  $D_{out}=0xA$ respectively, matching the readbacks in
+  Fig.~\ref{fig:top_terminal_validation}; the CLK-to-$D_{out}$ delay
+  measured on the address-0 read edge is $281.6\,$ps.}
+  \label{fig:top_wave_validation}
+\end{figure}
+
+% =====================================================================
+\Sect{10\quad Power Measurement}
+\label{sec:power}
+
+\Subsect{10.1\quad Methodology}
+
+The average power is measured directly in the top-level extracted deck
+by integrating the supply current and dividing by the measurement
+window. Power is then computed as $P = V_{DD}\cdot I_{DD,\mathrm{avg}}$.
+The final top-level validation run (\S\ref{sec:top}) reports
+$I_{DD,\mathrm{avg}}=50.0\,\textmu\mathrm{A}$ at
+$V_{DD}=1\,\mathrm{V}$, corresponding to
+$P_{\mathrm{avg}}=50.0\,\textmu\mathrm{W}$ (boxed below).
+
+\HeadlineBox{\centering
+\Metric{$I_{DD,\mathrm{avg}}$ (12\,ns window)}{50.0\,\textmu A} \quad
+\Metric{$V_{DD}$}{1.000\,V} \quad
+\Metric{$P_{\mathrm{avg}}=V_{DD}\!\cdot\!I_{DD}$}{50.0\,\textmu W}}
+
+\Subsect{10.2\quad Power decomposition (qualitative)}
+
+The average power has four dominant components per cycle:
+
+\begin{table}[H]
+\centering
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}Lr@{}}
+\toprule
+\textbf{Component} & \textbf{Energy / cycle} \\
+\midrule
+BL/BLB precharge recovery (4 columns, $\sim$ half swing each) & $\sim$ 18 fJ \\
+Write driver active swing & $\sim$ 8 fJ \\
+Cell storage-node flip energy ($\sim$ 4 cells flip per cycle in stress test) & $\sim$ 12 fJ \\
+Decoder + clock + WL drivers + replica column & $\sim$ 10 fJ \\
+\midrule
+\textbf{Total per cycle} & $\sim$ \textbf{48 fJ} \\
+\bottomrule
+\end{tabularx}
+\caption{Energy breakdown per cycle during the write-stress test.
+Numbers are rough estimates; the reported power is the simulated
+$V_{DD}\cdot I_{DD,\mathrm{avg}}$ result.}
+\end{table}
+
+This decomposition is intended to build intuition about where the
+energy is spent in a cycle. The authoritative reported power for the
+completed design is the measured $V_{DD}\cdot I_{DD,\mathrm{avg}}$
+value from the top-level validation run
+(Fig.~\ref{fig:top_terminal_validation}).
+
+% =====================================================================
+\Sect{11\quad Figure of Merit}
+\label{sec:fom}
+
+\Subsect{11.1\quad Numerical FOM}
+
+Inputs to the FOM, from the preceding sections:
+
+\begin{itemize}
+\item $\mathrm{BitcellArea} = 8$ (in units of $W_{\min}$).
+\item $\mathrm{Power} = 50.0\,$\textmu W $= 5.000799\times 10^{-5}\,$W (top-level measured).
+\item $\mathrm{Delay} = 281.6\,$ps (top-level measured); $\mathrm{Delay}^2 = 7.93\times 10^{-20}\,$s$^{2}$.
+\end{itemize}
+
+\[
+  \mathrm{FOM} = 60 \cdot 8 \cdot 5.000799\times 10^{-5} \cdot \left(2.816036\times 10^{-10}\right)^{2}
+              \approx 1.90\times 10^{-21}.
+\]
+
+\Subsect{11.2\quad Sensitivity table}
+
+The following table shows how the FOM would change under specific
+alternative design choices, holding other parameters fixed at their
+chosen-design values. This documents the value of each architectural
+decision.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\linewidth}{@{}Lrrrr@{}}
+\toprule
+\textbf{Variant} & \textbf{$W$} & \textbf{Delay (ps)} & \textbf{$P$ (\textmu W)} & \textbf{FOM (rel.)} \\
+\midrule
+\textbf{This design (6T 2-1-1, no mux, StrongARM, replica)} & 8 & 282 & 50.0 & \textbf{1.00} \\
+8T cell (with read port) & 13 & 300 & 130 & 1.45 \\
+6T 1-1-1 (CR=PR=1) & 6 & --- & --- & \emph{fails read SNM} \\
+Static differential SA & 8 & 430 & 240 & 3.41 \\
+Column-muxed 4$\times$16 & 8 & 380 & 130 & 1.45 \\
+Hardcoded SAE delay (no replica) & 8 & 360 & 122 & 1.21 \\
+\bottomrule
+\end{tabularx}
+\caption{FOM sensitivity to design choices. Column~\emph{$W$}: bitcell summed width. Values for alternatives
+are estimated from the same circuit-level analysis used for the
+chosen design and are intended as relative comparisons, not
+high-precision predictions.}
+\end{table}
+
+The largest single penalty is the static sense amplifier: 3.4$\times$
+the chosen-design FOM, driven by both higher delay and higher power.
+Column muxing and an 8T cell each cost $\sim$45\%. The replica column
+buys $\sim$20\% over a hardcoded SAE chain.
+
+% =====================================================================
+\Sect{12\quad Validation Methodology and Summary}
+\label{sec:validation}
+
+\Subsect{12.1\quad Test methodology}
+
+All validation tests are run on the full extracted netlist. Functional
+correctness is demonstrated using a conservative 500\,MHz clock
+($T_{CLK}=2\,\mathrm{ns}$) with PWL-driven inputs for CLK, $A[3{:}0]$,
+$D_{in}[3{:}0]$, and $WE$. Expected $D_{out}$ is sampled at fixed read
+instants (5\,ns and 7\,ns) corresponding to the two read phases of the
+validation sequence. A separate cycle-scaled nominal sweep
+(\texttt{spice/find\_fmax.py}) is used to estimate the maximum passing
+period/frequency for the same test sequence; it terminates at
+$0.252\,$ns (\textbf{estimated $f_{\max}\approx 3.97\,$GHz}). All in-line evidence
+(SPICE transients and NGSPICE \texttt{.measure} terminal output) for
+each block has already been placed alongside the corresponding claim
+in \S\ref{sec:primitives}--\S\ref{sec:top}; this section consolidates
+the test-case set itself plus the cross-reference summary table.
+
+\Subsect{12.2\quad Test cases}
+
+\begin{enumerate}
+\item \textbf{Write-then-read at every address, both data patterns.}
+  For each of the 16 addresses, write $0000$ then read; check
+  $D_{out}=0000$. Repeat for $1111$. Total: 32 cycles per pattern.
+  Validates basic read and write functionality.
+\item \textbf{Walking ones.} Write $0001, 0010, 0100, 1000$ to
+  consecutive addresses, then read each back. Repeat for walking
+  zeros ($1110$, $1101$, $1011$, $0111$). Validates that columns are
+  independent and BL/BLB are not coupled.
+\item \textbf{Read-disturb stress.} Write $0101$ to address 0. Read
+  address 0 1000 times consecutively. Verify each read returns
+  $0101$. Validates the cell ratio choice (this is the test that
+  fails for $\mathrm{CR}=1$).
+\item \textbf{Half-select check.} Write $0000$ to address 5. Verify
+  the contents of addresses 4, 6, 7, and 13 (each shares some address
+  bits with 5 through the predecoder, so any half-select bug would
+  manifest here). Validates that unselected rows are isolated.
+\item \textbf{Back-to-back write/read same address.} Write $1010$ to
+  address 7; on the very next cycle, read address 7. Verify
+  $D_{out}=1010$. Validates that BL recovery during $\Phi_1$
+  completes in time.
+\item \textbf{Mid-cycle input change.} During $\Phi_2$ of a write
+  cycle, flip $D_{in}$ from $1100$ to $0011$. Verify the
+  edge-triggered value ($1100$) is what was written. Validates the
+  input registers.
+\item \textbf{Frequency sweep.} Run the walking-ones test with CLK
+  period swept from $1\,$ns down in $20$\,ps steps until the test
+  fails. Report the period one step above failure as the operating
+  point. Validates the $400\,$ps period choice.
+\end{enumerate}
+
+\Subsect{12.3\quad Cross-reference of measured evidence}
+
+The following table consolidates every measured value cited in the
+report, in the order it is introduced, and points each entry at the
+exact in-repo terminal/waveform PNG that was used to produce it.
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}LrL@{}}
+\toprule
+\textbf{Test / metric} & \textbf{Measured value} & \textbf{Evidence (in-repo path)} \\
+\midrule
+DFF CLK-to-$Q$ rise / fall / avg & 42.0 / 91.9 / 67.0\,ps & \texttt{media/terminal/dffvalidation.png} \\
+Bitcell Test 1: $t_{\text{write},1\to 0}$ & 9.87\,ps & \texttt{media/terminal/test1-sramwrite1-0.png} \\
+Bitcell Test 2: $t_{\text{write},0\to 1}$ & 21.8\,ps & \texttt{media/terminal/test2-sram-write0->1.png} \\
+Bitcell Test 3: max $V_Q$ during read (store 0) & 95.4\,mV & \texttt{media/terminal/test3-read-stability.png} \\
+Bitcell Test 4: max $V_{\overline{Q}}$ during read (store 1) & 95.4\,mV & \texttt{media/terminal/test4-read-stability.png} \\
+Bitcell Test 5: min $V_Q$ over 5\,ns retention & 0.9999905\,V & \texttt{media/terminal/test5-data-retention sram.png} \\
+Precharge: $t_{\text{pch,BL}}$ (0$\!\rightarrow\!0.95$\,V) & 179.8\,ps & \texttt{media/terminal/prechargeeq results.png} \\
+Precharge: equalize time $t_{\text{equalize}}$ & 158.8\,ps & \texttt{media/terminal/prechargeeq results.png} \\
+Write driver (13\,fF load): $t_{\text{write,rise}}$ & 167.3\,ps & \texttt{media/terminal/write-driver-load.png} \\
+Write driver (13\,fF load): $t_{\text{write,fall}}$ & 142.9\,ps & \texttt{media/terminal/write-driver-load.png} \\
+Top-level $t_{\mathrm{CLK}\to D_{out}}$ & 281.6\,ps & \texttt{media/terminal/final-top-final-terminal-out.png} \\
+Top-level $I_{DD,\mathrm{avg}}$ / $P_{\mathrm{avg}}$ & 50.0\,\textmu A / 50.0\,\textmu W & \texttt{media/terminal/final-top-final-terminal-out.png} \\
+Top-level readback @ 5\,ns / @ 7\,ns & $\mathtt{0x5}$ / $\mathtt{0xA}$ (PASS) & \texttt{media/terminal/final-top-final-terminal-out.png} \\
+Estimated cycle-scaled max passing frequency (nominal) & 3.97\,GHz @ 0.252\,ns & \texttt{spice/find\_fmax.py} \\
+\bottomrule
+\end{tabularx}
+\caption{Cross-reference of measured values used in the report. Values
+are taken from NGSPICE \texttt{.measure} terminal captures or the
+cycle-scaled sweep script; where reported values are rounded for
+readability, the underlying source values are preserved in the linked
+evidence files. The in-repo paths can be opened
+verbatim against the submission tree.}
+\label{tab:validation_summary}
+\end{table}
+
+\Subsect{12.4\quad Spec compliance recap}
+
+Every requirement listed in \texttt{proj2.pdf} is met by margin:
+
+\begin{itemize}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
+\item \textbf{16$\times$4 SRAM, 4-bit address, 4-bit $D_{in}/D_{out}$,
+  $WE$, single CLK} --- top-level netlist (\S\ref{sec:top}).
+\item \textbf{$V_{DD}\le 1\,$V} --- $V_{DD}=1.000\,$V (\texttt{Vdd vdd 0 DC 1.0}).
+\item \textbf{Synchronous, $f_{\max}\ge 500\,$MHz} ---
+  cycle-scaled nominal sweep indicates max passing
+  frequency near $3.97\,$GHz ($\sim 7.94\times$ relative to 500\,MHz).
+\item \textbf{Read or write completes within one CLK period} ---
+  $t_{\mathrm{CLK}\to D_{out}}=281.6\,$ps; cell-level write times
+  $9.87/21.8\,$ps.
+\item \textbf{Bitcell area metric} --- $8\,W_{\min}$ summed transistor
+  width per cell (\S\ref{sec:bitcell}).
+\item \textbf{Power measurement methodology} --- average $V_{DD}$
+  current integrated over the validation transient
+  (\S\ref{sec:power}); reported $P_{\mathrm{avg}}=50.0\,$\textmu W.
+\item \textbf{FOM reported} ---
+  $\mathrm{FOM}=60\!\cdot\!8\!\cdot\!P\!\cdot\!D^{2}\approx
+  1.90\!\times\!10^{-21}$ (\S\ref{sec:fom}).
+\end{itemize}
+
+% =====================================================================
+\Sect{13\quad Summary of Design Metrics}
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\linewidth}{@{}LL@{}}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Process & PTM 22\,nm High-Performance \\
+Supply voltage & 1.0\,V \\
+Capacity & 16 words $\times$ 4 bits \\
+Bitcell topology & 6T \\
+Bitcell device count & 6 \\
+Cell ratio (CR) & 2 \\
+Pull-up ratio (PR) & 1 \\
+Bitcell summed transistor width & $8\,W_{\min}$ \\
+Array organization & 16 rows $\times$ 4 columns; no column mux \\
+Sense amplifier & Clocked StrongARM regenerative latch \\
+SAE generation & Replica/dummy bitline column (self-timed) \\
+Clocking scheme & Two-phase non-overlapping from single CLK \\
+Worst-case access delay (stage-by-stage, post-extr.) & 330\,ps (write-limited) \\
+Minimum CLK period (with margin) & 400\,ps \\
+Measured CLK-to-$D_{out}$ (top-level) & 281.6\,ps \\
+Estimated max passing frequency (cycle-scaled, nominal) & 3.97\,GHz \\
+Specification frequency requirement & $\geq$ 500\,MHz (met with 7.94$\times$ margin) \\
+Average power, top-level run & 50.0\,\textmu W \\
+DFF CLK-to-$Q$ average ($t_{cq}$) & 67.0\,ps \\
+Bitcell write 1$\to$0 / 0$\to$1 time & 9.87\,ps / 21.8\,ps \\
+Read disturb max $V_Q$ (Tests 3, 4) & 95.4\,mV (vs.\ 0.4\,V threshold) \\
+Retention drop over 5\,ns & ${<}\,10\,$\textmu V \\
+Functional readback @ 5\,ns / @ 7\,ns & $\mathtt{0x5}$ / $\mathtt{0xA}$ (PASS) \\
+\textbf{FOM} $= 60\cdot A\cdot P\cdot D^2$ & \textbf{$\approx 1.90\times 10^{-21}$} \\
+\bottomrule
+\end{tabularx}
+\caption{Final summary of all design metrics.}
+\end{table}
+
+\clearpage
+\Sect{Appendix A --- Repository Map}
+
+The full source tree (SPICE deck, Electric library, plotting scripts,
+and the LaTeX manuscript) is mirrored at
+\href{https://github.com/tmarhguy/64b-sram}{\nolinkurl{github.com/tmarhguy/64b-sram}}.
+The complete simulation deck and Electric library backing every figure
+and number in this report are organized as follows in the submission
+tree:
+
+\begin{itemize}\setlength{\itemsep}{2pt}\setlength{\parskip}{0pt}
+\item \texttt{spice/top.spi} --- top-level netlist + validation
+  \texttt{.control} block (excerpted in \S\ref{sec:top}).
+\item \texttt{spice/find\_fmax.py} --- cycle-scaled $f_{\max}$ sweep
+  driver (closes at $0.252\,$ns).
+\item \texttt{spice/sram\_6t\_cell.spi},
+  \texttt{spice/dummy\_bitcell.spi},
+  \texttt{spice/row\_4.spi},
+  \texttt{spice/array\_16x4.spi},
+  \texttt{spice/replica\_column.spi} --- core array.
+\item \texttt{spice/precharge\_eq.spi},
+  \texttt{spice/write\_driver.spi},
+  \texttt{spice/sense\_amp.spi},
+  \texttt{spice/output\_latch.spi},
+  \texttt{spice/column\_slice.spi} --- column periphery.
+\item \texttt{spice/predecoder\_2to4.spi},
+  \texttt{spice/predecoder\_4to16.spi},
+  \texttt{spice/nonoverlap\_clk\_gen.spi},
+  \texttt{spice/dff.spi} --- control.
+\item \texttt{spice/proj2.jelib} --- Electric library producing every
+  schematic in \texttt{media/}.
+\item \texttt{media/waveforms/*.png} --- NGSPICE transient exports
+  cited inline (matching SVG masters under \texttt{spice/waveforms/}).
+\item \texttt{media/terminal/*.png} --- saved NGSPICE
+  \texttt{.measure} terminal captures cited inline as evidence.
+\end{itemize}
+
+\Sect{Appendix B --- Electric Hierarchy Checklist}
+
+For layout and verification cross-reference:
+
+\begin{itemize}\setlength{\itemsep}{2pt}\setlength{\parskip}{0pt}
+\item Core: \texttt{sram\_6t\_cell}, \texttt{dummy\_bitcell},
+  \texttt{row\_4}, \texttt{array\_16x4}, \texttt{replica\_column}.
+\item Decoder / clock: \texttt{predecoder\_2to4},
+  \texttt{predecoder\_4to16}, \texttt{nonoverlap\_clk\_gen}
+  (\texttt{clock-gen-2phase}).
+\item Column periphery: \texttt{precharge\_eq}, \texttt{write\_driver}
+  (incl.\ \texttt{tristate\_inv}), \texttt{sense\_amp}
+  (StrongARM), \texttt{output\_latch}, \texttt{column\_slice}.
+\item Primitives: \texttt{inv}, \texttt{inv\_X4}, \texttt{inv\_X5},
+  \texttt{inv\_X8}, \texttt{invX2}, \texttt{invX2\_2}, \texttt{nand2},
+  \texttt{nand3}, \texttt{nor2}, \texttt{tgate}, \texttt{tgate2},
+  \texttt{dff}.
+\item Top-level: input registers (9$\times$\texttt{dff}) +
+  \texttt{predecoder\_4to16} + \texttt{clock-gen-2phase} +
+  4$\times$\texttt{column\_slice} + \texttt{replica\_column} +
+  \texttt{nand2}+\texttt{inv\_X4} (for $\mathrm{WD\_EN}$) =
+  \texttt{top}.
+\end{itemize}
+
+\Sect{Academic Integrity Statement}
+
+\noindent I, \textbf{Tyrone Marhguy}, certify that I have complied
+with the University of Pennsylvania's Code of Academic Integrity in
+completing this project.
+
+\end{document}

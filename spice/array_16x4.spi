@@ -1,0 +1,54 @@
+*** SPICE deck for cell array_16x4{sch} from library proj2
+*** Created on Tue May 05, 2026 15:17:51
+*** Last revised on Tue May 05, 2026 17:06:49
+*** Written on Tue May 05, 2026 17:07:28 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+*** SUBCIRCUIT proj2__sram_6t_cell FROM CELL sram_6t_cell{sch}
+.SUBCKT proj2__sram_6t_cell bl blb wl
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@3 net@53 net@48 gnd gnd N L=2 W=2
+Mnmos@4 net@48 net@53 gnd gnd N L=2 W=2
+Mnmos@5 bl wl net@48 gnd N L=2 W=1
+Mnmos@6 blb wl net@53 gnd N L=2 W=1
+Mpmos@0 net@53 net@48 vdd vdd P L=2 W=1
+Mpmos@1 net@48 net@53 vdd vdd P L=2 W=1
+.ENDS proj2__sram_6t_cell
+
+*** SUBCIRCUIT proj2__row_4 FROM CELL row_4{sch}
+.SUBCKT proj2__row_4 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL
+** GLOBAL gnd
+** GLOBAL vdd
+Xsram_6t_@4 BL_0 BLB_0 WL proj2__sram_6t_cell
+Xsram_6t_@5 BL_1 BLB_1 WL proj2__sram_6t_cell
+Xsram_6t_@6 BL_2 BLB_2 WL proj2__sram_6t_cell
+Xsram_6t_@7 BL_3 BLB_3 WL proj2__sram_6t_cell
+.ENDS proj2__row_4
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: array_16x4{sch}
+Xrow_4@1 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_7 proj2__row_4
+Xrow_4@2 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_6 proj2__row_4
+Xrow_4@4 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_5 proj2__row_4
+Xrow_4@5 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_4 proj2__row_4
+Xrow_4@6 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_3 proj2__row_4
+Xrow_4@7 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_2 proj2__row_4
+Xrow_4@8 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_1 proj2__row_4
+Xrow_4@9 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_0 proj2__row_4
+Xrow_4@10 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_15 proj2__row_4
+Xrow_4@11 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_14 proj2__row_4
+Xrow_4@12 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_13 proj2__row_4
+Xrow_4@13 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_12 proj2__row_4
+Xrow_4@14 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_11 proj2__row_4
+Xrow_4@15 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_10 proj2__row_4
+Xrow_4@16 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_9 proj2__row_4
+Xrow_4@17 BL_0 BL_1 BL_2 BL_3 BLB_0 BLB_1 BLB_2 BLB_3 WL_8 proj2__row_4
+.END

@@ -1,0 +1,93 @@
+*** SPICE deck for cell predecoder_2to4{sch} from library proj2
+*** Created on Tue May 05, 2026 14:06:52
+*** Last revised on Thu May 07, 2026 01:45:04
+*** Written on Thu May 07, 2026 01:45:17 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+*** SUBCIRCUIT proj2__invX2_2 FROM CELL invX2_2{sch}
+.SUBCKT proj2__invX2_2 a y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 y a gnd gnd N L=2 W=2
+Mpmos@0 y a vdd vdd P L=2 W=4
+.ENDS proj2__invX2_2
+
+*** SUBCIRCUIT proj2__nand2 FROM CELL nand2{sch}
+.SUBCKT proj2__nand2 a b y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@2 net@69 b gnd gnd N L=2 W=4
+Mnmos@3 y a net@69 gnd N L=2 W=4
+Mpmos@1 y a vdd vdd P L=2 W=8
+Mpmos@2 y b vdd vdd P L=2 W=8
+.ENDS proj2__nand2
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: predecoder_2to4{sch}
+XinvX2_2@0 net@43 Y_0 proj2__invX2_2
+XinvX2_2@1 net@45 Y_1 proj2__invX2_2
+XinvX2_2@2 net@48 Y_2 proj2__invX2_2
+XinvX2_2@3 net@49 Y_3 proj2__invX2_2
+XinvX2_2@4 IN_1 net@27 proj2__invX2_2
+XinvX2_2@5 IN_0 net@37 proj2__invX2_2
+Xnand2@0 net@27 net@37 net@43 proj2__nand2
+Xnand2@1 net@27 IN_0 net@45 proj2__nand2
+Xnand2@2 IN_1 net@37 net@48 proj2__nand2
+Xnand2@3 IN_1 IN_0 net@49 proj2__nand2
+
+* Spice Code nodes in cell cell 'predecoder_2to4{sch}'
+.global gnd vdd
+Vdd vdd 0 DC 1.0
+* Cycle through all 4 input combinations clearly
+* Time:   0-1ns: 00
+*         1-2ns: 01  
+*         2-3ns: 11
+*         3-4ns: 10
+*         4-5ns: 00
+Vin0 IN_0 0 PWL(0 0  1n 0  1.01n 1  3n 1  3.01n 0  5n 0)
+Vin1 IN_1 0 PWL(0 0  2n 0  2.01n 1  4n 1  4.01n 0  5n 0)
+.control
+tran 5p 5n
+* Measure decode delays for each output
+* Y_0 = ~IN_1 AND ~IN_0 (active at t=0 and t=4ns)
+* Y_1 = ~IN_1 AND IN_0  (active at t=1ns)
+meas tran t_y1 trig v(IN_0) val=0.5 rise=1 targ v(Y_1) val=0.5 rise=1
+* Y_2 = IN_1 AND ~IN_0  (active at t=3ns)
+meas tran t_y2 trig v(IN_0) val=0.5 fall=1 targ v(Y_2) val=0.5 rise=1
+* Y_3 = IN_1 AND IN_0   (active at t=2ns)
+meas tran t_y3 trig v(IN_1) val=0.5 rise=1 targ v(Y_3) val=0.5 rise=1
+echo " "
+echo "========================================"
+echo "  PREDECODER 2→4 DELAYS"
+echo "========================================"
+echo "Y_1 delay (00→01):"
+print t_y1
+echo "Y_2 delay (01→10 via 11):"
+print t_y2
+echo "Y_3 delay (01→11):"
+print t_y3
+echo " "
+* Find worst case
+let t_worst = maximum(t_y1, t_y2, t_y3)
+echo "Worst-case decode delay:"
+print t_worst
+if t_worst < 1e-10
+  echo "PASS: Excellent (<100ps)"
+else if t_worst < 2e-10
+  echo "PASS: Good (<200ps)"
+else
+  echo "FAIL: Too slow (>200ps) - need to upsize buffers"
+end
+echo "========================================"
+set hcopydevtype=svg
+hardcopy waveforms/predecode_2to4.svg v(IN_1)+10 v(IN_0)+8 v(Y_3)+6 v(Y_2)+4 v(Y_1)+2 v(Y_0) title 'Predecoder 2→4'
+plot v(IN_1)+10 v(IN_0)+8 v(Y_3)+6 v(Y_2)+4 v(Y_1)+2 v(Y_0) title 'Predecoder 2→4'
+.endc
+.END

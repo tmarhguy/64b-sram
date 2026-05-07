@@ -1,0 +1,45 @@
+# Compile the main LaTeX report to PDF and commit the artifact so it is
+# available from GitHub without requiring a local TeX installation.
+name: LaTeX to PDF
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "ESE3700_Proj2_Marhguy.tex"
+      - "media/**"
+      - ".github/workflows/latex-to-pdf.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: latex-pdf-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-commit-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: ESE3700_Proj2_Marhguy.tex
+          compiler: latexmk
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
+          latexmk_shell_escape: false
+
+      - name: Commit PDF to repository
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: ESE3700_Proj2_Marhguy.pdf
+          add_options: "-f"
+          commit_message: "chore(docs): regenerate compiled PDF [skip ci]"
+          commit_user_name: Tyrone Marhguy
+          commit_user_email: tmarhguy@gmail.com

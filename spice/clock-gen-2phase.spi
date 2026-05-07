@@ -1,0 +1,63 @@
+*** SPICE deck for cell clock-gen-2phase{sch} from library proj2
+*** Created on Sun May 03, 2026 09:02:41
+*** Last revised on Wed May 06, 2026 21:37:09
+*** Written on Thu May 07, 2026 03:55:38 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+*** SUBCIRCUIT proj2__inv_X4 FROM CELL inv_X4{sch}
+.SUBCKT proj2__inv_X4 A Y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 Y A gnd gnd N L=2 W=6
+Mpmos@0 Y A vdd vdd P L=2 W=12
+.ENDS proj2__inv_X4
+
+*** SUBCIRCUIT proj2__inv FROM CELL inv{sch}
+.SUBCKT proj2__inv a y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 y a gnd gnd N L=1 W=1
+Mpmos@0 y a vdd vdd P L=1 W=1
+.ENDS proj2__inv
+
+*** SUBCIRCUIT proj2__inv_X8 FROM CELL inv_X8{sch}
+.SUBCKT proj2__inv_X8 A Y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 Y A gnd gnd N L=2 W=12
+Mpmos@0 Y A vdd vdd P L=2 W=24
+.ENDS proj2__inv_X8
+
+*** SUBCIRCUIT proj2__nor2 FROM CELL nor2{sch}
+.SUBCKT proj2__nor2 a b y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 y a gnd gnd N L=2 W=2
+Mnmos@1 y b gnd gnd N L=2 W=2
+Mpmos@0 net@0 b vdd vdd P L=2 W=2
+Mpmos@1 y a net@0 vdd P L=2 W=2
+.ENDS proj2__nor2
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: clock-gen-2phase{sch}
+Xinv@0 in net@1 proj2__inv_X4
+Xinv@1 in net@16 proj2__inv_X4
+Xinv@2 net@16 net@17 proj2__inv_X4
+Xinv@3 net@12 net@35 proj2__inv
+Xinv@4 net@8 net@34 proj2__inv
+Xinv_X4@1 net@12 net@23 proj2__inv_X4
+Xinv_X4@2 net@35 net@32 proj2__inv_X4
+Xinv_X4@3 net@34 net@33 proj2__inv_X4
+Xinv_X8@1 net@23 phi2 proj2__inv_X8
+Xinv_X8@2 net@32 phi2_b proj2__inv_X8
+Xinv_X8@3 net@33 phi1_b proj2__inv_X8
+Xnor2@0 net@1 net@8 net@12 proj2__nor2
+Xnor2@1 net@12 net@17 net@8 proj2__nor2
+.END

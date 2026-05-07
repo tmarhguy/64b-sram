@@ -1,0 +1,134 @@
+*** SPICE deck for cell column_slice{sch} from library proj2
+*** Created on Tue May 05, 2026 20:16:06
+*** Last revised on Tue May 05, 2026 20:39:16
+*** Written on Tue May 05, 2026 20:39:26 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+*** SUBCIRCUIT proj2__invX2 FROM CELL invX2{sch}
+.SUBCKT proj2__invX2 a y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 y a gnd gnd N L=2 W=2
+Mpmos@0 y a vdd vdd P L=2 W=4
+.ENDS proj2__invX2
+
+*** SUBCIRCUIT proj2__inv_X4 FROM CELL inv_X4{sch}
+.SUBCKT proj2__inv_X4 A Y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 Y A gnd gnd N L=2 W=4
+Mpmos@0 Y A vdd vdd P L=2 W=8
+.ENDS proj2__inv_X4
+
+*** SUBCIRCUIT proj2__inv_X8 FROM CELL inv_X8{sch}
+.SUBCKT proj2__inv_X8 A Y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 Y A gnd gnd N L=2 W=8
+Mpmos@0 Y A vdd vdd P L=2 W=16
+.ENDS proj2__inv_X8
+*** WARNING: no power connection for P-transistor wells in cell 'tgate{sch}'
+*** WARNING: no ground connection for N-transistor wells in cell 'tgate{sch}'
+
+*** SUBCIRCUIT proj2__tgate FROM CELL tgate{sch}
+.SUBCKT proj2__tgate en en_b in out
+Mnmos@0 in en out N L=2 W=2
+Mpmos@0 out en_b in P L=2 W=2
+.ENDS proj2__tgate
+
+*** SUBCIRCUIT proj2__output_latch FROM CELL output_latch{sch}
+.SUBCKT proj2__output_latch D_out phi2 phi2_b SA_OUT
+** GLOBAL gnd
+** GLOBAL vdd
+XinvX2@0 net@5 net@7 proj2__invX2
+XinvX2@1 net@7 net@5 proj2__invX2
+Xinv_X4@0 net@7 net@9 proj2__inv_X4
+Xinv_X8@0 net@9 D_out proj2__inv_X8
+Xtgate@0 phi2 phi2_b SA_OUT net@5 proj2__tgate
+.ENDS proj2__output_latch
+
+*** SUBCIRCUIT proj2__precharge_eq FROM CELL precharge_eq{sch}
+.SUBCKT proj2__precharge_eq BL BLB PCH_b
+** GLOBAL vdd
+Mpmos@0 vdd PCH_b BL vdd P L=2 W=4
+Mpmos@1 vdd PCH_b BLB vdd P L=2 W=4
+Mpmos@2 BL PCH_b BLB vdd P L=2 W=2
+.ENDS proj2__precharge_eq
+
+*** SUBCIRCUIT proj2__sense_amp FROM CELL sense_amp{sch}
+.SUBCKT proj2__sense_amp bl blb out outb SAE
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 out outb net@8 gnd N L=2 W=4
+Mnmos@1 outb out net@7 gnd N L=2 W=4
+Mnmos@2 net@8 bl net@10 gnd N L=2 W=4
+Mnmos@3 net@7 blb net@10 gnd N L=2 W=4
+Mnmos@4 net@10 SAE gnd gnd N L=2 W=8
+Mpmos@0 vdd SAE out vdd P L=2 W=2
+Mpmos@1 vdd outb out vdd P L=2 W=4
+Mpmos@2 vdd out outb vdd P L=2 W=4
+Mpmos@3 vdd SAE outb vdd P L=2 W=2
+.ENDS proj2__sense_amp
+
+*** SUBCIRCUIT proj2__sram_6t_cell FROM CELL sram_6t_cell{sch}
+.SUBCKT proj2__sram_6t_cell bl blb wl
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@3 net@53 net@48 gnd gnd N L=2 W=2
+Mnmos@4 net@48 net@53 gnd gnd N L=2 W=2
+Mnmos@5 bl wl net@48 gnd N L=2 W=1
+Mnmos@6 blb wl net@53 gnd N L=2 W=1
+Mpmos@0 net@53 net@48 vdd vdd P L=2 W=1
+Mpmos@1 net@48 net@53 vdd vdd P L=2 W=1
+.ENDS proj2__sram_6t_cell
+
+*** SUBCIRCUIT proj2__tristate_inv FROM CELL tristate_inv{sch}
+.SUBCKT proj2__tristate_inv en en_b x y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 y en net@2 gnd N L=2 W=8
+Mnmos@1 net@2 x gnd gnd N L=2 W=8
+Mpmos@0 vdd x net@0 vdd P L=2 W=16
+Mpmos@1 net@0 en_b y vdd P L=2 W=16
+.ENDS proj2__tristate_inv
+
+*** SUBCIRCUIT proj2__write_driver FROM CELL write_driver{sch}
+.SUBCKT proj2__write_driver bl blb din wd_en
+** GLOBAL gnd
+** GLOBAL vdd
+XinvX2@0 din net@25 proj2__invX2
+XinvX2@2 wd_en net@35 proj2__invX2
+Xtristate@3 wd_en net@35 net@25 bl proj2__tristate_inv
+Xtristate@4 wd_en net@35 din blb proj2__tristate_inv
+.ENDS proj2__write_driver
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: column_slice{sch}
+Xoutput_l@0 D_OUT phi2 phi2_b net@107 proj2__output_latch
+Xprecharg@0 BL BLB PCH_b proj2__precharge_eq
+Xsense_am@0 BL BLB net@107 sense_amp_outb SAE proj2__sense_amp
+Xsram_6t_@0 BL BLB WL_0 proj2__sram_6t_cell
+Xsram_6t_@2 BL BLB WL_1 proj2__sram_6t_cell
+Xsram_6t_@3 BL BLB WL_2 proj2__sram_6t_cell
+Xsram_6t_@4 BL BLB WL_3 proj2__sram_6t_cell
+Xsram_6t_@5 BL BLB WL_4 proj2__sram_6t_cell
+Xsram_6t_@6 BL BLB WL_5 proj2__sram_6t_cell
+Xsram_6t_@7 BL BLB WL_6 proj2__sram_6t_cell
+Xsram_6t_@8 BL BLB WL_7 proj2__sram_6t_cell
+Xsram_6t_@17 BL BLB WL_8 proj2__sram_6t_cell
+Xsram_6t_@18 BL BLB WL_9 proj2__sram_6t_cell
+Xsram_6t_@19 BL BLB WL_10 proj2__sram_6t_cell
+Xsram_6t_@20 BL BLB WL_11 proj2__sram_6t_cell
+Xsram_6t_@21 BL BLB WL_12 proj2__sram_6t_cell
+Xsram_6t_@22 BL BLB WL_13 proj2__sram_6t_cell
+Xsram_6t_@23 BL BLB WL_14 proj2__sram_6t_cell
+Xsram_6t_@24 BL BLB WL_15 proj2__sram_6t_cell
+Xwrite_dr@0 BL BLB din wd_en proj2__write_driver
+.END

@@ -1,0 +1,86 @@
+*** SPICE deck for cell dff2{sch} from library proj2
+*** Created on Thu May 07, 2026 02:02:20
+*** Last revised on Thu May 07, 2026 02:30:26
+*** Written on Thu May 07, 2026 02:30:38 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+*** SUBCIRCUIT proj2__inv_X5 FROM CELL inv_X5{sch}
+.SUBCKT proj2__inv_X5 A Y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 Y A gnd gnd N L=1 W=12
+Mpmos@0 Y A vdd vdd P L=1 W=24
+.ENDS proj2__inv_X5
+
+*** SUBCIRCUIT proj2__tgate2 FROM CELL tgate2{sch}
+.SUBCKT proj2__tgate2 en en_b in out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos-4@0 in en out gnd N L=2 W=6
+Mpmos-4@0 out en_b in vdd P L=2 W=6
+.ENDS proj2__tgate2
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: dff2{sch}
+Xinv_X5@2 net@65 net@52 proj2__inv_X5
+Xinv_X5@3 net@52 net@65 proj2__inv_X5
+Xinv_X5@4 q net@82 proj2__inv_X5
+Xinv_X5@5 net@82 q proj2__inv_X5
+Xinv_X5@6 clk net@100 proj2__inv_X5
+Xtgate2@0 clk net@100 d net@65 proj2__tgate2
+Xtgate2@1 net@100 clk net@65 q proj2__tgate2
+
+* Spice Code nodes in cell cell 'dff2{sch}'
+* ============================================================================
+* CMOS DFF TEST (CLK-to-Q Delay Measurement)
+* ============================================================================
+.global gnd vdd
+Vdd vdd 0 DC 1.0
+* Output load (2fF - typical for next stage input)
+Cload q 0 2f
+* Data input: Toggle to capture different values
+Vd d 0 PWL(0 0  500p 0  510p 1  2.5n 1  2.51n 0  4.5n 0)
+* Clock: Rising edge at 1ns, 3ns (capture data)
+Vclk clk 0 PULSE(0 1.0 1n 10p 10p 1n 2n)
+.control
+tran 5p 5n
+* Measure CLK-to-Q delays
+* Rising edge (Q goes high after CLK rises at t=1ns with D=1)
+meas tran t_cq_rise trig v(clk) val=0.5 rise=1 targ v(q) val=0.5 rise=1
+* Falling edge (Q goes low after CLK rises at t=3ns with D=0)
+meas tran t_cq_fall trig v(clk) val=0.5 rise=2 targ v(q) val=0.5 fall=1
+echo " "
+echo "========================================"
+echo "  CMOS DFF PERFORMANCE"
+echo "========================================"
+echo "CLK-to-Q rise time:"
+print t_cq_rise
+echo "CLK-to-Q fall time:"
+print t_cq_fall
+echo " "
+* Calculate average
+let t_avg = (t_cq_rise + t_cq_fall) / 2
+echo "Average CLK-to-Q delay:"
+print t_avg
+if t_avg < 1.5e-10
+  echo "EXCELLENT: Ultra-fast (<150ps)"
+else if t_avg < 2.5e-10
+  echo "GOOD: Optimized range (150-250ps)"
+else if t_avg < 4e-10
+  echo "OK: Acceptable (<400ps)"
+else
+  echo "SLOW: Needs optimization (>400ps)"
+end
+echo "========================================"
+set hcopydevtype=svg
+hardcopy waveforms/dff2_test.svg v(clk)+4 v(d)+2 v(q) title 'CMOS DFF Test'
+plot v(clk)+4 v(d)+2 v(q) title 'CMOS DFF: CLK, D, Q'
+.endc
+.END

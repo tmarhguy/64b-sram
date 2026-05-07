@@ -1,0 +1,55 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor and local environment
+.vscode/
+.idea/
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# LaTeX build products
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+
+# Keep the CI-published report PDF, but ignore other generated PDFs.
+*.pdf
+!ESE3700_Proj2_Marhguy.pdf
+
+# SPICE / simulator byproducts
+*.raw
+*.tr0
+*.sw0
+*.st0
+*.mt0
+*.lis
+*.measure
+*.meas
+*.ps
+
+# Local OS and tool caches
+.act/
+.cache/
+tmp/
+temp/
+/scripts

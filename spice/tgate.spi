@@ -1,0 +1,46 @@
+*** SPICE deck for cell tgate{sch} from library proj2
+*** Created on Tue May 05, 2026 12:09:06
+*** Last revised on Wed May 06, 2026 23:32:11
+*** Written on Wed May 06, 2026 23:32:17 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: tgate{sch}
+Mnmos-4@0 in en out gnd N L=2 W=2
+Mpmos-4@0 out en_b in vdd P L=2 W=2
+
+* Spice Code nodes in cell cell 'tgate{sch}'
+* tgate unit test
+Vdd vdd 0 DC 1.0
+Cload out 0 2f
+* Input and Enable signals
+* en=1 (NMOS on), en_b=0 (PMOS on) -> Gate is OPEN (passing)
+Ven en 0 DC 1.0
+Ven_b en_b 0 DC 0
+Vin in 0 PULSE(0 1.0 1n 10p 10p 990p 2n)
+.control
+tran 5p 4n
+* tphl: 'out' falls when 'in' falls (event at t=2ns)
+meas tran tphl trig v(in) val=0.5 fall=1 targ v(out) val=0.5 fall=1
+* tplh: 'out' rises when 'in' rises (event at t=1ns)
+meas tran tplh trig v(in) val=0.5 rise=1 targ v(out) val=0.5 rise=1
+* --- Custom Terminal Output ---
+echo " "
+echo "========================================"
+echo "       TGATE Propagation Delays"
+echo "========================================"
+print tphl tplh
+echo " "
+set hcopydevtype=svg
+hardcopy waveforms/tgate.svg v(in)+2 v(out) title 'tgate'
+plot v(in)+2 v(out) title 'tgate'
+.endc
+.end
+.END

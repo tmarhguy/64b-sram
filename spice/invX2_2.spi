@@ -1,0 +1,18 @@
+*** SPICE deck for cell invX2_2{sch} from library proj2
+*** Created on Tue May 05, 2026 12:14:08
+*** Last revised on Wed May 06, 2026 20:52:24
+*** Written on Wed May 06, 2026 23:59:07 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: invX2_2{sch}
+Mnmos@0 y a gnd gnd N L=2 W=2
+Mpmos@0 y a vdd vdd P L=2 W=4
+.END

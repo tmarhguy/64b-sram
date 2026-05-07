@@ -1,0 +1,43 @@
+*** SPICE deck for cell inv_X8{sch} from library proj2
+*** Created on Fri Apr 10, 2026 18:02:35
+*** Last revised on Wed May 06, 2026 23:27:40
+*** Written on Wed May 06, 2026 23:27:44 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: inv_X8{sch}
+Mnmos@0 Y A gnd gnd N L=2 W=12
+Mpmos@0 Y A vdd vdd P L=2 W=24
+
+* Spice Code nodes in cell cell 'inv_X8{sch}'
+* inv_X8 unit test
+Vdd vdd 0 DC 1.0
+Cload y 0 13f
+* Pulse input
+Va a 0 PULSE(0 1.0 1n 10p 10p 990p 2n)
+.control
+tran 5p 4n
+* tphl: Y falls when A rises (event at t=1ns)
+meas tran tphl trig v(a) val=0.5 rise=1 targ v(y) val=0.5 fall=1
+* tplh: Y rises when A falls (event at t=2ns)
+meas tran tplh trig v(a) val=0.5 fall=1 targ v(y) val=0.5 rise=1
+* --- Custom Terminal Output ---
+echo " "
+echo "========================================"
+echo "       INV_X8 Propagation Delays"
+echo "========================================"
+print tphl tplh
+echo " "
+set hcopydevtype=svg
+hardcopy waveforms/inv_x8.svg v(a)+2 v(y) title 'inv_x8'
+plot v(a)+2 v(y) title 'inv_x8'
+.endc
+.end
+.END

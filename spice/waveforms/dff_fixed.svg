@@ -1,0 +1,129 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+  width="100%" height="100%" viewBox="0 0 1024 768"
+  style="fill: none; stroke-width: 3; font-family: Helvetica;
+ font: Helvetica;
+">
+
+<!-- Creator: NGspice -->
+
+<rect x="0" y="0" width="1024" height="768" fill="black" stroke="none"/>
+<text stroke="none" fill="white" font-size="16" x="358" y="752">
+time
+</text>
+<text stroke="none" fill="white" font-size="16" x="10" y="16">
+tran5: 11T TSPC: High-Speed Test
+</text>
+<path stroke="white" stroke-width="3" d="M50 704l0 -640"/>
+<text stroke="none" fill="white" font-size="16" x="35" y="728">
+0.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M142 704l0 -640"/>
+<text stroke="none" fill="white" font-size="16" x="122" y="728">
+20.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M234 704l0 -640"/>
+<text stroke="none" fill="white" font-size="16" x="214" y="728">
+40.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M326 704l0 -640"/>
+<text stroke="none" fill="white" font-size="16" x="306" y="728">
+60.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M418 704l0 -640"/>
+<text stroke="none" fill="white" font-size="16" x="398" y="728">
+80.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M510 704l0 -640"/>
+<text stroke="none" fill="white" font-size="16" x="485" y="728">
+100.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M602 704l0 -640"/>
+<text stroke="none" fill="white" font-size="16" x="577" y="728">
+120.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M694 704l0 -640"/>
+<text stroke="none" fill="white" font-size="16" x="669" y="728">
+140.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M786 704l0 -640"/>
+<text stroke="none" fill="white" font-size="16" x="761" y="728">
+160.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M878 704l0 -640"/>
+<text stroke="none" fill="white" font-size="16" x="853" y="728">
+180.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M970 704l0 -640"/>
+<text stroke="none" fill="white" font-size="16" x="945" y="728">
+200.0
+</text>
+<text stroke="none" fill="white" font-size="16" x="614" y="752">
+ps
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M50 704l920 0"/>
+<text stroke="none" fill="white" font-size="16" x="8" y="712">
+-0.5
+</text>
+<path stroke="white" stroke-width="3" d="M50 624l920 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="632">
+0.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M50 544l920 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="552">
+0.5
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M50 464l920 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="472">
+1.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M50 384l920 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="392">
+1.5
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M50 304l920 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="312">
+2.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M50 224l920 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="232">
+2.5
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M50 144l920 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="152">
+3.0
+</text>
+<path stroke="white" stroke-width="3" stroke-dasharray="1,2" d="M50 64l920 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="72">
+3.5
+</text>
+<text stroke="none" fill="white" font-size="16" x="10" y="32">
+     
+</text>
+<path stroke="red" d="M460 23l46 0"/>
+<text stroke="none" fill="white" font-size="16" x="516" y="32">
+v(clk)+2.5
+</text>
+<path stroke="red" d="M50 224l92 0 0 -6 1 -6 0 -8 1 -8 0 -8 1 -8 0 -16 1 -8 0 -8 1 -8 0 -8 1 -8 0 -8 1 -8 0 -8 1 -8 0 -8 1 -8 0 -12 212 0M363 76l0 -12M363 76l1 8M364 92l0 -8M364 92l1 8M365 108l0 -8M365 108l1 8M366 124l0 -8M366 124l1 8M367 140l0 -8"/>
+<path stroke="red" d="M367 140l1 8M368 156l0 -8M368 156l1 8M369 180l0 -16M369 180l1 8M370 196l0 -8M370 196l1 8M371 212l0 -8M371 212l1 8M372 224l0 -4M372 224l230 0 0 -6 1 -6 0 -8 1 -8 0 -8 1 -8 0 -16 1 -8 0 -8 1 -8 0 -8 1 -8 0 -8 1 -8 0 -8 1 -8"/>
+<path stroke="red" d="M610 92l0 -8 1 -8 0 -12 212 0M823 76l0 -12M823 76l1 8M824 92l0 -8M824 92l1 8M825 108l0 -8M825 108l1 8M826 124l0 -8M826 124l1 8M827 140l0 -8M827 140l1 8M828 156l0 -8M828 156l1 8M829 180l0 -16M829 180l1 8M830 196l0 -8M830 196l1 8"/>
+<path stroke="red" d="M831 212l0 -8M831 212l1 8M832 224l0 -4M832 224l138 0"/>
+<path stroke="blue" d="M50 23l46 0"/>
+<text stroke="none" fill="white" font-size="16" x="106" y="32">
+v(d)+1.2
+</text>
+<path stroke="blue" d="M50 432l322 0 0 -6 1 -6 0 -8 1 -8 0 -8 1 -8 0 -16 1 -8 0 -8 1 -8 0 -8 1 -8 0 -8 1 -8 0 -8 1 -8 0 -8 1 -8 0 -12 460 0M841 274l0 -2M841 274l1 4M842 292l0 -14M842 292l1 8M843 308l0 -8M843 308l1 8M844 324l0 -8M844 324l1 8M845 340l0 -8"/>
+<path stroke="blue" d="M845 340l1 8M846 364l0 -16M846 364l1 8M847 380l0 -8M847 380l1 8M848 396l0 -8M848 396l1 8M849 412l0 -8M849 412l1 8M850 432l0 -12M850 432l120 0"/>
+<path stroke="#FFA500" d="M460 39l46 0"/>
+<text stroke="none" fill="white" font-size="16" x="516" y="48">
+v(q)
+</text>
+<path stroke="#FFA500" d="M50 624l110 0 1 1 21 0 1 -1 279 0 1 -1 26 0 1 1 124 0M614 625l0 -1M614 625l6 0M620 626l0 -1M620 626l10 0M630 627l0 -1M630 627l17 0 1 1 15 0M663 629l0 -1M663 629l19 0 1 -1 3 0 1 -1 3 0 0 -1 2 0 0 -1 2 0 1 -1 1 0 1 -1"/>
+<path stroke="#FFA500" d="M697 623l1 0 0 -1 1 0 1 -1 1 0 0 -1 2 0 0 -1 1 0 0 -1 1 0 0 -1 1 0 1 -1 1 0 0 -1 1 -1 1 0 0 -1 1 0 0 -1 1 0 2 -2 0 -1 1 0 0 -1 1 0 4 -4 0 -1 1 0 0 -1 1 0 0 -1 1 0 0 -1 1 0 0 -1 1 0 0 -1 1 0 0 -1 1 -1 0 -1 1 0 0 -1 1 0"/>
+<path stroke="#FFA500" d="M729 594l0 -1 1 0 0 -1 1 0 0 -2 1 0 0 -1 1 0 0 -1 1 0 0 -1 3 -3 0 -1 3 -3 0 -1 1 0 0 -1 2 -2 0 -1 3 -3 0 -1 1 0 0 -1 2 -2 0 -1 2 -2 0 -1 1 0 0 -1 2 -2 0 -1 1 -1 0 -1 1 0 0 -1 1 0 0 -1 2 -2 0 -1 1 0 0 -2 1 0 0 -1 2 -2"/>
+<path stroke="#FFA500" d="M763 548l0 -1 1 0 0 -1 2 -2 0 -1 1 -1 0 -1 1 0 0 -1 2 -2 0 -1 1 0 0 -1 1 -1 0 -1 2 -2 0 -1 1 0 0 -1 1 0 0 -1 1 -1 0 -1 2 -2 0 -1 1 0 0 -1 3 -3 0 -1 1 -1 0 -1 1 0 0 -1 1 0 0 -1 3 -3 0 -1 4 -4 0 -1 1 0 0 -1 1 0 0 -1 5 -5"/>
+<path stroke="#FFA500" d="M800 499l0 -1 1 0 0 -1 1 0 0 -1 1 0 5 -5 1 0 0 -1 1 0 0 -1 1 0 2 -2 1 0 0 -1 1 0 1 -1 1 0 0 -1 1 0 0 -1 2 0 0 -1 2 0 0 -1 2 0 0 -1 3 0 1 -1 1 0 1 -1 2 0 0 -1 2 0 1 -1 1 0 1 -1 2 0 0 -1 3 0 0 -1 2 0 1 -1 3 0 0 -1 4 0"/>
+<path stroke="#FFA500" d="M852 471l0 -1 4 0 1 -1 4 0 1 -1 6 0 1 -1 8 0 0 -1 13 0 1 -1 28 0 1 -1 50 0"/>
+</svg>

@@ -1,0 +1,57 @@
+*** SPICE deck for cell replica_column{sch} from library proj2
+*** Created on Tue May 05, 2026 19:20:00
+*** Last revised on Tue May 05, 2026 19:53:04
+*** Written on Tue May 05, 2026 19:53:21 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+*** SUBCIRCUIT proj2__dummy_bitcell FROM CELL dummy_bitcell{sch}
+.SUBCKT proj2__dummy_bitcell BL BLB WL
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 vdd gnd gnd gnd N L=2 W=2
+Mnmos@1 gnd vdd gnd gnd N L=2 W=2
+Mnmos@2 BL WL gnd gnd N L=2 W=1
+Mnmos@3 BLB WL vdd gnd N L=2 W=1
+Mpmos@0 vdd gnd vdd vdd P L=2 W=1
+Mpmos@1 gnd vdd vdd vdd P L=2 W=1
+.ENDS proj2__dummy_bitcell
+
+*** SUBCIRCUIT proj2__invX2 FROM CELL invX2{sch}
+.SUBCKT proj2__invX2 a y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 y a gnd gnd N L=2 W=2
+Mpmos@0 y a vdd vdd P L=2 W=4
+.ENDS proj2__invX2
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: replica_column{sch}
+Mnmos@0 net@117 net@20 gnd gnd N L=2 W=1
+Mpmos@0 vdd PCH_b net@20 vdd P L=2 W=4
+Mpmos@1 vdd net@20 net@117 vdd P L=2 W=16
+Xdummy_bi@18 net@20 net@18 WL_0 proj2__dummy_bitcell
+Xdummy_bi@19 net@20 net@18 WL_1 proj2__dummy_bitcell
+Xdummy_bi@20 net@20 net@18 WL_2 proj2__dummy_bitcell
+Xdummy_bi@21 net@20 net@18 WL_3 proj2__dummy_bitcell
+Xdummy_bi@22 net@20 net@18 WL_4 proj2__dummy_bitcell
+Xdummy_bi@23 net@20 net@18 WL_5 proj2__dummy_bitcell
+Xdummy_bi@24 net@20 net@18 WL_6 proj2__dummy_bitcell
+Xdummy_bi@25 net@20 net@18 WL_7 proj2__dummy_bitcell
+Xdummy_bi@26 net@20 net@18 WL_8 proj2__dummy_bitcell
+Xdummy_bi@27 net@20 net@18 WL_9 proj2__dummy_bitcell
+Xdummy_bi@28 net@20 net@18 WL_10 proj2__dummy_bitcell
+Xdummy_bi@29 net@20 net@18 WL_11 proj2__dummy_bitcell
+Xdummy_bi@30 net@20 net@18 WL_12 proj2__dummy_bitcell
+Xdummy_bi@31 net@20 net@18 WL_13 proj2__dummy_bitcell
+Xdummy_bi@32 net@20 net@18 WL_14 proj2__dummy_bitcell
+Xdummy_bi@33 net@20 net@18 WL_15 proj2__dummy_bitcell
+XinvX2@0 net@117 net@125 proj2__invX2
+XinvX2@1 net@125 SAE proj2__invX2
+.END

@@ -1,0 +1,113 @@
+*** SPICE deck for cell dff{sch} from library proj2
+*** Created on Tue May 05, 2026 12:28:59
+*** Last revised on Thu May 07, 2026 03:37:10
+*** Written on Thu May 07, 2026 03:37:13 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+*** SUBCIRCUIT proj2__invX2_2 FROM CELL invX2_2{sch}
+.SUBCKT proj2__invX2_2 a y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 y a gnd gnd N L=2 W=2
+Mpmos@0 y a vdd vdd P L=2 W=4
+.ENDS proj2__invX2_2
+
+*** SUBCIRCUIT proj2__inv_X5 FROM CELL inv_X5{sch}
+.SUBCKT proj2__inv_X5 A Y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 Y A gnd gnd N L=1 W=12
+Mpmos@0 Y A vdd vdd P L=1 W=24
+.ENDS proj2__inv_X5
+
+*** SUBCIRCUIT proj2__tgate2 FROM CELL tgate2{sch}
+.SUBCKT proj2__tgate2 en en_b in out
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos-4@0 in en out gnd N L=2 W=16
+Mpmos-4@0 out en_b in vdd P L=2 W=16
+.ENDS proj2__tgate2
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: dff{sch}
+XinvX2_2@3 node1 node2 proj2__invX2_2
+XinvX2_2@4 clk clk_b proj2__invX2_2
+XinvX2_2@6 q netfb2 proj2__invX2_2
+XinvX2_2@7 node2 netfb proj2__invX2_2
+Xinv_X5@0 node3 q proj2__inv_X5
+Xtgate2@0 clk_b clk d node1 proj2__tgate2
+Xtgate2@1 clk clk_b node2 node3 proj2__tgate2
+Xtgate2@2 clk_b clk netfb2 node3 proj2__tgate2
+Xtgate2@3 clk clk_b netfb node1 proj2__tgate2
+
+* Spice Code nodes in cell cell 'dff{sch}'
+* ============================================================================
+* COMPLETE DFF VALIDATION (All Critical Parameters)
+* ============================================================================
+.global gnd vdd
+Vdd vdd 0 DC 1.0
+* Load (2fF - typical for next stage input)
+Cload q 0 2f
+* Clock: 1 GHz (1ns period) for clear measurements
+Vclk clk 0 PULSE(0 1.0 500p 10p 10p 490p 1n)
+* Data: Pattern that exercises both transitions
+* t=0-1ns: D=0
+* t=1-2ns: D=1 (capture on 2nd clock edge at 1.5ns)
+* t=2-3ns: D=0 (capture on 3rd clock edge at 2.5ns)
+* t=3-4ns: D=1 (capture on 4th clock edge at 3.5ns)
+Vd d 0 PWL(0 0  900p 0  910p 1  1.9n 1  1.91n 0  2.9n 0  2.91n 1)
+.control
+tran 5p 5n
+* Test 1: CLK-to-Q RISE delay (2nd clock edge, D=1)
+meas tran t_cq_rise trig v(clk) val=0.5 rise=2 targ v(q) val=0.5 rise=1
+* Test 2: CLK-to-Q FALL delay (3rd clock edge, D=0)
+meas tran t_cq_fall trig v(clk) val=0.5 rise=3 targ v(q) val=0.5 fall=2
+* Test 3: Verify multiple cycles work (4th clock edge)
+meas tran t_cq_rise2 trig v(clk) val=0.5 rise=4 targ v(q) val=0.5 rise=2
+echo " "
+echo "========================================"
+echo "  COMPLETE DFF VALIDATION"
+echo "========================================"
+echo "CLK-to-Q rise delay:"
+print t_cq_rise
+echo "CLK-to-Q fall delay:"
+print t_cq_fall
+echo " "
+let t_cq_avg = (t_cq_rise + t_cq_fall) / 2
+echo "Average CLK-to-Q:"
+print t_cq_avg
+echo " "
+echo "Multi-cycle test (2nd rise):"
+print t_cq_rise2
+echo " "
+if t_cq_avg < 1e-10
+  echo "ELITE: Ultra-fast (<100ps average)"
+else if t_cq_avg < 2e-10
+  echo "EXCELLENT: High performance (<200ps)"
+else
+  echo "GOOD: Acceptable performance"
+end
+echo " "
+echo "Rise/Fall Balance:"
+let ratio = t_cq_rise / t_cq_fall
+print ratio
+if ratio < 1.5
+  echo "EXCELLENT: Well-balanced (<1.5x ratio)"
+else if ratio < 3
+  echo "GOOD: Acceptable balance"
+else
+  echo "WARNING: Asymmetric (>3x ratio)"
+end
+echo "========================================"
+set hcopydevtype=svg
+hardcopy waveforms/dff_complete_test.svg v(clk)+4 v(d)+2 v(q) title 'Complete DFF Validation'
+plot v(clk)+4 v(d)+2 v(q) title 'DFF: Multiple Transitions'
+.endc
+.END

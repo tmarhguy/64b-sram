@@ -1,0 +1,20 @@
+*** SPICE deck for cell nand2{sch} from library proj2
+*** Created on Sat Dec 27, 2025 22:02:41
+*** Last revised on Thu May 07, 2026 01:35:57
+*** Written on Thu May 07, 2026 01:36:08 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: nand2{sch}
+Mnmos@2 net@69 b gnd gnd N L=2 W=4
+Mnmos@3 y a net@69 gnd N L=2 W=4
+Mpmos@1 y a vdd vdd P L=2 W=8
+Mpmos@2 y b vdd vdd P L=2 W=8
+.END

@@ -1,0 +1,64 @@
+*** SPICE deck for cell precharge_eq{sch} from library proj2
+*** Created on Tue May 05, 2026 13:48:57
+*** Last revised on Thu May 07, 2026 01:22:45
+*** Written on Thu May 07, 2026 01:22:48 by Electric VLSI Design System, version 9.08
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+*** Lambda Conversion ***
+.opt scale=0.022U
+
+* Model cards described in this file:
+.include /Users/tmarhguy/Downloads/22nm_HP.pm
+
+.global vdd
+
+*** TOP LEVEL CELL: precharge_eq{sch}
+Mpmos-4@0 BL PCH_b BLB vdd P L=2 W=6
+Mpmos-4@1 BLB PCH_b vdd vdd P L=2 W=12
+Mpmos-4@2 BL PCH_b vdd vdd P L=2 W=12
+
+* Spice Code nodes in cell cell 'precharge_eq{sch}'
+* --- PRECHARGE & EQUALIZATION TEST ---
+.global gnd vdd
+Vdd vdd 0 DC 1.0
+* Bitline Capacitance (13fF per line)
+Cbl BL 0 13f
+Cblb BLB 0 13f
+* Initial Conditions: Worst-case imbalance
+.ic v(BL)=0.0 v(BLB)=1.0
+* Precharge Enable (active LOW - match your schematic's PCH_b)
+Vpch PCH_b 0 PULSE(1.0 0 100p 10p 10p 500p 1.5n)
+.control
+tran 1p 1.5n
+* Measure precharge time for BL (slowest - starts at 0V)
+meas tran t_pch_bl trig v(PCH_b) val=0.5 fall=1 targ v(BL) val=0.95 rise=1
+* Measure precharge time for BLB
+meas tran t_pch_blb trig v(PCH_b) val=0.5 fall=1 targ v(BLB) val=0.95 rise=1
+* Measure when both lines are equalized
+meas tran t_eq_start when v(BL)=0.5 rise=1
+meas tran t_eq_done when v(BL)=0.98 rise=1
+let t_equalize = t_eq_done - t_eq_start
+echo " "
+echo "========================================"
+echo "  PRECHARGE & EQUALIZATION RESULTS"
+echo "========================================"
+echo "Precharge time (BL 0->0.95V):"
+print t_pch_bl
+echo "Precharge time (BLB settling):"
+print t_pch_blb
+echo "Equalization time:"
+print t_equalize
+echo " "
+if t_pch_bl < 2e-10
+  echo "PASS: Precharge fast (<200ps)"
+else if t_pch_bl < 3e-10
+  echo "MARGINAL: Precharge acceptable (200-300ps)"
+else
+  echo "WARNING: Precharge slow (>300ps)"
+end
+echo "========================================"
+set hcopydevtype=svg
+hardcopy waveforms/precharge_test.svg v(PCH_b)+4 v(BL)+2 v(BLB) title 'Precharge & Equalization'
+plot v(PCH_b)+4 v(BL)+2 v(BLB) title 'Precharge & Equalization'
+.endc
+.END
