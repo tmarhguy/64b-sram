@@ -1,11 +1,11 @@
 # 64 b SRAM Memory Design
 
-[![LaTeX to PDF](https://img.shields.io/github/actions/workflow/status/tmarhguy/64b-sram/latex-to-pdf.yml?branch=main&logo=github&label=LaTeX%20to%20PDF)](https://github.com/tmarhguy/64b-sram/actions/workflows/latex-to-pdf.yml)
-[![LaTeX](https://img.shields.io/badge/LaTeX-Report-008080?logo=latex&logoColor=white)](https://github.com/tmarhguy/64b-sram/blob/main/ESE3700_Proj2_Marhguy.tex)
-[![ESE 3700](https://img.shields.io/badge/ESE%203700-Spring%202026%20%7C%20UPenn-011F5B)](https://github.com/tmarhguy/64b-sram)
-[![22 nm HP](https://img.shields.io/badge/process-22%20nm%20HP-informational)](.)
-[![SRAM](https://img.shields.io/badge/memory-16x4%20SRAM-6f42c1)](.)
-[![SPICE](https://img.shields.io/badge/SPICE-netlists-orange)](./spice/)
+[![LaTeX to PDF](https://img.shields.io/github/actions/workflow/status/tmarhguy/64b-sram/latex-to-pdf.yml?branch=main&logo=github&label=LaTeX%20to%20PDF&style=flat-square)](https://github.com/tmarhguy/64b-sram/actions/workflows/latex-to-pdf.yml)
+[![LaTeX](https://img.shields.io/badge/LaTeX-Report-008080?logo=latex&logoColor=white&style=flat-square)](https://github.com/tmarhguy/64b-sram/blob/main/ESE3700_Proj2_Marhguy.tex)
+[![ESE 3700](https://img.shields.io/badge/ESE%203700-Spring%202026%20%7C%20UPenn-011F5B?style=flat-square)](https://github.com/tmarhguy/64b-sram)
+[![22 nm HP](https://img.shields.io/badge/process-22%20nm%20HP-informational?style=flat-square)](https://github.com/tmarhguy/64b-sram/tree/main/spice)
+[![SRAM](https://img.shields.io/badge/memory-16x4%20SRAM-6f42c1?style=flat-square)](https://github.com/tmarhguy/64b-sram)
+[![SPICE](https://img.shields.io/badge/SPICE-netlists-orange?style=flat-square)](https://github.com/tmarhguy/64b-sram/tree/main/spice)
 
 The **required course work** is **Project 2** itself: a 16x4 SRAM design, analysis, and written report for **ESE 3700 - Spring 2026** (*Circuit Design and Optimization*) at the **University of Pennsylvania**, School of Engineering and Applied Science.
 
