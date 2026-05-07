@@ -9,7 +9,7 @@
 
 The **required course work** is **Project 2** itself: a 16x4 SRAM design, analysis, and written report for **ESE 3700 - Spring 2026** (*Circuit Design and Optimization*) at the **University of Pennsylvania**, School of Engineering and Applied Science.
 
-**This GitHub repository is not the official assignment submission.** It exists for documentation, reproducibility, and personal record-keeping: LaTeX source, figures, SPICE decks, Electric exports, validation evidence, and a CI-built PDF.
+**This GitHub repository is not the official assignment submission.** It exists for documentation, and personal record-keeping: LaTeX source, figures, SPICE decks, Electric exports, validation evidence, and a CI-built PDF.
 
 **Author:** Tyrone Marhguy (contact links at the end of this page).
 
