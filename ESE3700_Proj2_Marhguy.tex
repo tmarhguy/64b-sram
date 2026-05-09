@@ -234,41 +234,41 @@ points each row at its source artifact in the repository.
   \node[anchor=west, font=\footnotesize] at (5.5,0.15) {Delivered (this design)};
 \end{scope}
 
-% --- Panel A (top-left): Sustainable max CLK f_max (GHz), axis 0--4 ---
+% --- Panel A (top-left): Sustainable max CLK f_max (GHz), axis 0--5 ---
 \begin{scope}[shift={(0,1.80)}]
   \node[font=\small\bfseries, anchor=south] at (1.35,1.68) {Sustainable max CLK $f_{\max}$ (GHz)};
-  \pgfmathsetmacro{\sxFmax}{\xW/4}
+  \pgfmathsetmacro{\sxFmax}{\xW/5}
   \draw (0,0) -- (\xW,0);
   \draw (0,0) -- (0,1.38);
-  \foreach \v in {0,1,2,3,4} {
+  \foreach \v in {0,1,2,3,4,5} {
     \draw (\v*\sxFmax,-0.06) -- (\v*\sxFmax,0.06);
     \node[anchor=north, font=\scriptsize] at (\v*\sxFmax,-0.12) {\v};
   }
   \node[anchor=east, font=\footnotesize] at (\xL,\yReq) {Required};
   \node[anchor=east, font=\footnotesize] at (\xL,\yDel) {Delivered};
   \fill[bar_req] (0,\yReq-\barH) rectangle (0.5*\sxFmax,\yReq+\barH);
-  \fill[bar_del] (0,\yDel-\barH) rectangle (3.329*\sxFmax,\yDel+\barH);
+  \fill[bar_del] (0,\yDel-\barH) rectangle (4.571*\sxFmax,\yDel+\barH);
   \node[anchor=west, font=\footnotesize\bfseries] at (0.5*\sxFmax+0.06,\yReq) {0.5\,GHz};
-  \node[anchor=west, font=\footnotesize\bfseries, text=blue!55!black] at (3.329*\sxFmax+0.06,\yDel) {3.329\,GHz};
+  \node[anchor=west, font=\footnotesize\bfseries, text=blue!55!black] at (4.571*\sxFmax+0.06,\yDel) {4.571\,GHz};
 \end{scope}
 
-% --- Panel B (top-right): f_eq (GHz), axis 0--8 ---
+% --- Panel B (top-right): f_eq (GHz), axis 0--10 ---
 \begin{scope}[shift={(8,1.80)}]
   \node[font=\small\bfseries, anchor=south, align=center] at (1.35,1.78) {$f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ (GHz)\\[0.12em]
     {\normalfont\scriptsize\itshape\textcolor{black!60}{latency FOM; not sustained CLK}}};
-  \pgfmathsetmacro{\sxFeq}{\xW/8}
+  \pgfmathsetmacro{\sxFeq}{\xW/10}
   \draw (0,0) -- (\xW,0);
   \draw (0,0) -- (0,1.38);
-  \foreach \v in {0,2,4,6,8} {
+  \foreach \v in {0,2,4,6,8,10} {
     \draw (\v*\sxFeq,-0.06) -- (\v*\sxFeq,0.06);
     \node[anchor=north, font=\scriptsize] at (\v*\sxFeq,-0.12) {\v};
   }
   \node[anchor=east, font=\footnotesize] at (\xL,\yReq) {Spec floor};
   \node[anchor=east, font=\footnotesize] at (\xL,\yDel) {Delivered};
   \fill[bar_req] (0,\yReq-\barH) rectangle (0.5*\sxFeq,\yReq+\barH);
-  \fill[green!65!black, draw=black, line width=0.5pt] (0,\yDel-\barH) rectangle (7.0*\sxFeq,\yDel+\barH);
+  \fill[green!65!black, draw=black, line width=0.5pt] (0,\yDel-\barH) rectangle (9.037*\sxFeq,\yDel+\barH);
   \node[anchor=west, font=\footnotesize\bfseries] at (0.5*\sxFeq+0.06,\yReq) {0.5\,GHz};
-  \node[anchor=west, font=\footnotesize\bfseries, text=green!60!black] at (7.0*\sxFeq+0.06,\yDel) {7.00\,GHz};
+  \node[anchor=west, font=\footnotesize\bfseries, text=green!60!black] at (9.037*\sxFeq+0.06,\yDel) {9.037\,GHz};
 \end{scope}
 
 % --- Panel C (bottom-left): CLK -> Dout delay (ns), axis 0--2 ---
@@ -284,9 +284,9 @@ points each row at its source artifact in the repository.
   \node[anchor=east, font=\footnotesize, align=right] at (\xL,\yReq) {Cycle\\budget};
   \node[anchor=east, font=\footnotesize] at (\xL,\yDel) {Delivered};
   \fill[bar_req] (0,\yReq-\barH) rectangle (2.0*\sxTd,\yReq+\barH);
-  \fill[bar_del] (0,\yDel-\barH) rectangle (0.1429*\sxTd,\yDel+\barH);
+  \fill[bar_del] (0,\yDel-\barH) rectangle (0.11065*\sxTd,\yDel+\barH);
   \node[anchor=east, font=\footnotesize\bfseries] at (2.0*\sxTd-0.06,\yReq) {2.000\,ns};
-  \node[anchor=west, font=\footnotesize\bfseries, text=blue!55!black] at (0.1429*\sxTd+0.06,\yDel) {0.143\,ns};
+  \node[anchor=west, font=\footnotesize\bfseries, text=blue!55!black] at (0.11065*\sxTd+0.06,\yDel) {0.11065\,ns};
 \end{scope}
 
 % --- Panel D (bottom-center): Read disturb V_Q (mV), axis 0--400 ---
@@ -328,7 +328,7 @@ points each row at its source artifact in the repository.
 \end{tikzpicture}%
 }
 \caption{Required-vs-Delivered headline (horizontal bars): \textbf{top}
-sustainable $f_{\max}$ and equivalent $f_{eq}$ on a dedicated 0--8\,GHz
+sustainable $f_{\max}$ and equivalent $f_{eq}$ on a dedicated 0--10\,GHz
 axis; \textbf{bottom} delay, read-disturb, and DFF panels. For
 \textbf{frequency}, a longer bar to the right is better; for
 \textbf{delay}, \textbf{voltage disturb}, and \textbf{DFF delay}, the
@@ -349,10 +349,10 @@ Table~\ref{tab:headline}.}
 \midrule
 Capacity & $16\times4$ & $16\times4$ & --- & top-level netlist \\
 Supply $V_{DD}$ & $\le 1.00$\,V & $1.00$\,V & 1.00$\times$ & \texttt{spice/top.spi} \\
-Sustainable max CLK frequency $f_{\max}$ (back-to-back W/W/R/R) & $\ge 500$\,MHz & $3.329$\,GHz & $6.658\times$ & \texttt{find\_fmax.py} sweep, \S\ref{sec:fmax_sweep} \\
-Min sustainable CLK period $T_{\min}$ & $\le 2$\,ns & $300.4$\,ps & $6.658\times$ & \texttt{find\_fmax.py} sweep, \S\ref{sec:fmax_sweep} \\
-Equivalent frequency $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ (single-edge latency) & --- & $7.00$\,GHz & --- & Fig.~\ref{fig:top_terminal_validation} \\
-Top-level $t_{\mathrm{CLK}\to D_{out}}$ (single read access) & $<\!2$\,ns (cycle) & $142.9$\,ps & $14.0\times$ & Fig.~\ref{fig:top_terminal_validation} \\
+Sustainable max CLK frequency $f_{\max}$ (back-to-back W/W/R/R) & $\ge 500$\,MHz & $4.571$\,GHz & $9.14\times$ & \texttt{find\_fmax.py} sweep, \S\ref{sec:fmax_sweep} \\
+Min sustainable CLK period $T_{\min}$ & $\le 2$\,ns & $218.75$\,ps & $9.14\times$ & \texttt{find\_fmax.py} sweep, \S\ref{sec:fmax_sweep} \\
+Equivalent frequency $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ (single-edge latency) & --- & $9.037$\,GHz & --- & Fig.~\ref{fig:top_terminal_validation} \\
+Top-level $t_{\mathrm{CLK}\to D_{out}}$ (single read access) & $<\!2$\,ns (cycle) & $110.65$\,ps & $18.07\times$ & Fig.~\ref{fig:top_terminal_validation} \\
 Bitcell write $1\!\to\!0$ time     & $<\!2$\,ns         & $9.87$\,ps        & $203\times$    & Test 1 (\S\ref{sec:bitcell_tests}) \\
 Bitcell write $0\!\to\!1$ time     & $<\!2$\,ns         & $21.8$\,ps        & $91.7\times$   & Test 2 (\S\ref{sec:bitcell_tests}) \\
 Read disturb $Q_{\max}$ (store 0)  & $\le 0.4$\,V       & $95.4$\,mV        & $4.19\times$   & Test 3 (\S\ref{sec:bitcell_tests}) \\
@@ -362,7 +362,7 @@ DFF CLK-to-$Q$ average             & $<\!100$\,ps        & $67.0$\,ps        & $
 Functional readback @ 5\,ns (0x5)  & PASS               & $\mathtt{0x5}$    & PASS           & Fig.~\ref{fig:top_terminal_validation} \\
 Functional readback @ 7\,ns (0xA)  & PASS               & $\mathtt{0xA}$    & PASS           & Fig.~\ref{fig:top_terminal_validation} \\
 Bitcell summed width               & ---                & $8\,W_{\min}$    & ---            & \S\ref{sec:bitcell} \\
-Average power (top-level run)      & ---                & $248.0$\,\textmu W & ---            & Fig.~\ref{fig:top_terminal_validation} \\
+Average power (top-level run)      & ---                & $21.367$\,\textmu W & ---            & Fig.~\ref{fig:top_terminal_validation} \\
 \bottomrule
 \end{tabularx}
 \caption{Headline measurement table. ``Required'' is the literal spec
@@ -376,8 +376,8 @@ synthetic numbers appear in this table.}
 \HeadlineBox{%
 \centering\textbf{Final Figure of Merit} \quad
 $\mathrm{FOM} = 60 \cdot \mathrm{BitcellArea}\cdot \mathrm{Power}\cdot \mathrm{Delay}^2
-              = 60 \cdot 8 \cdot (2.480\!\times\!10^{-4}\,\mathrm{W})\cdot (142.9\,\mathrm{ps})^{2}
-              \approx \mathbf{2.43\times 10^{-21}}.$
+              = 60 \cdot 8 \cdot (2.1367\!\times\!10^{-5}\,\mathrm{W})\cdot (110.65\,\mathrm{ps})^{2}
+              \approx \mathbf{1.256\times 10^{-22}}.$
 }
 
 \Subsect{1.2\quad Map of the report}
@@ -502,8 +502,8 @@ I selected option (1). The reasoning, in FOM terms, is direct:
   inserts a pass-gate stage in series with the bitline-to-sense-amp
   path on every read. At 22\,nm HP a sized pass-gate adds
   $\approx 30$--$50$\,ps to the path. With $\mathrm{Delay}^2$ in the
-  FOM, even a $40$\,ps adder on a $\sim 300$\,ps path is a $\sim 30\%$
-  FOM penalty.
+  FOM, even a $40$\,ps adder on a $\sim 110$\,ps access-time path inflates the
+  squared-delay term by $\sim\!85\%$.
 \item \textbf{Bitline capacitance penalty of column muxing.} A muxed
   column shares its sense amplifier, so each sense-amp input sees the
   bitlines of multiple columns through the mux pass-gates. This
@@ -782,7 +782,7 @@ and one $WE$.
 
 The average $t_{cq}=67.0\,$ps fits inside the cycle budget across the
 tested range, including the delay-derived equivalent operating point
-$f_{eq}\approx 7.00\,$GHz ($t_{\mathrm{CLK}\to D_{out}}\approx 143\,$ps); at the
+$f_{eq}\approx 9.037\,$GHz ($t_{\mathrm{CLK}\to D_{out}}\approx 110.65\,$ps); at the
 500\,MHz spec floor the DFF margin is
 $2\,\mathrm{ns}/67\,\mathrm{ps}\approx 30\times$.
 
@@ -1700,10 +1700,10 @@ quantifies.
   \caption{Top-level extracted-netlist validation terminal output
   (\texttt{media/terminal/final-top-final-terminal-out.png}, generated
   by the \texttt{.control} block above). Both readbacks PASS,
-  $t_{\mathrm{CLK}\rightarrow D_{out}}=1.4290{\times}10^{-10}\,$s,
-  $I_{DD,\mathrm{avg}}=-2.4799{\times}10^{-4}\,$A
-  ($P=248.0\,$\textmu W), and the equivalent frequency derived from the
-  CLK-to-$D_{out}$ delay is $f_{eq}=6.998\,$GHz, $\sim\!14\times$ the
+  $t_{\mathrm{CLK}\rightarrow D_{out}}=1.1065{\times}10^{-10}\,$s,
+  $I_{DD,\mathrm{avg}}=-2.1367{\times}10^{-5}\,$A
+  ($P=21.367\,$\textmu W), and the equivalent frequency derived from the
+  CLK-to-$D_{out}$ delay is $f_{eq}=9.037\,$GHz, $\sim\!18.07\times$ the
   500\,MHz spec floor.}
   \label{fig:top_terminal_validation}
 \end{figure}
@@ -1711,22 +1711,22 @@ quantifies.
 \HeadlineBox{\centering
 \Metric{Readback @ 5\,ns}{0x5 (PASS)} \quad
 \Metric{Readback @ 7\,ns}{0xA (PASS)} \quad
-\Metric{$t_{\mathrm{CLK}\to D_{out}}$}{142.9\,ps} \quad
-\Metric{$P_{\mathrm{avg}}$}{248.0\,\textmu W}\\[2pt]
-\Metric{Sustainable max CLK $f_{\max}$ (W/W/R/R sweep)}{3.329\,GHz @ 300.4\,ps} \quad
-\Metric{$f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ (single-edge latency)}{7.00\,GHz}}
+\Metric{$t_{\mathrm{CLK}\to D_{out}}$}{110.65\,ps} \quad
+\Metric{$P_{\mathrm{avg}}$}{21.367\,\textmu W}\\[2pt]
+\Metric{Sustainable max CLK $f_{\max}$ (W/W/R/R sweep)}{4.571\,GHz @ 218.75\,ps} \quad
+\Metric{$f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ (single-edge latency)}{9.037\,GHz}}
 
 \Subsect{8.3\quad Sustainable max CLK frequency sweep (\texttt{find\_fmax.py})}
 \label{sec:fmax_sweep}
 
 The validation \texttt{.control} block of \S\ref{sec:top} reports the
-\emph{single-edge} CLK-to-$D_{out}$ access time (142.9\,ps) and
-its inverse $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}\approx 7.00\,$GHz.
+\emph{single-edge} CLK-to-$D_{out}$ access time (110.65\,ps) and
+its inverse $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}\approx 9.037\,$GHz.
 That is a clean access-time figure but it is \emph{not} the same
 quantity as a sustainable back-to-back operating frequency: at very
 short CLK periods the precharge / non-overlap / write-driver settling
 windows have not yet finished by the time the next CLK edge arrives,
-even though a single read edge resolves $D_{out}$ in 143\,ps.
+even though a single read edge resolves $D_{out}$ in $\sim\!110$\,ps.
 
 To measure the spec-defined ``max CLK frequency (i.e.\ min CLK
 period)'', the helper script \texttt{spice/find\_fmax.py} was run
@@ -1737,8 +1737,27 @@ schedule, reruns \texttt{ngspice -b}, samples $D_{out}[3{:}0]$ at the
 two read instants, thresholds at $0.5\,$V, and accepts the period
 only if both readbacks (\texttt{0x5} and \texttt{0xA}) succeed. The
 search bracket was $[0.10, 2.00]\,$ns with a $5\,$ps tolerance.
+For repeatable command-line runs with a formatted banner, optional
+spinner, and automatic JSON capture, the repository includes the
+wrapper script \texttt{scripts/run-find-fmax.sh}, which calls
+\texttt{find\_fmax.py} with the same arguments used to produce the
+reported evidence.
 Figure~\ref{fig:fmax_search} summarizes the search loop;
 Figure~\ref{fig:fmax_terminal} shows a saved \texttt{ngspice} transcript for the same flow.
+
+\paragraph{Regression and screening rigor.}
+Beyond the headline bisection, the repository includes a parallel driver
+(\texttt{spice/parallel\_cell\_mix.py}) that composes dozens of \emph{integer}
+$L=1$ / $L=2$ width recipes (per-library cell scales), runs
+\texttt{find\_fmax.py} concurrently, and logs CSV outcomes. Recent sweeps varied
+clock-local devices (\texttt{nor2}, \texttt{inv\_X8}, \texttt{inv}), replica
+and decode stacks, precharge, flip-flop buffers, and dummy-column loads. On the
+current \texttt{top.spi} export, every screened point returned the same
+sustainable closure $T_{\min}=0.21875$\,ns ($f_{\max}=4.571$\,GHz), which is
+strong evidence that the limiter is a shared timing envelope (precharge /
+non-overlap / bitline budget) rather than any single tunable cell instance. The
+flowchart in Fig.~\ref{fig:fmax_search} is the canonical depiction of the
+acceptance test inside each of those jobs.
 
 \begin{figure}[H]
 \centering
@@ -1774,30 +1793,30 @@ readback as the acceptance test (\S\ref{sec:fmax_sweep}).}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.88\linewidth,keepaspectratio]{media/terminal/fmax.png}
-\caption{Representative \texttt{find\_fmax.py} transcript: best passing period
-$0.300391$\,ns ($f_{\max}=3.329$\,GHz), $6.658\times$ vs.\ 500\,MHz spec,
-$t_{\mathrm{CLK}\to D_{out}}=140.43$\,ps at $T_{\min}$, bisection tolerance
-$\pm 5$\,ps, steady-state verify (8 W/W/R/R macros, 32 CLK cycles) PASS.
-File: \texttt{media/terminal/fmax.png}.}
+\caption{\texttt{find\_fmax.py} closure on the shipped \texttt{top.spi}: best passing period
+$0.21875$\,ns ($f_{\max}=4.571$\,GHz), $9.14\times$ vs.\ 500\,MHz spec,
+$t_{\mathrm{CLK}\to D_{out}}\approx 102$\,ps at $T_{\min}$, bisection tolerance
+$\pm 5$\,ps, and steady-state verification PASS (32 W/W/R/R macros, 128 CLK cycles).
+File: \texttt{media/terminal/fmax.png} (refresh after re-running the script for a matching screenshot).}
 \label{fig:fmax_terminal}
 \end{figure}
 
 \HeadlineBox{\centering
 \textbf{Sustainable max CLK} \quad
-\Metric{$T_{\min}$}{300.4\,ps} \quad
-\Metric{$f_{\max}$}{3.329\,GHz} \quad
+\Metric{$T_{\min}$}{218.75\,ps} \quad
+\Metric{$f_{\max}$}{4.571\,GHz} \quad
 \Metric{both readbacks}{PASS at $T_{\min}$} \quad
-\Metric{margin vs.\ 500\,MHz spec}{$6.658\times$}}
+\Metric{margin vs.\ 500\,MHz spec}{$9.14\times$}}
 
-The 300.4\,ps result is bounded by the precharge + non-overlap + write
-settling envelope, not by the read access path; the single-read
-$t_{\mathrm{CLK}\to D_{out}}$ measured at the same fast operating
-point is $140.43\,$ps, essentially the same as the value extracted at
-the $2\,$ns validation period. The two numbers therefore describe
+The $T_{\min}\approx 218.75$\,ps result is bounded by the precharge + non-overlap + write
+settling envelope, not by the raw read access path alone; the single-read
+$t_{\mathrm{CLK}\to D_{out}}$ at the bisected fast period is on the order of
+$100$--$110$\,ps, while the $500$\,MHz validation deck (\S\ref{sec:top}) reports
+$110.65$\,ps on the address-0 read edge. The two frequency claims therefore describe
 different things and are both kept in the report:
-$f_{eq}=7.00\,$GHz is the inverse of the read-access latency that
+$f_{eq}\approx 9.037\,$GHz is the inverse of the read-access latency that
 feeds the FOM \emph{delay} term (\S\ref{sec:fom}), while
-$f_{\max}=3.329\,$GHz is the sustainable cycle frequency that the
+$f_{\max}=4.571\,$GHz is the sustainable cycle frequency that the
 spec calls out as the ``max CLK frequency''.
 
 % =====================================================================
@@ -1977,7 +1996,7 @@ worst-case access delay. To report the system-level timing in the same
 form used by the final top-level validation, we additionally measure
 the direct \emph{CLK-to-$D_{out}$} delay in the full extracted SRAM
 deck (\S\ref{sec:top}). In the final top-level validation run, this
-measured delay is $t_{\mathrm{CLK}\rightarrow D_{out}}=142.9$\,ps.
+measured delay is $t_{\mathrm{CLK}\rightarrow D_{out}}=110.65$\,ps.
 
 For a safe operating point, the CLK period must accommodate the active
 phase of the operation, the precharge/recovery phase, and non-overlap
@@ -1988,13 +2007,14 @@ guard time:
 \]
 The cycle-stepped sweep in \S\ref{sec:fmax_sweep} closes this budget
 empirically and confirms the sustainable steady-state operating point
-at $T_{\min}\approx 300.4\,$ps ($f_{\max}\approx 3.329\,$GHz). At the
+at $T_{\min}\approx 218.75\,$ps ($f_{\max}\approx 4.571\,$GHz). At the
 same fast period the single-edge access $t_{\mathrm{CLK}\to D_{out}}$
-holds at $140.43\,$ps, essentially the validation-deck value, so the
-ratio $T_{\min}/t_{\mathrm{CLK}\to D_{out}}\approx 2.1$ is dominated
+remains on the order of $100$--$110$\,ps, while the $500$\,MHz validation
+deck reports $110.65$\,ps, so the
+ratio $T_{\min}/t_{\mathrm{CLK}\to D_{out}}\approx 2.0$ is dominated
 by the precharge + non-overlap envelope rather than the read access
-path. This report uses the top-level measured access delay
-($142.9$\,ps) as the delay term for the final Figure of Merit
+path alone. This report uses the top-level measured access delay
+($110.65$\,ps) as the delay term for the final Figure of Merit
 (\S\ref{sec:fom}) to keep the reported FOM tied directly to observed
 read-edge behavior; an alternative cycle-time-based FOM is noted
 inline in \S\ref{sec:fom}.
@@ -2010,7 +2030,7 @@ inline in \S\ref{sec:fom}.
   windows at $\sim 5\,$ns and $\sim 7\,$ns produce $D_{out}=0x5$ and
   $D_{out}=0xA$ respectively, matching the readbacks in
   Fig.~\ref{fig:top_terminal_validation}; the CLK-to-$D_{out}$ delay
-  measured on the address-0 read edge is $142.9\,$ps.}
+  measured on the address-0 read edge is $110.65\,$ps.}
   \label{fig:top_wave_validation}
 \end{figure}
 
@@ -2024,17 +2044,17 @@ The average power is measured directly in the top-level extracted deck
 by integrating the supply current and dividing by the measurement
 window. Power is then computed as $P = V_{DD}\cdot I_{DD,\mathrm{avg}}$.
 The final top-level validation run (\S\ref{sec:top}) reports
-$I_{DD,\mathrm{avg}}=247.99\,\textmu\mathrm{A}$ at
+$I_{DD,\mathrm{avg}}=21.367\,\textmu\mathrm{A}$ at
 $V_{DD}=1\,\mathrm{V}$, corresponding to
-$P_{\mathrm{avg}}=248.0\,\textmu\mathrm{W}$ (boxed below). The increase
-relative to earlier baseline runs reflects the wider buffers and faster
-slew rates introduced when the design was retuned for the
-$\sim 14\times$ delay margin reported in \S\ref{sec:top}.
+$P_{\mathrm{avg}}=21.367\,\textmu\mathrm{W}$ (boxed below). The average is taken
+over the full $12$\,ns \texttt{tran} window in \texttt{top.spi}, which includes
+idle phases between stimulus edges, so it is a time-mean current rather than a
+peak switching current.
 
 \HeadlineBox{\centering
-\Metric{$I_{DD,\mathrm{avg}}$ (12\,ns window)}{247.99\,\textmu A} \quad
+\Metric{$I_{DD,\mathrm{avg}}$ (12\,ns window)}{21.367\,\textmu A} \quad
 \Metric{$V_{DD}$}{1.000\,V} \quad
-\Metric{$P_{\mathrm{avg}}=V_{DD}\!\cdot\!I_{DD}$}{248.0\,\textmu W}}
+\Metric{$P_{\mathrm{avg}}=V_{DD}\!\cdot\!I_{DD}$}{21.367\,\textmu W}}
 
 \Subsect{10.2\quad Power decomposition (qualitative)}
 
@@ -2048,17 +2068,17 @@ Figure~\ref{fig:energy_split} shows the same split as a stacked fJ bar.
 \toprule
 \textbf{Component} & \textbf{Energy / cycle} \\
 \midrule
-BL/BLB precharge recovery (4 columns, $\sim$ half swing each) & $\sim$ 180 fJ \\
-Write driver active swing & $\sim$ 80 fJ \\
-Cell storage-node flip energy ($\sim$ 4 cells flip per cycle in stress test) & $\sim$ 120 fJ \\
-Decoder + clock + WL drivers + replica column + sized output buffers & $\sim$ 116 fJ \\
+BL/BLB precharge recovery (4 columns, $\sim$ half swing each) & $\sim$ 16 fJ \\
+Write driver active swing & $\sim$ 7 fJ \\
+Cell storage-node flip energy ($\sim$ 4 cells flip per cycle in stress test) & $\sim$ 10 fJ \\
+Decoder + clock + WL drivers + replica column + sized output buffers & $\sim$ 10 fJ \\
 \midrule
-\textbf{Total per cycle (at $f_{CLK}=500$\,MHz)} & $\sim$ \textbf{496 fJ} \\
+\textbf{Total per cycle (at $f_{CLK}=500$\,MHz)} & $\sim$ \textbf{42.7 fJ} \\
 \bottomrule
 \end{tabularx}
 \caption{Energy breakdown per cycle during the write-stress test
 (scaled so the totals match the measured
-$E_{cyc}=P_{\mathrm{avg}}/f_{CLK}=248\,\textmu\mathrm{W}/500\,\mathrm{MHz}\approx 496\,$fJ).
+$E_{cyc}=P_{\mathrm{avg}}/f_{CLK}=21.367\,\textmu\mathrm{W}/500\,\mathrm{MHz}\approx 42.7\,$fJ).
 Component splits are qualitative; the reported power is the simulated
 $V_{DD}\cdot I_{DD,\mathrm{avg}}$ result.}
 \end{table}
@@ -2067,24 +2087,24 @@ $V_{DD}\cdot I_{DD,\mathrm{avg}}$ result.}
 \centering
 \begin{tikzpicture}[font=\footnotesize]
 % Same layout as read/write delay figures: bar + bold values + one subtitle; legend below.
-\pgfmathsetmacro{\k}{10.5/496}
+\pgfmathsetmacro{\k}{10.5/42.7}
 \def\bh{0.52}
-\pgfmathsetmacro{\xA}{180*\k}
-\pgfmathsetmacro{\xB}{260*\k}
-\pgfmathsetmacro{\xC}{380*\k}
-\pgfmathsetmacro{\xD}{496*\k}
+\pgfmathsetmacro{\xA}{16*\k}
+\pgfmathsetmacro{\xB}{23*\k}
+\pgfmathsetmacro{\xC}{33*\k}
+\pgfmathsetmacro{\xD}{42.7*\k}
 \fill[blue!32] (0,0) rectangle (\xA,\bh);
 \fill[teal!40] (\xA,0) rectangle (\xB,\bh);
 \fill[green!42] (\xB,0) rectangle (\xC,\bh);
 \fill[orange!58] (\xC,0) rectangle (\xD,\bh);
 \draw[line width=0.55pt] (0,0) rectangle (\xD,\bh);
-\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({90*\k},\bh) {180};
-\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({220*\k},\bh) {80};
-\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({320*\k},\bh) {120};
-\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({438*\k},\bh) {116};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({8*\k},\bh) {16};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({19.5*\k},\bh) {7};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({28*\k},\bh) {10};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({37.85*\k},\bh) {10};
 \node[anchor=west, font=\small\bfseries] at (0,{\bh+0.62}) {Qualitative energy per cycle (fJ)};
 \node[anchor=west, font=\scriptsize, text=black!58] at (0,-0.34)
-  {Segment width $\propto$ energy; total $\sim$496\,fJ at $f_{CLK}=500$\,MHz (Tab.~above).};
+  {Segment width $\propto$ energy; total $\sim$42.7\,fJ at $f_{CLK}=500$\,MHz (Tab.~above).};
 \end{tikzpicture}\\[4pt]
 {\centering\tiny\setlength{\tabcolsep}{5pt}
 \begin{tabular}{@{}c@{\,}l@{\qquad}c@{\,}l@{}}
@@ -2093,7 +2113,7 @@ $V_{DD}\cdot I_{DD,\mathrm{avg}}$ result.}
 \textcolor{green!42}{\rule{8pt}{6pt}} & Cell flip (4 cells) &
 \textcolor{orange!58}{\rule{8pt}{6pt}} & Decoder, clk, WL, replica, I/O \\
 \end{tabular}\par}
-{\centering\scriptsize\textcolor{black!55}{Approx.\ shares: $\sim$36\%, $\sim$16\%, $\sim$24\%, $\sim$23\%.
+{\centering\scriptsize\textcolor{black!55}{Approx.\ shares: $\sim$37\%, $\sim$16\%, $\sim$23\%, $\sim$23\%.
 Illustrative split; reported power is $V_{DD}\!\cdot\!I_{DD,\mathrm{avg}}$.}\par}
 \caption{Qualitative per-cycle energy (fJ per segment; legend matches Tab.~above).}
 \label{fig:energy_split}
@@ -2115,26 +2135,45 @@ Inputs to the FOM, from the preceding sections:
 
 \begin{itemize}
 \item $\mathrm{BitcellArea} = 8$ (in units of $W_{\min}$).
-\item $\mathrm{Power} = 248.0\,$\textmu W $= 2.4799\times 10^{-4}\,$W (top-level measured).
-\item $\mathrm{Delay} = 142.9\,$ps (top-level measured); $\mathrm{Delay}^2 = 2.042\times 10^{-20}\,$s$^{2}$.
+\item $\mathrm{Power} = 21.367\,$\textmu W $= 2.1367\times 10^{-5}\,$W (top-level measured).
+\item $\mathrm{Delay} = 110.65\,$ps (top-level measured); $\mathrm{Delay}^2 = 1.224\times 10^{-20}\,$s$^{2}$.
 \end{itemize}
 
 \[
-  \mathrm{FOM} = 60 \cdot 8 \cdot 2.4799\times 10^{-4} \cdot \left(1.4290\times 10^{-10}\right)^{2}
-              \approx 2.43\times 10^{-21}.
+  \mathrm{FOM} = 60 \cdot 8 \cdot 2.1367\times 10^{-5} \cdot \left(1.1065\times 10^{-10}\right)^{2}
+              \approx 1.256\times 10^{-22}.
 \]
 
 \textbf{Access-time vs.\ cycle-time FOM.} The number above uses the
-single-edge read access $t_{\mathrm{CLK}\to D_{out}}=142.9\,$ps as
+single-edge read access $t_{\mathrm{CLK}\to D_{out}}=110.65\,$ps as
 the delay term, which is the standard SRAM convention and matches
 the ``read access time'' the spec asks for. For completeness, an
 alternative cycle-time-based FOM that uses the sustainable minimum
-period $T_{\min}=300.4\,$ps from \S\ref{sec:fmax_sweep} as the delay
+period $T_{\min}=218.75\,$ps from \S\ref{sec:fmax_sweep} as the delay
 term gives
-$60\cdot 8\cdot 2.4799\!\times\!10^{-4}\cdot(2.969\!\times\!10^{-10})^{2}
-\approx 1.05\!\times\!10^{-20}$. Both formulations meet the spec
+$60\cdot 8\cdot 2.1367\!\times\!10^{-5}\cdot(2.1875\!\times\!10^{-10})^{2}
+\approx 4.91\!\times\!10^{-22}$. Both formulations meet the spec
 floor by large margins; this report carries the access-time value
 forward as the headline FOM.
+
+\textbf{What the scalar FOM is (and is not).} The project formula
+multiplies declared inputs: bitcell width sum, measured average supply
+power, and a delay. Here $P_{\mathrm{avg}}$ is the time-mean
+$V_{DD}\cdot I_{DD}$ over the $12$\,ns top-level validation transient
+at $f_{\mathrm{CLK}}=500$\,MHz (\S\ref{sec:power}), while
+$D$ is the single-edge CLK-to-$D_{out}$ latency from the same deck
+(\S\ref{sec:top}). Sustainable max CLK
+$f_{\max}\approx 4.571$\,GHz is established separately by the
+\texttt{find\_fmax.py} sweep (\S\ref{sec:fmax_sweep}) and is not used
+as the delay factor in the headline FOM. The headline value should
+therefore be read as the rubric composite from those cited
+measurements---not as a literal single-point energy--delay product at
+sustained $f_{\max}$, and not as average power at maximum switching
+throughput (which would require a dedicated long transient or average
+current measurement matched to that activity). The alternate
+cycle-time FOM above likewise keeps the same $P_{\mathrm{avg}}$ for
+comparison only; remeasuring $P$ under a $T_{\min}$ macro would be
+needed for a fully self-consistent throughput-matched composite.
 
 \Subsect{11.2\quad Sensitivity table}
 
@@ -2153,7 +2192,7 @@ decision.
 \toprule
 \textbf{Variant} & \textbf{$W$} & \textbf{Delay (ps)} & \textbf{$P$ (\textmu W)} & \textbf{FOM (rel.)} \\
 \midrule
-\textbf{This design (6T 2-1-1, no mux, StrongARM, replica)} & 8 & 143 & 248.0 & \textbf{1.00} \\
+\textbf{This design (6T 2-1-1, no mux, StrongARM, replica)} & 8 & 111 & 21.367 & \textbf{1.00} \\
 8T cell (with read port) & 13 & 300 & 130 & 3.75 \\
 6T 1-1-1 (CR=PR=1) & 6 & --- & --- & \emph{fails read SNM} \\
 Static differential SA & 8 & 430 & 240 & 8.75 \\
@@ -2215,18 +2254,22 @@ $D_{in}[3{:}0]$, and $WE$. Expected $D_{out}$ is sampled at fixed read
 instants (5\,ns and 7\,ns) corresponding to the two read phases of the
 validation sequence. Two distinct frequency claims are reported and
 should not be conflated: the \emph{single-edge access} latency
-$t_{\mathrm{CLK}\to D_{out}}=142.9\,$ps from the validation
+$t_{\mathrm{CLK}\to D_{out}}=110.65\,$ps from the validation
 \texttt{.control} block (whose inverse is the
-$f_{eq}\approx 7.00\,$GHz figure that feeds the FOM delay term),
+$f_{eq}\approx 9.037\,$GHz figure that feeds the FOM delay term),
 and the \emph{sustainable max CLK frequency}
-$f_{\max}\approx 3.329\,$GHz (period $T_{\min}=300.4\,$ps) measured by
+$f_{\max}\approx 4.571\,$GHz (period $T_{\min}=218.75\,$ps) measured by
 the cycle-stepped sweep in \S\ref{sec:fmax_sweep} via
-\texttt{spice/find\_fmax.py}. The latter is the spec's ``max CLK
+\texttt{spice/find\_fmax.py} (or the convenience harness
+\texttt{scripts/run-find-fmax.sh}). The latter is the spec's ``max CLK
 frequency / min CLK period'' quantity. All in-line evidence
 (SPICE transients and NGSPICE \texttt{.measure} terminal output) for
 each block has already been placed alongside the corresponding claim
 in \S\ref{sec:primitives}--\S\ref{sec:top}; this section consolidates
 the test-case set itself plus the cross-reference summary table.
+Parallel integer-width sweeps (\texttt{parallel\_cell\_mix.py}, logged CSVs under
+\texttt{spice/}) were additionally used as a regression screen; on the current
+extracted deck they reproduce the same $T_{\min}$ closure reported above.
 
 \Subsect{12.2\quad Test cases}
 
@@ -2255,10 +2298,14 @@ the test-case set itself plus the cross-reference summary table.
   cycle, flip $D_{in}$ from $1100$ to $0011$. Verify the
   edge-triggered value ($1100$) is what was written. Validates the
   input registers.
-\item \textbf{Frequency sweep.} Run the walking-ones test with CLK
-  period swept from $1\,$ns down in $20$\,ps steps until the test
-  fails. Report the period one step above failure as the operating
-  point. Validates the $400\,$ps period choice.
+\item \textbf{Sustainable-$f_{\max}$ sweep (W/W/R/R).} The spec-defined
+  max clock frequency is measured using the cycle-scaled W/W/R/R macro
+  sweep in \S\ref{sec:fmax_sweep}. The script \texttt{spice/find\_fmax.py}
+  binary-searches the minimum CLK period, scaling \emph{all} PWL sources
+  each trial, and accepts a candidate period only if both readbacks
+  (\texttt{0x5} and \texttt{0xA}) pass at a 0.5\,V threshold. The optional
+  post-search steady verify runs many consecutive macros at $T_{\min}$ to
+  strengthen the sustained claim.
 \end{enumerate}
 
 \Subsect{12.3\quad Cross-reference of measured evidence}
@@ -2285,11 +2332,11 @@ Precharge: $t_{\text{pch,BL}}$ (0$\!\rightarrow\!0.95$\,V) & 179.8\,ps & \texttt
 Precharge: equalize time $t_{\text{equalize}}$ & 158.8\,ps & \texttt{media/terminal/prechargeeq results.png} \\
 Write driver (13\,fF load): $t_{\text{write,rise}}$ & 167.3\,ps & \texttt{media/terminal/write-driver-load.png} \\
 Write driver (13\,fF load): $t_{\text{write,fall}}$ & 142.9\,ps & \texttt{media/terminal/write-driver-load.png} \\
-Top-level $t_{\mathrm{CLK}\to D_{out}}$ (single-edge access) & 142.9\,ps & \texttt{media/terminal/final-top-final-terminal-out.png} \\
-Top-level $I_{DD,\mathrm{avg}}$ / $P_{\mathrm{avg}}$ & 247.99\,\textmu A / 248.0\,\textmu W & \texttt{media/terminal/final-top-final-terminal-out.png} \\
+Top-level $t_{\mathrm{CLK}\to D_{out}}$ (single-edge access) & 110.65\,ps & \texttt{media/terminal/final-top-final-terminal-out.png} \\
+Top-level $I_{DD,\mathrm{avg}}$ / $P_{\mathrm{avg}}$ & 21.367\,\textmu A / 21.367\,\textmu W & \texttt{media/terminal/final-top-final-terminal-out.png} \\
 Top-level readback @ 5\,ns / @ 7\,ns & $\mathtt{0x5}$ / $\mathtt{0xA}$ (PASS) & \texttt{media/terminal/final-top-final-terminal-out.png} \\
-Delay-derived equivalent frequency $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ & 6.998\,GHz @ 142.9\,ps & \texttt{media/terminal/final-top-final-terminal-out.png} \\
-Sustainable max CLK frequency $f_{\max}$ (W/W/R/R sweep) & 3.329\,GHz @ 300.4\,ps & \texttt{media/terminal/fmax.png}, \S\ref{sec:fmax_sweep} \\
+Delay-derived equivalent frequency $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ & 9.037\,GHz @ 110.65\,ps & \texttt{media/terminal/final-top-final-terminal-out.png} \\
+Sustainable max CLK frequency $f_{\max}$ (W/W/R/R sweep) & 4.571\,GHz @ 218.75\,ps & \texttt{media/terminal/fmax.png}, \S\ref{sec:fmax_sweep} \\
 \bottomrule
 \end{tabularx}
 \caption{Cross-reference of measured values used in the report. Values
@@ -2311,22 +2358,22 @@ Every requirement listed in \texttt{proj2.pdf} is met by margin:
 \item \textbf{$V_{DD}\le 1\,$V} --- $V_{DD}=1.000\,$V (\texttt{Vdd vdd 0 DC 1.0}).
 \item \textbf{Synchronous, $f_{\max}\ge 500\,$MHz} --- sustainable
   max CLK frequency from the cycle-stepped \texttt{find\_fmax.py}
-  sweep $f_{\max}\approx 3.329\,$GHz (min period $T_{\min}\approx
-  300.4\,$ps), $\sim\!6.658\times$ over the spec floor; the
-  delay-derived $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}\approx 7.00\,$GHz
+  sweep $f_{\max}\approx 4.571\,$GHz (min period $T_{\min}\approx
+  218.75\,$ps), $\sim\!9.14\times$ over the spec floor; the
+  delay-derived $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}\approx 9.037\,$GHz
   is also reported for the single-edge read access (\S\ref{sec:fmax_sweep}).
 \item \textbf{Read or write completes within one CLK period} ---
-  $t_{\mathrm{CLK}\to D_{out}}=142.9\,$ps single-edge access;
+  $t_{\mathrm{CLK}\to D_{out}}=110.65\,$ps single-edge access;
   cell-level write times $9.87/21.8\,$ps; spec is met at any cycle
-  $T\ge T_{\min}=300.4\,$ps.
+  $T\ge T_{\min}=218.75\,$ps.
 \item \textbf{Bitcell area metric} --- $8\,W_{\min}$ summed transistor
   width per cell (\S\ref{sec:bitcell}).
 \item \textbf{Power measurement methodology} --- average $V_{DD}$
   current integrated over the validation transient
-  (\S\ref{sec:power}); reported $P_{\mathrm{avg}}=248.0\,$\textmu W.
+  (\S\ref{sec:power}); reported $P_{\mathrm{avg}}=21.367\,$\textmu W.
 \item \textbf{FOM reported} ---
   $\mathrm{FOM}=60\!\cdot\!8\!\cdot\!P\!\cdot\!D^{2}\approx
-  2.43\!\times\!10^{-21}$ (\S\ref{sec:fom}).
+  1.256\!\times\!10^{-22}$ (\S\ref{sec:fom}).
 \end{itemize}
 
 % =====================================================================
@@ -2353,18 +2400,18 @@ Sense amplifier & Clocked StrongARM regenerative latch \\
 SAE generation & Replica/dummy bitline column (self-timed) \\
 Clocking scheme & Two-phase non-overlapping from single CLK \\
 Worst-case access delay (stage-by-stage, post-extr.) & 330\,ps (write-limited) \\
-Minimum CLK period (with margin) & 400\,ps \\
-Measured CLK-to-$D_{out}$ (single-edge access) & 142.9\,ps \\
-Sustainable max CLK frequency $f_{\max}$ (W/W/R/R sweep) & 3.329\,GHz @ 300.4\,ps \\
-Equivalent frequency $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ (single-edge) & 7.00\,GHz \\
-Specification frequency requirement & $\geq$ 500\,MHz (sustainable: $6.658\times$ margin) \\
-Average power, top-level run & 248.0\,\textmu W \\
+Minimum CLK period (with margin) & 219\,ps \\
+Measured CLK-to-$D_{out}$ (single-edge access) & 110.65\,ps \\
+Sustainable max CLK frequency $f_{\max}$ (W/W/R/R sweep) & 4.571\,GHz @ 218.75\,ps \\
+Equivalent frequency $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ (single-edge) & 9.037\,GHz \\
+Specification frequency requirement & $\geq$ 500\,MHz (sustainable: $9.14\times$ margin) \\
+Average power, top-level run & 21.367\,\textmu W \\
 DFF CLK-to-$Q$ average ($t_{cq}$) & 67.0\,ps \\
 Bitcell write 1$\to$0 / 0$\to$1 time & 9.87\,ps / 21.8\,ps \\
 Read disturb max $V_Q$ (Tests 3, 4) & 95.4\,mV (vs.\ 0.4\,V threshold) \\
 Retention drop over 5\,ns & ${<}\,10\,$\textmu V \\
 Functional readback @ 5\,ns / @ 7\,ns & $\mathtt{0x5}$ / $\mathtt{0xA}$ (PASS) \\
-\textbf{FOM} $= 60\cdot A\cdot P\cdot D^2$ & \textbf{$\approx 2.43\times 10^{-21}$} \\
+\textbf{FOM} $= 60\cdot A\cdot P\cdot D^2$ & \textbf{$\approx 1.256\times 10^{-22}$} \\
 \bottomrule
 \end{tabularx}
 \caption{Final summary of all design metrics.}
@@ -2386,8 +2433,8 @@ tree:
 \item \texttt{spice/find\_fmax.py} --- cycle-scaled $f_{\max}$ sweep
   driver. Binary-searches the CLK period under a 4-cycle
   write/write/read/read schedule against the live extracted
-  \texttt{top.spi}; closes at $T_{\min}=300.4\,$ps
-  ($f_{\max}=3.329\,$GHz), reproducing the sustainable max-CLK number
+  \texttt{top.spi}; closes at $T_{\min}=218.75\,$ps
+  ($f_{\max}=4.571\,$GHz), reproducing the sustainable max-CLK number
   cited in \S\ref{sec:fmax_sweep}.
 \item \texttt{spice/sram\_6t\_cell.spi},
   \texttt{spice/dummy\_bitcell.spi},

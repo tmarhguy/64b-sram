@@ -8,6 +8,8 @@ confirm steady-state operation (stronger "sustained f_max" claim).
 
 Usage:
   python3 find_fmax.py              # one-line summary on stdout
+  python3 find_fmax.py --format pretty
+  python3 find_fmax.py --format tex
   python3 find_fmax.py --json       # metrics only (JSON)
   python3 find_fmax.py --verify-macro-cycles 48 --json
   python3 find_fmax.py --min-period-ns 0.10 --max-period-ns 2.00 --tol-ns 0.002
@@ -19,6 +21,7 @@ import argparse
 import json
 import re
 import subprocess
+from datetime import datetime
 from pathlib import Path
 
 SPEC_FMIN_GHZ = 0.5
@@ -26,6 +29,7 @@ VDD = 1.0
 # Expected readback on Dout_0..3 (LSB..MSB wiring in meas order b*r*{0..3}).
 READ0_NIBBLE = (1, 0, 1, 0)  # 0x5
 READ1_NIBBLE = (0, 1, 0, 1)  # 0xA
+DEFAULT_BITCELL_AREA_WMIN = 8.0
 
 
 def ngspice_version_line() -> str:
@@ -41,6 +45,16 @@ def ngspice_version_line() -> str:
         return text[0] if text else "ngspice (version unknown)"
     except (OSError, subprocess.TimeoutExpired):
         return "ngspice (not found)"
+
+
+def display_path(path: Path, *, base: Path | None = None) -> str:
+    """Prefer relative paths in output for readability."""
+    anchor = (base or Path.cwd()).resolve()
+    target = path.resolve()
+    try:
+        return str(target.relative_to(anchor))
+    except ValueError:
+        return str(target)
 
 
 def _format_pwl_line(prefix: str, points: list[tuple[float, float]], tail_t: float, tail_v: float) -> str:
@@ -210,7 +224,11 @@ def build_control_block(
             "meas tran t_clk_to_dout trig v(CLK) val=0.5 rise=3 "
             f"targ v(Dout_0) val=0.5 cross=1 td={td_meas:.6f}n"
         )
+        lines.append(f"meas tran iavg_vdd avg i(Vdd) from=0n to={t_stop:.6f}n")
+        lines.append(f"let pavg_mw = -iavg_vdd * {VDD:.6f} * 1e3")
         print_names.append("t_clk_to_dout")
+        print_names.append("iavg_vdd")
+        print_names.append("pavg_mw")
 
     lines.append("print " + " ".join(print_names))
     lines.extend([".endc", ".END", ""])
@@ -302,6 +320,15 @@ def run_case(
         out = proc.stdout + "\n" + proc.stderr
         vals: dict = {"returncode": proc.returncode}
 
+        # If ngspice fails (common for overly-aggressive min-period bounds),
+        # don't crash trying to parse missing .measure outputs—just mark fail.
+        if proc.returncode != 0:
+            vals["pass_all"] = False
+            vals["failed_block_indices"] = list(range(macro_cycles))
+            vals["pass_r0"] = False
+            vals["pass_r1"] = False
+            return False, vals
+
         for r in range(macro_cycles):
             for j in range(4):
                 vals[f"b{r}a{j}"] = parse_measure(out, f"b{r}a{j}", required=True)
@@ -309,6 +336,8 @@ def run_case(
 
         if macro_cycles == 1:
             vals["t_clk_to_dout"] = parse_measure(out, "t_clk_to_dout", required=False)
+            vals["iavg_vdd"] = parse_measure(out, "iavg_vdd", required=False)
+            vals["pavg_mw"] = parse_measure(out, "pavg_mw", required=False)
             # Legacy keys for callers / logs
             vals["d0_r0"] = vals["b0a0"]
             vals["d1_r0"] = vals["b0a1"]
@@ -372,10 +401,15 @@ def find_fmax(
 
 
 def main() -> None:
+    default_deck = "spice/top.spi"
     ap = argparse.ArgumentParser(
         description="Binary-search min CLK period for repeating W/W/R/R SRAM test."
     )
-    ap.add_argument("--deck", default="top.spi", help="Base deck (default: top.spi)")
+    ap.add_argument(
+        "--deck",
+        default=default_deck,
+        help="Base deck (default: spice/top.spi next to this script)",
+    )
     ap.add_argument("--min-period-ns", type=float, default=0.10, help="Fast bound (fail)")
     ap.add_argument("--max-period-ns", type=float, default=2.00, help="Slow bound (pass)")
     ap.add_argument(
@@ -398,11 +432,32 @@ def main() -> None:
         action="store_true",
         help="Print only a JSON object with key metrics (no other stdout).",
     )
+    ap.add_argument(
+        "--format",
+        choices=["line", "pretty", "tex", "json"],
+        default="line",
+        help="Output format (default: line).",
+    )
+    ap.add_argument(
+        "--bitcell-area-wmin",
+        type=float,
+        default=DEFAULT_BITCELL_AREA_WMIN,
+        help="Bitcell area term (sum of normalized Wmin units) for optional FOM reporting.",
+    )
+    ap.add_argument(
+        "--save-json",
+        default="",
+        help="Optional path to write the JSON result object (in addition to stdout formatting).",
+    )
     args = ap.parse_args()
+
+    if args.json:
+        args.format = "json"
 
     deck_path = Path(args.deck).resolve()
     if not deck_path.exists():
         raise SystemExit(f"Deck not found: {deck_path}")
+    deck_mtime_utc = datetime.utcfromtimestamp(deck_path.stat().st_mtime).isoformat() + "Z"
 
     ngspice_v = ngspice_version_line()
     base_text = deck_path.read_text()
@@ -443,6 +498,9 @@ def main() -> None:
         "sustained_fmax_ghz": round(freq_ghz, 6),
         "t_min_clk_ps": round(tmin_ps, 4),
         "t_min_clk_ns": round(best_period, 6),
+        "deck_path": display_path(deck_path),
+        "deck_path_abs": str(deck_path),
+        "deck_mtime_utc": deck_mtime_utc,
         "spec_fmin_ghz": SPEC_FMIN_GHZ,
         "margin_vs_spec_x": round(margin, 4),
         "vdd_v": VDD,
@@ -457,21 +515,97 @@ def main() -> None:
 
     tcd = best_vals.get("t_clk_to_dout")
     if tcd is not None and tcd == tcd:
-        result_obj["t_clk_to_dout_s"] = float(tcd)
-        result_obj["t_clk_to_dout_ps"] = round(float(tcd) * 1e12, 4)
+        tcd_f = float(tcd)
+        result_obj["t_clk_to_dout_s"] = tcd_f
+        result_obj["t_clk_to_dout_ps"] = round(tcd_f * 1e12, 4)
 
-    if args.json:
+    iavg_vdd = best_vals.get("iavg_vdd")
+    pavg_mw = best_vals.get("pavg_mw")
+    if iavg_vdd is not None and iavg_vdd == iavg_vdd:
+        result_obj["iavg_vdd_a"] = float(iavg_vdd)
+    if pavg_mw is not None and pavg_mw == pavg_mw:
+        p_mw_f = float(pavg_mw)
+        result_obj["pavg_mw"] = p_mw_f
+        result_obj["pavg_uw"] = round(p_mw_f * 1e3, 4)
+        # Power window used by the injected measurement in this sweep deck.
+        # (This is NOT the 12 ns top.spi validation window unless you run that deck.)
+        result_obj["pavg_window_ns"] = round((4.5 * best_period), 6)
+        result_obj["fom_bitcell_area_wmin"] = float(args.bitcell_area_wmin)
+        if tcd is not None and tcd == tcd:
+            p_w = p_mw_f * 1e-3
+            fom = 60.0 * args.bitcell_area_wmin * p_w * (float(tcd) ** 2)
+            fom_cycle = 60.0 * args.bitcell_area_wmin * p_w * (best_period * 1e-9) ** 2
+            # Explicit naming: these are computed from sweep-deck measurements (W/W/R/R @ ~Tmin).
+            result_obj["fom_access_sweep"] = fom
+            result_obj["fom_access_sweep_sci"] = f"{fom:.4e}"
+            result_obj["fom_cycle_tmin_sweep"] = fom_cycle
+            result_obj["fom_cycle_tmin_sweep_sci"] = f"{fom_cycle:.4e}"
+
+    if args.save_json:
+        Path(args.save_json).expanduser().resolve().write_text(json.dumps(result_obj, indent=2) + "\n")
+
+    if args.format == "json":
         print(json.dumps(result_obj, indent=2))
         return
 
-    parts = [
-        f"T_min_ns={best_period:.6f}",
-        f"f_max_GHz={freq_ghz:.6f}",
-        f"vs_{SPEC_FMIN_GHZ}GHz={margin:.3f}x",
-    ]
-    if args.verify_macro_cycles > 1:
-        parts.append(f"steady_pass={steady_ok}")
-    print(" ".join(parts))
+    if args.format == "line":
+        parts = [
+            f"T_min_ns={best_period:.6f}",
+            f"f_max_GHz={freq_ghz:.6f}",
+            f"vs_{SPEC_FMIN_GHZ}GHz={margin:.3f}x",
+        ]
+        if args.verify_macro_cycles > 1:
+            parts.append(f"steady_pass={steady_ok}")
+        if "t_clk_to_dout_ps" in result_obj:
+            parts.append(f"t_clk_to_dout_ps={result_obj['t_clk_to_dout_ps']}")
+        if "fom_access_sweep_sci" in result_obj:
+            parts.append(f"fom_access_sweep={result_obj['fom_access_sweep_sci']}")
+        print(" ".join(parts))
+        return
+
+    if args.format == "pretty":
+        print("==============================================")
+        print("Full SRAM W/W/R/R Sustained f_max Sweep Summary")
+        print("==============================================")
+        print(f"Deck                    : {result_obj['deck_path']}")
+        print(f"Sustained f_max         : {result_obj['sustained_fmax_ghz']:.6f} GHz")
+        print(f"T_min                   : {result_obj['t_min_clk_ps']:.4f} ps ({result_obj['t_min_clk_ns']:.6f} ns)")
+        print(f"Margin vs 500 MHz spec  : {result_obj['margin_vs_spec_x']:.4f}x")
+        if args.verify_macro_cycles > 1:
+            print(f"Steady-state verify     : {'PASS' if steady_ok else 'FAIL'} ({args.verify_macro_cycles} macros, {n_clk_steady} CLK cycles)")
+        if "t_clk_to_dout_ps" in result_obj:
+            print(f"t_CLK→Dout (single-edge): {result_obj['t_clk_to_dout_ps']:.4f} ps")
+            print(f"f_eq = 1/t_CLK→Dout      : {1e-9 / result_obj['t_clk_to_dout_s']:.6f} GHz")
+        if "pavg_uw" in result_obj:
+            print(f"P_avg (from i(Vdd))     : {result_obj['pavg_uw']:.4f} µW @ VDD={VDD:.1f} V")
+            if "pavg_window_ns" in result_obj:
+                print(f"P_avg window            : 0 → {result_obj['pavg_window_ns']:.6f} ns (sweep deck)")
+        if "fom_access_sweep_sci" in result_obj:
+            print(f"FOM (access delay, sweep): {result_obj['fom_access_sweep_sci']}  [Area={args.bitcell_area_wmin:g}]")
+            print(f"FOM (cycle @ T_min, sweep): {result_obj['fom_cycle_tmin_sweep_sci']}  [Area={args.bitcell_area_wmin:g}]")
+        print(f"Pattern                 : {result_obj['pattern']}")
+        return
+
+    if args.format == "tex":
+        fields = [
+            ("Deck", result_obj["deck_path"]),
+            ("Sustained $f_{\\max}$", f"{result_obj['sustained_fmax_ghz']:.6f}\\,GHz"),
+            ("$T_{\\min}$", f"{result_obj['t_min_clk_ps']:.4f}\\,ps"),
+            ("Margin vs. 500\\,MHz", f"{result_obj['margin_vs_spec_x']:.4f}\\times"),
+            ("Steady verify", f"{steady_ok}" if args.verify_macro_cycles > 1 else "not requested"),
+        ]
+        if "t_clk_to_dout_ps" in result_obj:
+            fields.append(("$t_{\\mathrm{CLK}\\to D_{out}}$", f"{result_obj['t_clk_to_dout_ps']:.4f}\\,ps"))
+            fields.append(("$f_{eq}=1/t_{\\mathrm{CLK}\\to D_{out}}$", f"{1e-9 / result_obj['t_clk_to_dout_s']:.6f}\\,GHz"))
+        if "pavg_uw" in result_obj:
+            fields.append(("$P_{\\mathrm{avg}}$", f"{result_obj['pavg_uw']:.4f}\\,\\textmu W"))
+        if "fom_access_sweep_sci" in result_obj:
+            fields.append(("FOM (access delay, sweep)", result_obj["fom_access_sweep_sci"]))
+            fields.append(("FOM (cycle @ $T_{\\min}$, sweep)", result_obj["fom_cycle_tmin_sweep_sci"]))
+
+        for key, value in fields:
+            print(f"\\Metric{{{key}}}{{{value}}}")
+        return
 
 
 if __name__ == "__main__":
