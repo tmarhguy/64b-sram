@@ -1,7 +1,7 @@
 *** SPICE deck for cell output_latch{sch} from library proj2
 *** Created on Tue May 05, 2026 13:57:31
-*** Last revised on Tue May 05, 2026 21:04:32
-*** Written on Tue May 05, 2026 21:04:36 by Electric VLSI Design System, version 9.08
+*** Last revised on Fri May 08, 2026 18:35:12
+*** Written on Fri May 08, 2026 18:47:32 by Electric VLSI Design System, version 9.08
 *** Layout tech: mocmos, foundry MOSIS
 *** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
 *** Lambda Conversion ***
@@ -10,37 +10,30 @@
 * Model cards described in this file:
 .include /Users/tmarhguy/Downloads/22nm_HP.pm
 
-*** SUBCIRCUIT proj2__invX2 FROM CELL invX2{sch}
-.SUBCKT proj2__invX2 a y
-** GLOBAL gnd
-** GLOBAL vdd
-Mnmos@0 y a gnd gnd N L=2 W=2
-Mpmos@0 y a vdd vdd P L=2 W=4
-.ENDS proj2__invX2
-
 *** SUBCIRCUIT proj2__inv_X4 FROM CELL inv_X4{sch}
 .SUBCKT proj2__inv_X4 A Y
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos@0 Y A gnd gnd N L=2 W=4
-Mpmos@0 Y A vdd vdd P L=2 W=8
+Mnmos@0 Y A gnd gnd N L=1 W=6
+Mpmos@0 Y A vdd vdd P L=1 W=14
 .ENDS proj2__inv_X4
-*** WARNING: no power connection for P-transistor wells in cell 'tgate{sch}'
-*** WARNING: no ground connection for N-transistor wells in cell 'tgate{sch}'
 
 *** SUBCIRCUIT proj2__tgate FROM CELL tgate{sch}
 .SUBCKT proj2__tgate en en_b in out
-Mnmos@0 in en out N L=2 W=2
-Mpmos@0 out en_b in P L=2 W=2
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos-4@0 in en out gnd N L=1 W=6
+Mpmos-4@0 out en_b in vdd P L=1 W=8
 .ENDS proj2__tgate
 
 .global gnd vdd
 
 *** TOP LEVEL CELL: output_latch{sch}
-XinvX2@2 net@14 net@61 proj2__invX2
-XinvX2@4 net@61 net@45 proj2__invX2
-XinvX2@5 net@61 net@59 proj2__invX2
-Xinv_X4@1 net@59 D_out proj2__inv_X4
-Xtgate@0 phi2 phi2_b SO net@14 proj2__tgate
-Xtgate@1 phi2_b phi2 net@45 net@14 proj2__tgate
+Xinv_X4@0 net@87 D_out proj2__inv_X4
+Xinv_X4@4 net@54 net@76 proj2__inv_X4
+Xinv_X4@5 net@76 net@87 proj2__inv_X4
+Xinv_X4@6 inv_X4@6_A inv_X4@6_Y proj2__inv_X4
+Xinv_X4@7 net@76 net@90 proj2__inv_X4
+Xtgate@0 phi2 phi2_b SO net@54 proj2__tgate
+Xtgate@1 phi2_b phi2 net@90 net@54 proj2__tgate
 .END

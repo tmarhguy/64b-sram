@@ -1506,9 +1506,9 @@ NOff-Page|conn@0||-20|6||||
 NOff-Page|conn@1||-4|6||||
 NGround|gnd@0||-11|-2||||
 IinvX2_2;1{ic}|invX2@0||4|20|||D5G4;
-NTransistor|nmos@0||-13|3|||R||ATTR_length(D5G0.5;X-0.5;Y-1;)S2|ATTR_width(D5G1;X0.5;Y-1;)S2
+NTransistor|nmos@0||-13|3|||R||ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S3
 NWire_Pin|pin@0||-14|6||||
-NTransistor|pmos@0||-13|8|||YR|2|ATTR_length(D5G0.5;X-0.5;Y-1;)S2|ATTR_width(D5G1;X0.5;Y-1;)S4
+NTransistor|pmos@0||-13|8|||YR|2|ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S6
 NPower|pwr@0||-11|13||||
 Awire|net@0|||900|pmos@0|d|-11|6|nmos@0|d|-11|5
 Awire|net@1|||2700|gnd@0||-11|0|nmos@0|s|-11|1
@@ -1582,7 +1582,7 @@ NGround|gnd@0||-6|1||||
 Iinv_X4;1{ic}|inv@0||9|23|||D5G4;
 NTransistor|nmos@0||-8|6|||R||ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S6
 NWire_Pin|pin@0||-9|9||||
-NTransistor|pmos@0||-8|11|||YR|2|ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S12
+NTransistor|pmos@0||-8|11|||YR|2|ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S14
 NPower|pwr@0||-6|16||||
 Awire|net@0|||900|pmos@0|d|-6|9|nmos@0|d|-6|8
 Awire|net@2|||2700|gnd@0||-6|3|nmos@0|s|-6|4
@@ -1617,9 +1617,9 @@ NOff-Page|conn@0||-15|9||||
 NOff-Page|conn@1||1|9||||
 NGround|gnd@0||-6|1||||
 Iinv_X5;1{ic}|inv_X4@0||9|23|||D5G4;
-NTransistor|nmos@0||-8|6|||R||ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S12
+NTransistor|nmos@0||-8|6|||R||ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S14
 NWire_Pin|pin@0||-9|9||||
-NTransistor|pmos@0||-8|11|||YR|2|ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S24
+NTransistor|pmos@0||-8|11|||YR|2|ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S28
 NPower|pwr@0||-6|16||||
 Awire|net@0|||900|pmos@0|d|-6|9|nmos@0|d|-6|8
 Awire|net@2|||2700|gnd@0||-6|3|nmos@0|s|-6|4
@@ -1656,7 +1656,7 @@ NGround|gnd@0||-6|1||||
 Iinv_X8;1{ic}|inv_X4@0||9|23|||D5G4;
 NTransistor|nmos@0||-8|6|||R||ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S12
 NWire_Pin|pin@0||-9|9||||
-NTransistor|pmos@0||-8|11|||YR|2|ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S24
+NTransistor|pmos@0||-8|11|||YR|2|ATTR_length(D5G0.5;X-0.5;Y-1;)S1|ATTR_width(D5G1;X0.5;Y-1;)S28
 NPower|pwr@0||-6|16||||
 Awire|net@0|||900|pmos@0|d|-6|9|nmos@0|d|-6|8
 Awire|net@2|||2700|gnd@0||-6|3|nmos@0|s|-6|4

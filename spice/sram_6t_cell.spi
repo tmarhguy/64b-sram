@@ -1,7 +1,7 @@
 *** SPICE deck for cell sram_6t_cell{sch} from library proj2
 *** Created on Fri Apr 10, 2026 18:02:21
-*** Last revised on Thu May 07, 2026 01:03:13
-*** Written on Thu May 07, 2026 01:03:16 by Electric VLSI Design System, version 9.08
+*** Last revised on Thu May 07, 2026 03:38:57
+*** Written on Fri May 08, 2026 19:13:27 by Electric VLSI Design System, version 9.08
 *** Layout tech: mocmos, foundry MOSIS
 *** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
 *** Lambda Conversion ***
@@ -19,38 +19,4 @@ Mnmos@5 bl wl q gnd N L=2 W=1
 Mnmos@6 blb wl qb gnd N L=2 W=1
 Mpmos@0 qb q vdd vdd P L=2 W=1
 Mpmos@1 q qb vdd vdd P L=2 W=1
-
-* Spice Code nodes in cell cell 'sram_6t_cell{sch}'
-* Test 5: Data Retention (hold test)
-* Initial: Q=1, QB=0
-* Action: WL stays low, bitlines floating
-* Pass: Q stays >0.9V for 5ns
-.global gnd vdd
-Vdd vdd 0 DC 1.0
-.ic v(q)=1.0 v(qb)=0.0
-Vwl wl 0 DC 0.0
-.control
-tran 1p 5n
-meas tran v_q_min min v(q)
-meas tran v_q_end find v(q) at=5n
-echo " "
-echo "========================================"
-echo "  TEST 5: DATA RETENTION"
-echo "========================================"
-echo "Min Q voltage (should stay ~1.0V):"
-print v_q_min
-echo "Final Q voltage at t=5ns:"
-print v_q_end
-if v_q_min > 0.95
-  echo "PASS: Data retained perfectly"
-else if v_q_min > 0.9
-  echo "PASS: Data retained with slight droop"
-else
-  echo "FAIL: Data retention issue (leakage?)"
-end
-echo "========================================"
-set hcopydevtype=svg
-hardcopy waveforms/test5_retention.svg v(wl)+4 v(q)+2 v(qb) title 'Test 5: Data Retention'
-plot v(wl)+4 v(q)+2 v(qb) title 'Test 5: Data Retention'
-.endc
 .END
