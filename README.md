@@ -67,11 +67,11 @@ All headline numbers below come from the LaTeX report and its cited SPICE eviden
 
 | Metric | Result |
 |--------|--------|
-| Sustainable max CLK frequency `fmax` (W/W/R/R sweep) | **3.37 GHz @ 296.9 ps** |
+| Sustainable max CLK frequency `fmax` (W/W/R/R sweep) | **3.329 GHz** (`T_min` = 0.300391 ns ≈ **300.39 ps**) |
 | Equivalent frequency `feq = 1 / (CLK -> Dout)` (single-edge) | **7.00 GHz** |
 | Top-level `CLK` to `Dout` (single read access) | **142.9 ps** |
 | Frequency requirement | 500 MHz |
-| Sustainable frequency margin | **6.74x** |
+| Sustainable frequency margin | **6.658×** |
 | Average top-level power | **248.0 uW** |
 | Functional readback at 5 ns | **0x5 PASS** |
 | Functional readback at 7 ns | **0xA PASS** |
@@ -80,10 +80,16 @@ All headline numbers below come from the LaTeX report and its cited SPICE eviden
 | Read disturb maximum storage-node rise | **95.4 mV** |
 | Final FOM (access-time delay) | **~2.43e-21** |
 
+<p align="center">
+  <img src="media/terminal/fmax.png" alt="find_fmax.py terminal: f_max 3.329 GHz, T_min 0.300391 ns, steady verify PASS" width="92%" />
+  <br />
+  <em><code>find_fmax.py</code> transcript: <strong>3.329 GHz</strong> sustainable <code>f_max</code>, <strong>0.300391 ns</strong> period, <strong>6.658×</strong> vs 500 MHz, <code>t_clk_to_dout</code> ≈ 140.4 ps at <code>T_min</code>, steady verify (8 W/W/R/R macros) PASS — <a href="media/terminal/fmax.png">media/terminal/fmax.png</a>.</em>
+</p>
+
 > Two distinct frequency claims and they are not the same number:
-> - **`fmax = 3.37 GHz`** is the sustainable steady-state CLK from the cycle-stepped sweep in `spice/find_fmax.py` (write-write-read-read at every period, both readbacks must pass). This is the spec's "max CLK frequency / min CLK period".
+> - **`fmax`** comes from the cycle-stepped sweep in [`spice/find_fmax.py`](spice/find_fmax.py): binary search on CLK period with a **W/W/R/R** pattern each cycle, functional readback at **0.5 V**. After the search, the script optionally runs consecutive macros at `T_min` for steady-state check (screenshot: **8 macros** / 32 CLK cycles). Default CLI is quiet: use `python3 spice/find_fmax.py --json` for the full metric object on stdout.
 > - **`feq = 7.00 GHz = 1 / 142.9 ps`** is the inverse of the single-edge CLK -> Dout access time reported by the `.control` block in `spice/top.spi`. This is the access-time figure that feeds the FOM delay term.
-> Sources: [`spice/find_fmax.py`](spice/find_fmax.py) terminal output and [media/terminal/final-top-final-terminal-out.png](media/terminal/final-top-final-terminal-out.png).
+> Evidence: [media/terminal/fmax.png](media/terminal/fmax.png) (sweep + steady verify) and [media/terminal/final-top-final-terminal-out.png](media/terminal/final-top-final-terminal-out.png) (500 MHz validation deck).
 
 ## Architecture
 
@@ -115,12 +121,6 @@ Screenshots of PDF figures live under [`media/readme/`](media/readme/) as **`fig
 > Decoder / SA / write paths **do not** add to the bitcell-area FOM term—only the repeated 6T width does ([§2 in the PDF](ESE3700_Proj2_Marhguy.pdf)).
 
 ### Highlights
-
-**Figure 38 — `find_fmax.py` sweep** (`fig:fmax_search`)
-
-<p align="center">
-  <img src="media/readme/fig38.png" alt="Figure 38: find_fmax.py binary search flowchart" width="72%" />
-</p>
 
 **Figure 43 — FOM sensitivity** (`fig:fom_sensitivity_bars`)
 
@@ -193,7 +193,7 @@ The SPICE decks are exported from Electric VLSI and use a PTM-style 22 nm HP mod
 Important entry points:
 
 - [spice/top.spi](spice/top.spi): top-level netlist and validation driver. The embedded `.control` block prints the headline `t_clk_to_dout` (single-edge access), `iavg_vdd`, `pavg_mw`, and `f_eq_ghz = 1 / t_clk_to_dout` used in the report.
-- [spice/find_fmax.py](spice/find_fmax.py): cycle-stepped `fmax` sweep driver. Binary-searches the CLK period under a 4-cycle write/write/read/read schedule against the live `top.spi`; closes at `T_min = 296.9 ps` (`fmax = 3.37 GHz`), the sustainable-cycle quantity the spec asks for.
+- [spice/find_fmax.py](spice/find_fmax.py): cycle-stepped `fmax` sweep driver. Binary-searches the CLK period under a 4-cycle write/write/read/read schedule against the live `top.spi`; closes at **`T_min ≈ 300.39 ps`** (**`fmax ≈ 3.329 GHz`**). Run with `--json` for metrics only on stdout.
 - [spice/sram_6t_cell.spi](spice/sram_6t_cell.spi): repeated 6T memory bitcell.
 - [spice/column_slice.spi](spice/column_slice.spi): precharge, write driver, sense amp, and output latch integration.
 - [spice/replica_column.spi](spice/replica_column.spi): dummy-column timing path for self-timed `SAE`.
