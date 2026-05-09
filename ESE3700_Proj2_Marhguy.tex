@@ -1696,9 +1696,9 @@ quantifies.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.92\linewidth,keepaspectratio]{media/terminal/final-top-final-terminal-out.png}
+  \includegraphics[width=0.92\linewidth,keepaspectratio]{media/terminal/final-terminal-out.png}
   \caption{Top-level extracted-netlist validation terminal output
-  (\texttt{media/terminal/final-top-final-terminal-out.png}, generated
+  (\texttt{media/terminal/final-terminal-out.png}, generated
   by the \texttt{.control} block above). Both readbacks PASS,
   $t_{\mathrm{CLK}\rightarrow D_{out}}=1.1065{\times}10^{-10}\,$s,
   $I_{DD,\mathrm{avg}}=-2.1367{\times}10^{-5}\,$A
@@ -2332,10 +2332,10 @@ Precharge: $t_{\text{pch,BL}}$ (0$\!\rightarrow\!0.95$\,V) & 179.8\,ps & \texttt
 Precharge: equalize time $t_{\text{equalize}}$ & 158.8\,ps & \texttt{media/terminal/prechargeeq results.png} \\
 Write driver (13\,fF load): $t_{\text{write,rise}}$ & 167.3\,ps & \texttt{media/terminal/write-driver-load.png} \\
 Write driver (13\,fF load): $t_{\text{write,fall}}$ & 142.9\,ps & \texttt{media/terminal/write-driver-load.png} \\
-Top-level $t_{\mathrm{CLK}\to D_{out}}$ (single-edge access) & 110.65\,ps & \texttt{media/terminal/final-top-final-terminal-out.png} \\
-Top-level $I_{DD,\mathrm{avg}}$ / $P_{\mathrm{avg}}$ & 21.367\,\textmu A / 21.367\,\textmu W & \texttt{media/terminal/final-top-final-terminal-out.png} \\
-Top-level readback @ 5\,ns / @ 7\,ns & $\mathtt{0x5}$ / $\mathtt{0xA}$ (PASS) & \texttt{media/terminal/final-top-final-terminal-out.png} \\
-Delay-derived equivalent frequency $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ & 9.037\,GHz @ 110.65\,ps & \texttt{media/terminal/final-top-final-terminal-out.png} \\
+Top-level $t_{\mathrm{CLK}\to D_{out}}$ (single-edge access) & 110.65\,ps & \texttt{media/terminal/final-terminal-out.png} \\
+Top-level $I_{DD,\mathrm{avg}}$ / $P_{\mathrm{avg}}$ & 21.367\,\textmu A / 21.367\,\textmu W & \texttt{media/terminal/final-terminal-out.png} \\
+Top-level readback @ 5\,ns / @ 7\,ns & $\mathtt{0x5}$ / $\mathtt{0xA}$ (PASS) & \texttt{media/terminal/final-terminal-out.png} \\
+Delay-derived equivalent frequency $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ & 9.037\,GHz @ 110.65\,ps & \texttt{media/terminal/final-terminal-out.png} \\
 Sustainable max CLK frequency $f_{\max}$ (W/W/R/R sweep) & 4.571\,GHz @ 218.75\,ps & \texttt{media/terminal/fmax.png}, \S\ref{sec:fmax_sweep} \\
 \bottomrule
 \end{tabularx}
