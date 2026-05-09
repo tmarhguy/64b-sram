@@ -1,7 +1,7 @@
 *** SPICE deck for cell top{sch} from library proj2
 *** Created on Tue May 05, 2026 21:19:42
 *** Last revised on Thu May 07, 2026 04:51:06
-*** Written on Fri May 08, 2026 18:47:08 by Electric VLSI Design System, version 9.08
+*** Written on Sat May 09, 2026 02:16:18 by Electric VLSI Design System, version 9.08
 *** Layout tech: mocmos, foundry MOSIS
 *** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
 *** Lambda Conversion ***
@@ -14,24 +14,24 @@
 .SUBCKT proj2__invX2_2 a y
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos@0 y a gnd gnd N L=1 W=3
-Mpmos@0 y a vdd vdd P L=1 W=6
+Mnmos@0 y a gnd gnd N L=1 W=1
+Mpmos@0 y a vdd vdd P L=1 W=2
 .ENDS proj2__invX2_2
 
 *** SUBCIRCUIT proj2__inv_X5 FROM CELL inv_X5{sch}
 .SUBCKT proj2__inv_X5 A Y
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos@0 Y A gnd gnd N L=1 W=14
-Mpmos@0 Y A vdd vdd P L=1 W=28
+Mnmos@0 Y A gnd gnd N L=1 W=5
+Mpmos@0 Y A vdd vdd P L=1 W=9
 .ENDS proj2__inv_X5
 
 *** SUBCIRCUIT proj2__tgate2 FROM CELL tgate2{sch}
 .SUBCKT proj2__tgate2 en en_b in out
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos-4@0 in en out gnd N L=1 W=3
-Mpmos-4@0 out en_b in vdd P L=1 W=3
+Mnmos-4@0 in en out gnd N L=1 W=1
+Mpmos-4@0 out en_b in vdd P L=1 W=1
 .ENDS proj2__tgate2
 
 *** SUBCIRCUIT proj2__dff FROM CELL dff{sch}
@@ -53,8 +53,8 @@ Xtgate2@3 clk clk_b netfb node1 proj2__tgate2
 .SUBCKT proj2__inv_X4 A Y
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos@0 Y A gnd gnd N L=1 W=6
-Mpmos@0 Y A vdd vdd P L=1 W=14
+Mnmos@0 Y A gnd gnd N L=1 W=2
+Mpmos@0 Y A vdd vdd P L=1 W=5
 .ENDS proj2__inv_X4
 
 *** SUBCIRCUIT proj2__inv FROM CELL inv{sch}
@@ -69,18 +69,18 @@ Mpmos@0 y a vdd vdd P L=1 W=1
 .SUBCKT proj2__inv_X8 A Y
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos@0 Y A gnd gnd N L=1 W=12
-Mpmos@0 Y A vdd vdd P L=1 W=28
+Mnmos@0 Y A gnd gnd N L=1 W=4
+Mpmos@0 Y A vdd vdd P L=1 W=9
 .ENDS proj2__inv_X8
 
 *** SUBCIRCUIT proj2__nor2 FROM CELL nor2{sch}
 .SUBCKT proj2__nor2 a b y
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos@0 y a gnd gnd N L=1 W=2
-Mnmos@1 y b gnd gnd N L=1 W=2
-Mpmos@0 net@0 b vdd vdd P L=1 W=2
-Mpmos@1 y a net@0 vdd P L=1 W=2
+Mnmos@0 y a gnd gnd N L=1 W=1
+Mnmos@1 y b gnd gnd N L=1 W=1
+Mpmos@0 net@0 b vdd vdd P L=1 W=1
+Mpmos@1 y a net@0 vdd P L=1 W=1
 .ENDS proj2__nor2
 
 *** SUBCIRCUIT proj2__clock-gen-2phase FROM CELL clock-gen-2phase{sch}
@@ -102,48 +102,55 @@ Xnor2@0 net@1 net@8 net@12 proj2__nor2
 Xnor2@1 net@12 net@17 net@8 proj2__nor2
 .ENDS proj2__clock-gen-2phase
 
+*** SUBCIRCUIT proj2__invX2 FROM CELL invX2{sch}
+.SUBCKT proj2__invX2 a y
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 y a gnd gnd N L=1 W=1
+Mpmos@0 y a vdd vdd P L=1 W=1
+.ENDS proj2__invX2
+
 *** SUBCIRCUIT proj2__tgate FROM CELL tgate{sch}
 .SUBCKT proj2__tgate en en_b in out
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos-4@0 in en out gnd N L=1 W=6
-Mpmos-4@0 out en_b in vdd P L=1 W=8
+Mnmos-4@0 in en out gnd N L=1 W=2
+Mpmos-4@0 out en_b in vdd P L=1 W=2
 .ENDS proj2__tgate
 
 *** SUBCIRCUIT proj2__output_latch FROM CELL output_latch{sch}
 .SUBCKT proj2__output_latch D_out phi2 phi2_b SO
 ** GLOBAL gnd
 ** GLOBAL vdd
-Xinv_X4@0 net@87 D_out proj2__inv_X4
-Xinv_X4@4 net@54 net@76 proj2__inv_X4
-Xinv_X4@5 net@76 net@87 proj2__inv_X4
-Xinv_X4@6 inv_X4@6_A inv_X4@6_Y proj2__inv_X4
-Xinv_X4@7 net@76 net@90 proj2__inv_X4
-Xtgate@0 phi2 phi2_b SO net@54 proj2__tgate
-Xtgate@1 phi2_b phi2 net@90 net@54 proj2__tgate
+XinvX2@2 net@14 net@61 proj2__invX2
+XinvX2@4 net@61 net@45 proj2__invX2
+XinvX2@5 net@61 net@59 proj2__invX2
+Xinv_X4@1 net@59 D_out proj2__inv_X4
+Xtgate@0 phi2 phi2_b SO net@14 proj2__tgate
+Xtgate@1 phi2_b phi2 net@45 net@14 proj2__tgate
 .ENDS proj2__output_latch
 
 *** SUBCIRCUIT proj2__precharge_eq FROM CELL precharge_eq{sch}
 .SUBCKT proj2__precharge_eq BL BLB PCH_b
 ** GLOBAL vdd
-Mpmos-4@0 BL PCH_b BLB vdd P L=1 W=2
-Mpmos-4@1 BLB PCH_b vdd vdd P L=1 W=6
-Mpmos-4@2 BL PCH_b vdd vdd P L=1 W=6
+Mpmos-4@0 BL PCH_b BLB vdd P L=1 W=1
+Mpmos-4@1 BLB PCH_b vdd vdd P L=1 W=2
+Mpmos-4@2 BL PCH_b vdd vdd P L=1 W=2
 .ENDS proj2__precharge_eq
 
 *** SUBCIRCUIT proj2__sense_amp FROM CELL sense_amp{sch}
 .SUBCKT proj2__sense_amp bl blb out outb SAE
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos@0 out outb node2 gnd N L=1 W=8
-Mnmos@1 outb out node3 gnd N L=1 W=8
-Mnmos@2 node2 bl node1 gnd N L=1 W=6
-Mnmos@3 node3 blb node1 gnd N L=1 W=6
-Mnmos@4 node1 SAE gnd gnd N L=1 W=10
-Mpmos@0 vdd SAE out vdd P L=1 W=3
-Mpmos@1 vdd outb out vdd P L=1 W=8
-Mpmos@2 vdd out outb vdd P L=1 W=8
-Mpmos@3 vdd SAE outb vdd P L=1 W=3
+Mnmos@0 out outb node2 gnd N L=1 W=2
+Mnmos@1 outb out node3 gnd N L=1 W=2
+Mnmos@2 node2 bl node1 gnd N L=1 W=2
+Mnmos@3 node3 blb node1 gnd N L=1 W=2
+Mnmos@4 node1 SAE gnd gnd N L=1 W=3
+Mpmos@0 vdd SAE out vdd P L=1 W=1
+Mpmos@1 vdd outb out vdd P L=1 W=2
+Mpmos@2 vdd out outb vdd P L=1 W=2
+Mpmos@3 vdd SAE outb vdd P L=1 W=1
 .ENDS proj2__sense_amp
 
 *** SUBCIRCUIT proj2__sram_6t_cell FROM CELL sram_6t_cell{sch}
@@ -157,14 +164,6 @@ Mnmos@6 blb wl qb gnd N L=2 W=1
 Mpmos@0 qb q vdd vdd P L=2 W=1
 Mpmos@1 q qb vdd vdd P L=2 W=1
 .ENDS proj2__sram_6t_cell
-
-*** SUBCIRCUIT proj2__invX2 FROM CELL invX2{sch}
-.SUBCKT proj2__invX2 a y
-** GLOBAL gnd
-** GLOBAL vdd
-Mnmos@0 y a gnd gnd N L=1 W=1
-Mpmos@0 y a vdd vdd P L=1 W=1
-.ENDS proj2__invX2
 
 *** SUBCIRCUIT proj2__tristate_inv FROM CELL tristate_inv{sch}
 .SUBCKT proj2__tristate_inv en en_b x y
@@ -216,22 +215,22 @@ Xwrite_dr@0 net@32 net@35 din wd_en proj2__write_driver
 .SUBCKT proj2__nand2 a b y
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos@2 net@69 b gnd gnd N L=1 W=6
-Mnmos@3 y a net@69 gnd N L=1 W=6
-Mpmos@1 y a vdd vdd P L=1 W=10
-Mpmos@2 y b vdd vdd P L=1 W=10
+Mnmos@2 net@69 b gnd gnd N L=1 W=2
+Mnmos@3 y a net@69 gnd N L=1 W=2
+Mpmos@1 y a vdd vdd P L=1 W=3
+Mpmos@2 y b vdd vdd P L=1 W=3
 .ENDS proj2__nand2
 
 *** SUBCIRCUIT proj2__nand3 FROM CELL nand3{sch}
 .SUBCKT proj2__nand3 a b c y
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos@2 net@11 b net@10 gnd N L=1 W=8
-Mnmos@3 y a net@11 gnd N L=1 W=8
-Mnmos@5 net@10 c gnd gnd N L=1 W=8
-Mpmos@0 y a vdd vdd P L=1 W=6
-Mpmos@1 y b vdd vdd P L=1 W=6
-Mpmos@2 y c vdd vdd P L=1 W=6
+Mnmos@2 net@11 b net@10 gnd N L=1 W=2
+Mnmos@3 y a net@11 gnd N L=1 W=2
+Mnmos@5 net@10 c gnd gnd N L=1 W=2
+Mpmos@0 y a vdd vdd P L=1 W=2
+Mpmos@1 y b vdd vdd P L=1 W=2
+Mpmos@2 y c vdd vdd P L=1 W=2
 .ENDS proj2__nand3
 
 *** SUBCIRCUIT proj2__predecoder_2to4 FROM CELL predecoder_2to4{sch}
@@ -306,9 +305,9 @@ Mpmos@1 gnd vdd vdd vdd P L=2 W=1
 .SUBCKT proj2__replica_column PCH_b SAE WL_0 WL_1 WL_10 WL_11 WL_12 WL_13 WL_14 WL_15 WL_2 WL_3 WL_4 WL_5 WL_6 WL_7 WL_8 WL_9
 ** GLOBAL gnd
 ** GLOBAL vdd
-Mnmos@0 net@117 net@20 gnd gnd N L=1 W=4
-Mpmos@0 vdd PCH_b net@20 vdd P L=1 W=4
-Mpmos@1 vdd net@20 net@117 vdd P L=1 W=2
+Mnmos@0 net@117 net@20 gnd gnd N L=1 W=2
+Mpmos@0 vdd PCH_b net@20 vdd P L=1 W=2
+Mpmos@1 vdd net@20 net@117 vdd P L=1 W=1
 Xdummy_bi@18 net@20 net@18 WL_0 proj2__dummy_bitcell
 Xdummy_bi@19 net@20 net@18 WL_1 proj2__dummy_bitcell
 Xdummy_bi@20 net@20 net@18 WL_2 proj2__dummy_bitcell
