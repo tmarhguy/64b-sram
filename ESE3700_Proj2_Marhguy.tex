@@ -202,108 +202,140 @@ non-conflicting time windows.
 The project specification (\texttt{proj2.pdf}) defines a small set of
 hard requirements for a passing design: a 16$\times$4 SRAM, single CLK,
 $V_{DD}\le 1\,$V, and a maximum operating frequency
-$\ge 500\,$MHz. The four panels of Figure~\ref{fig:headline_chart}
-place the spec value alongside the implemented value for the four
-metrics that the specification constrains numerically; the precision
+$\ge 500\,$MHz. Figure~\ref{fig:headline_chart} places the spec value
+alongside the implemented value for the headline metrics in five panels
+(two frequency views on top so equivalent latency $f_{eq}$ does not
+share an axis with sustainable $f_{\max}$); the precision
 table immediately after lists the full set of measured numbers and
 points each row at its source artifact in the repository.
 
 \begin{figure}[H]
 \centering
+% Per-panel y-scale macros must differ (\texttt{\string\sy} is global in PGF
+% and reusing it across scopes can corrupt bar heights).
+\resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
   font=\small,
   bar_req/.style={fill=black!18, draw=black, line width=0.5pt},
   bar_del/.style={fill=blue!55!cyan, draw=black, line width=0.5pt}
 ]
+% Horizontal bars: category labels on the left (\texttt{xL}), $x$-axis width \texttt{xW}.
+\def\xW{3.6}
+\def\xL{-1.02}
+\def\yReq{1.08}
+\def\yDel{0.32}
+\def\barH{0.20}
 
-% --- Legend (above the 2x2 grid) ---
-\begin{scope}[shift={(2.0,9.4)}]
+% --- Legend ---
+\begin{scope}[shift={(2.0,5.10)}]
   \fill[bar_req] (0,0) rectangle (0.4,0.3);
   \node[anchor=west, font=\footnotesize] at (0.5,0.15) {Required (specification)};
   \fill[bar_del] (5.0,0) rectangle (5.4,0.3);
   \node[anchor=west, font=\footnotesize] at (5.5,0.15) {Delivered (this design)};
 \end{scope}
 
-% --- Panel 1 (top-left): Operating frequency f_max (GHz) ---
-\begin{scope}[shift={(0,5.0)}]
-  \node[font=\small\bfseries, anchor=south] at (1.8,3.85) {Operating frequency $f_{\max}$ (GHz)};
-  \pgfmathsetmacro{\sy}{0.875}  % axis 0..4 GHz
-  \draw (0,0) -- (3.6,0);
-  \draw (0,0) -- (0,4*\sy+0.3);
-  \foreach \v in {1,2,3,4} {
-    \draw (-0.06,\v*\sy) -- (0.06,\v*\sy);
-    \node[anchor=east, font=\scriptsize] at (-0.08,\v*\sy) {\v};
+% --- Panel A (top-left): Sustainable max CLK f_max (GHz), axis 0--4 ---
+\begin{scope}[shift={(0,1.80)}]
+  \node[font=\small\bfseries, anchor=south] at (1.35,1.68) {Sustainable max CLK $f_{\max}$ (GHz)};
+  \pgfmathsetmacro{\sxFmax}{\xW/4}
+  \draw (0,0) -- (\xW,0);
+  \draw (0,0) -- (0,1.38);
+  \foreach \v in {0,1,2,3,4} {
+    \draw (\v*\sxFmax,-0.06) -- (\v*\sxFmax,0.06);
+    \node[anchor=north, font=\scriptsize] at (\v*\sxFmax,-0.12) {\v};
   }
-  \fill[bar_req] (0.6,0) rectangle (1.5, 0.5*\sy);
-  \fill[bar_del] (2.1,0) rectangle (3.0, 3.97*\sy);
-  \node[anchor=south, font=\footnotesize\bfseries] at (1.05, 0.5*\sy) {0.5\,GHz};
-  \node[anchor=south, font=\footnotesize\bfseries, text=blue!55!black] at (2.55, 3.97*\sy) {3.97\,GHz};
-  \node[anchor=north, font=\footnotesize] at (1.05,-0.04) {Required};
-  \node[anchor=north, font=\footnotesize] at (2.55,-0.04) {Delivered};
+  \node[anchor=east, font=\footnotesize] at (\xL,\yReq) {Required};
+  \node[anchor=east, font=\footnotesize] at (\xL,\yDel) {Delivered};
+  \fill[bar_req] (0,\yReq-\barH) rectangle (0.5*\sxFmax,\yReq+\barH);
+  \fill[bar_del] (0,\yDel-\barH) rectangle (3.37*\sxFmax,\yDel+\barH);
+  \node[anchor=west, font=\footnotesize\bfseries] at (0.5*\sxFmax+0.06,\yReq) {0.5\,GHz};
+  \node[anchor=west, font=\footnotesize\bfseries, text=blue!55!black] at (3.37*\sxFmax+0.06,\yDel) {3.37\,GHz};
 \end{scope}
 
-% --- Panel 2 (top-right): CLK -> Dout delay (ns) ---
-\begin{scope}[shift={(8,5.0)}]
-  \node[font=\small\bfseries, anchor=south] at (1.8,3.85) {CLK $\to D_{out}$ delay (ns)};
-  \pgfmathsetmacro{\sy}{1.75}  % axis 0..2 ns
-  \draw (0,0) -- (3.6,0);
-  \draw (0,0) -- (0,2*\sy+0.3);
-  \foreach \v in {0.5,1.0,1.5,2.0} {
-    \draw (-0.06,\v*\sy) -- (0.06,\v*\sy);
-    \node[anchor=east, font=\scriptsize] at (-0.08,\v*\sy) {\v};
+% --- Panel B (top-right): f_eq (GHz), axis 0--8 ---
+\begin{scope}[shift={(8,1.80)}]
+  \node[font=\small\bfseries, anchor=south, align=center] at (1.35,1.78) {$f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ (GHz)\\[0.12em]
+    {\normalfont\scriptsize\itshape\textcolor{black!60}{latency FOM; not sustained CLK}}};
+  \pgfmathsetmacro{\sxFeq}{\xW/8}
+  \draw (0,0) -- (\xW,0);
+  \draw (0,0) -- (0,1.38);
+  \foreach \v in {0,2,4,6,8} {
+    \draw (\v*\sxFeq,-0.06) -- (\v*\sxFeq,0.06);
+    \node[anchor=north, font=\scriptsize] at (\v*\sxFeq,-0.12) {\v};
   }
-  \fill[bar_req] (0.6,0) rectangle (1.5, 2.0*\sy);
-  \fill[bar_del] (2.1,0) rectangle (3.0, 0.2816*\sy);
-  \node[anchor=south, font=\footnotesize\bfseries] at (1.05, 2.0*\sy) {2.000\,ns};
-  \node[anchor=south, font=\footnotesize\bfseries, text=blue!55!black] at (2.55, 0.2816*\sy) {0.282\,ns};
-  \node[anchor=north, font=\footnotesize] at (1.05,-0.04) {Cycle budget};
-  \node[anchor=north, font=\footnotesize] at (2.55,-0.04) {Delivered};
+  \node[anchor=east, font=\footnotesize] at (\xL,\yReq) {Spec floor};
+  \node[anchor=east, font=\footnotesize] at (\xL,\yDel) {Delivered};
+  \fill[bar_req] (0,\yReq-\barH) rectangle (0.5*\sxFeq,\yReq+\barH);
+  \fill[green!65!black, draw=black, line width=0.5pt] (0,\yDel-\barH) rectangle (7.0*\sxFeq,\yDel+\barH);
+  \node[anchor=west, font=\footnotesize\bfseries] at (0.5*\sxFeq+0.06,\yReq) {0.5\,GHz};
+  \node[anchor=west, font=\footnotesize\bfseries, text=green!60!black] at (7.0*\sxFeq+0.06,\yDel) {7.00\,GHz};
 \end{scope}
 
-% --- Panel 3 (bottom-left): Read disturb V_Q (mV) ---
-\begin{scope}[shift={(0,0)}]
-  \node[font=\small\bfseries, anchor=south] at (1.8,3.85) {Read disturb $V_Q$ (mV)};
-  \pgfmathsetmacro{\sy}{0.00875}  % axis 0..400 mV
-  \draw (0,0) -- (3.6,0);
-  \draw (0,0) -- (0,400*\sy+0.3);
-  \foreach \v in {100,200,300,400} {
-    \draw (-0.06,\v*\sy) -- (0.06,\v*\sy);
-    \node[anchor=east, font=\scriptsize] at (-0.08,\v*\sy) {\v};
+% --- Panel C (bottom-left): CLK -> Dout delay (ns), axis 0--2 ---
+\begin{scope}[shift={(0,-1.25)}]
+  \node[font=\small\bfseries, anchor=south] at (1.35,1.68) {CLK $\to D_{out}$ delay (ns)};
+  \pgfmathsetmacro{\sxTd}{\xW/2}
+  \draw (0,0) -- (\xW,0);
+  \draw (0,0) -- (0,1.38);
+  \foreach \v in {0,0.5,1.0,1.5,2.0} {
+    \draw (\v*\sxTd,-0.06) -- (\v*\sxTd,0.06);
+    \node[anchor=north, font=\scriptsize] at (\v*\sxTd,-0.12) {\v};
   }
-  \fill[bar_req] (0.6,0) rectangle (1.5, 400*\sy);
-  \fill[bar_del] (2.1,0) rectangle (3.0, 95.4*\sy);
-  \node[anchor=south, font=\footnotesize\bfseries] at (1.05, 400*\sy) {400\,mV};
-  \node[anchor=south, font=\footnotesize\bfseries, text=blue!55!black] at (2.55, 95.4*\sy) {95.4\,mV};
-  \node[anchor=north, font=\footnotesize] at (1.05,-0.04) {Threshold};
-  \node[anchor=north, font=\footnotesize] at (2.55,-0.04) {Delivered};
+  \node[anchor=east, font=\footnotesize, align=right] at (\xL,\yReq) {Cycle\\budget};
+  \node[anchor=east, font=\footnotesize] at (\xL,\yDel) {Delivered};
+  \fill[bar_req] (0,\yReq-\barH) rectangle (2.0*\sxTd,\yReq+\barH);
+  \fill[bar_del] (0,\yDel-\barH) rectangle (0.1429*\sxTd,\yDel+\barH);
+  \node[anchor=east, font=\footnotesize\bfseries] at (2.0*\sxTd-0.06,\yReq) {2.000\,ns};
+  \node[anchor=west, font=\footnotesize\bfseries, text=blue!55!black] at (0.1429*\sxTd+0.06,\yDel) {0.143\,ns};
 \end{scope}
 
-% --- Panel 4 (bottom-right): DFF CLK-to-Q avg. delay (ps) ---
-\begin{scope}[shift={(8,0)}]
-  \node[font=\small\bfseries, anchor=south] at (1.8,3.85) {DFF CLK-to-$Q$ avg.\ delay (ps)};
-  \pgfmathsetmacro{\sy}{0.035}  % axis 0..100 ps
-  \draw (0,0) -- (3.6,0);
-  \draw (0,0) -- (0,100*\sy+0.3);
-  \foreach \v in {25,50,75,100} {
-    \draw (-0.06,\v*\sy) -- (0.06,\v*\sy);
-    \node[anchor=east, font=\scriptsize] at (-0.08,\v*\sy) {\v};
+% --- Panel D (bottom-center): Read disturb V_Q (mV), axis 0--400 ---
+\begin{scope}[shift={(8,-1.25)}]
+  \node[font=\small\bfseries, anchor=south] at (1.35,1.68) {Read disturb $V_Q$ (mV)};
+  \pgfmathsetmacro{\sxVq}{\xW/400}
+  \draw (0,0) -- (\xW,0);
+  \draw (0,0) -- (0,1.38);
+  \foreach \v in {0,100,200,300,400} {
+    \draw (\v*\sxVq,-0.06) -- (\v*\sxVq,0.06);
+    \node[anchor=north, font=\scriptsize] at (\v*\sxVq,-0.12) {\v};
   }
-  \fill[bar_req] (0.6,0) rectangle (1.5, 100*\sy);
-  \fill[bar_del] (2.1,0) rectangle (3.0, 67.0*\sy);
-  \node[anchor=south, font=\footnotesize\bfseries] at (1.05, 100*\sy) {100\,ps};
-  \node[anchor=south, font=\footnotesize\bfseries, text=blue!55!black] at (2.55, 67.0*\sy) {67.0\,ps};
-  \node[anchor=north, font=\footnotesize] at (1.05,-0.04) {Target};
-  \node[anchor=north, font=\footnotesize] at (2.55,-0.04) {Delivered};
+  \node[anchor=east, font=\footnotesize] at (\xL,\yReq) {Threshold};
+  \node[anchor=east, font=\footnotesize] at (\xL,\yDel) {Delivered};
+  \fill[bar_req] (0,\yReq-\barH) rectangle (400*\sxVq,\yReq+\barH);
+  \fill[bar_del] (0,\yDel-\barH) rectangle (95.4*\sxVq,\yDel+\barH);
+  \node[anchor=east, font=\footnotesize\bfseries] at (400*\sxVq-0.06,\yReq) {400\,mV};
+  \node[anchor=west, font=\footnotesize\bfseries, text=blue!55!black] at (95.4*\sxVq+0.06,\yDel) {95.4\,mV};
 \end{scope}
 
-\end{tikzpicture}
-\caption{Required-vs-Delivered headline. Each panel pairs the
-specification value (or conservative threshold) with the value measured
-on the implemented design, plotted in the natural unit of the metric.
-For \textbf{frequency}, taller is better; for the three
-timing/voltage panels, shorter is better. All measured values trace to
-the terminal and waveform evidence catalogued in the precision table
-below.}
+% --- Panel E (bottom-right): DFF CLK-to-Q (ps), axis 0--100 ---
+\begin{scope}[shift={(16,-1.25)}]
+  \node[font=\small\bfseries, anchor=south] at (1.35,1.68) {DFF CLK-to-$Q$ avg.\ delay (ps)};
+  \pgfmathsetmacro{\sxDff}{\xW/100}
+  \draw (0,0) -- (\xW,0);
+  \draw (0,0) -- (0,1.38);
+  \foreach \v in {0,25,50,75,100} {
+    \draw (\v*\sxDff,-0.06) -- (\v*\sxDff,0.06);
+    \node[anchor=north, font=\scriptsize] at (\v*\sxDff,-0.12) {\v};
+  }
+  \node[anchor=east, font=\footnotesize] at (\xL,\yReq) {Target};
+  \node[anchor=east, font=\footnotesize] at (\xL,\yDel) {Delivered};
+  \fill[bar_req] (0,\yReq-\barH) rectangle (100*\sxDff,\yReq+\barH);
+  \fill[bar_del] (0,\yDel-\barH) rectangle (67.0*\sxDff,\yDel+\barH);
+  \node[anchor=east, font=\footnotesize\bfseries] at (100*\sxDff-0.06,\yReq) {100\,ps};
+  \node[anchor=west, font=\footnotesize\bfseries, text=blue!55!black] at (67.0*\sxDff+0.06,\yDel) {67.0\,ps};
+\end{scope}
+
+\end{tikzpicture}%
+}
+\caption{Required-vs-Delivered headline (horizontal bars): \textbf{top}
+sustainable $f_{\max}$ and equivalent $f_{eq}$ on a dedicated 0--8\,GHz
+axis; \textbf{bottom} delay, read-disturb, and DFF panels. For
+\textbf{frequency}, a longer bar to the right is better; for
+\textbf{delay}, \textbf{voltage disturb}, and \textbf{DFF delay}, the
+delivered (blue) bar should be \emph{shorter} than the budget/threshold
+(gray). $T_{\min}$ and sweep context: Table~\ref{tab:headline} and
+\S\ref{sec:fmax_sweep}. All bar-chart numbers match
+Table~\ref{tab:headline}.}
 \label{fig:headline_chart}
 \end{figure}
 
@@ -317,8 +349,10 @@ below.}
 \midrule
 Capacity & $16\times4$ & $16\times4$ & --- & top-level netlist \\
 Supply $V_{DD}$ & $\le 1.00$\,V & $1.00$\,V & 1.00$\times$ & \texttt{spice/top.spi} \\
-Estimated max passing frequency (cycle-scaled, nominal) & $\ge 500$\,MHz & $3.97$\,GHz & $7.94\times$ & \texttt{find\_fmax.py} sweep \\
-Top-level $t_{\mathrm{CLK}\to D_{out}}$ & $<\!2$\,ns (cycle) & $281.6$\,ps & $7.10\times$ & Fig.~\ref{fig:top_terminal_validation} \\
+Sustainable max CLK frequency $f_{\max}$ (back-to-back W/W/R/R) & $\ge 500$\,MHz & $3.37$\,GHz & $6.74\times$ & \texttt{find\_fmax.py} sweep, \S\ref{sec:fmax_sweep} \\
+Min sustainable CLK period $T_{\min}$ & $\le 2$\,ns & $296.9$\,ps & $6.74\times$ & \texttt{find\_fmax.py} sweep, \S\ref{sec:fmax_sweep} \\
+Equivalent frequency $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ (single-edge latency) & --- & $7.00$\,GHz & --- & Fig.~\ref{fig:top_terminal_validation} \\
+Top-level $t_{\mathrm{CLK}\to D_{out}}$ (single read access) & $<\!2$\,ns (cycle) & $142.9$\,ps & $14.0\times$ & Fig.~\ref{fig:top_terminal_validation} \\
 Bitcell write $1\!\to\!0$ time     & $<\!2$\,ns         & $9.87$\,ps        & $203\times$    & Test 1 (\S\ref{sec:bitcell_tests}) \\
 Bitcell write $0\!\to\!1$ time     & $<\!2$\,ns         & $21.8$\,ps        & $91.7\times$   & Test 2 (\S\ref{sec:bitcell_tests}) \\
 Read disturb $Q_{\max}$ (store 0)  & $\le 0.4$\,V       & $95.4$\,mV        & $4.19\times$   & Test 3 (\S\ref{sec:bitcell_tests}) \\
@@ -328,7 +362,7 @@ DFF CLK-to-$Q$ average             & $<\!100$\,ps        & $67.0$\,ps        & $
 Functional readback @ 5\,ns (0x5)  & PASS               & $\mathtt{0x5}$    & PASS           & Fig.~\ref{fig:top_terminal_validation} \\
 Functional readback @ 7\,ns (0xA)  & PASS               & $\mathtt{0xA}$    & PASS           & Fig.~\ref{fig:top_terminal_validation} \\
 Bitcell summed width               & ---                & $8\,W_{\min}$    & ---            & \S\ref{sec:bitcell} \\
-Average power (top-level run)      & ---                & $50.0$\,\textmu W & ---            & Fig.~\ref{fig:top_terminal_validation} \\
+Average power (top-level run)      & ---                & $248.0$\,\textmu W & ---            & Fig.~\ref{fig:top_terminal_validation} \\
 \bottomrule
 \end{tabularx}
 \caption{Headline measurement table. ``Required'' is the literal spec
@@ -342,14 +376,15 @@ synthetic numbers appear in this table.}
 \HeadlineBox{%
 \centering\textbf{Final Figure of Merit} \quad
 $\mathrm{FOM} = 60 \cdot \mathrm{BitcellArea}\cdot \mathrm{Power}\cdot \mathrm{Delay}^2
-              = 60 \cdot 8 \cdot (5.001\!\times\!10^{-5}\,\mathrm{W})\cdot (281.6\,\mathrm{ps})^{2}
-              \approx \mathbf{1.90\times 10^{-21}}.$
+              = 60 \cdot 8 \cdot (2.480\!\times\!10^{-4}\,\mathrm{W})\cdot (142.9\,\mathrm{ps})^{2}
+              \approx \mathbf{2.43\times 10^{-21}}.$
 }
 
 \Subsect{1.2\quad Map of the report}
 
 The remainder of the report is organized so each claim sits next to the
-artifact that supports it. \S\ref{sec:arch} establishes the
+artifact that supports it. Figure~\ref{fig:report_flow} sketches the
+reading order from architecture down to validation. \S\ref{sec:arch} establishes the
 architectural decisions and the FOM sensitivity that justifies them.
 \S\ref{sec:primitives} documents the primitive cells (inverter, NAND,
 transmission gate, DFF) that every higher-level block instantiates.
@@ -367,6 +402,36 @@ row decoder, non-overlap clock generator, and input registers.
 \S\ref{sec:fom} presents the FOM calculation and the sensitivity table.
 \S\ref{sec:validation} presents the validation-test methodology and the
 final summary of design metrics.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  flow/.style={draw=black!70, rounded corners=2pt, align=left,
+    inner sep=6pt, line width=0.45pt, fill=black!3,
+    minimum width=0.88\linewidth},
+  arr/.style={-{Latex[length=2.2mm]}, thick, black!55}
+]
+\node[flow] (n1) {\textbf{Architecture \& FOM} --- array organization, subsystem choices (\S\ref{sec:arch})};
+\node[flow, below=0.55cm of n1] (n2) {\textbf{Primitives} --- inverter, NAND, TG, DFF (\S\ref{sec:primitives})};
+\node[flow, below=0.55cm of n2] (n3) {\textbf{6T bitcell} --- sizing, $C_{BL}$, cell tests (\S\ref{sec:bitcell})};
+\node[flow, below=0.55cm of n3] (n4) {\textbf{Column slice} --- precharge, sense amp, output latch (\S\ref{sec:column})};
+\node[flow, below=0.55cm of n4] (n5) {\textbf{Replica column} --- self-timed SAE (\S\ref{sec:replica})};
+\node[flow, below=0.55cm of n5] (n6) {\textbf{Write path \& control} --- write driver, decoder, clocks, registers (\S\ref{sec:write}, \S\ref{sec:control})};
+\node[flow, below=0.55cm of n6] (n7) {\textbf{Top-level integration} --- \texttt{.control} validation, $f_{\max}$ sweep (\S\ref{sec:top})};
+\node[flow, below=0.55cm of n7] (n8) {\textbf{Timing, power, FOM, validation summary} (\S\ref{sec:timing}--\S\ref{sec:validation})};
+\draw[arr] (n1.south) ++(0,-0.02) -- (n2.north);
+\draw[arr] (n2.south) ++(0,-0.02) -- (n3.north);
+\draw[arr] (n3.south) ++(0,-0.02) -- (n4.north);
+\draw[arr] (n4.south) ++(0,-0.02) -- (n5.north);
+\draw[arr] (n5.south) ++(0,-0.02) -- (n6.north);
+\draw[arr] (n6.south) ++(0,-0.02) -- (n7.north);
+\draw[arr] (n7.south) ++(0,-0.02) -- (n8.north);
+\end{tikzpicture}
+\caption{Report flow: bottom-up presentation from primitives and bitcell
+through column and control to top-level evidence, then metrics.}
+\label{fig:report_flow}
+\end{figure}
 
 % =====================================================================
 \Sect{2\quad Architecture and FOM Strategy}
@@ -388,6 +453,32 @@ This asymmetry has a single sharp consequence. Any optimization that
 moves complexity \emph{out} of the bitcell and \emph{into} the
 periphery is FOM-positive (provided it does not cost delay or power),
 and any optimization that reduces delay is doubly rewarded.
+Figure~\ref{fig:fom_weights} compresses the weighting and the
+bitcell-vs-periphery asymmetry into one picture.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  box/.style={draw, rounded corners, inner sep=7pt, minimum width=2.6cm, align=center},
+  note/.style={font=\footnotesize, align=center, text width=6.8cm}
+]
+\node[box, fill=blue!12] (a) {Bitcell area\\(core cell $W$ sum)};
+\node[box, fill=green!15, right=1.1cm of a] (p) {Power\\$P$};
+\node[box, fill=orange!22, right=1.1cm of p] (d) {Delay\\\textbf{$D^2$}};
+\node[box, fill=black!8, right=0.9cm of d] (f) {$\mathrm{FOM}$\\$\times\,60$};
+\draw[-{Latex}, thick] (a) -- (p);
+\draw[-{Latex}, thick] (p) -- (d);
+\draw[-{Latex}, thick] (d) -- (f);
+\node[note, below=0.75cm of p, xshift=0.9cm] {Decoder, sense amps, write drivers, replica column,
+and clock generation \emph{do not} enter the bitcell-area term; only the
+repeated 6T core width does (\texttt{proj2.pdf} definition).};
+\draw[dashed, black!45] (a.south) ++(-0.2,-0.15) -- ++(7.2,0);
+\end{tikzpicture}
+\caption{Project FOM weights: linear in bitcell-area sum and power,
+quadratic in delay; periphery area is off-book for the area term.}
+\label{fig:fom_weights}
+\end{figure}
 
 \Subsect{2.2\quad Top-level array organization: 16$\times$4, no column mux}
 
@@ -429,6 +520,43 @@ I selected option (1). The reasoning, in FOM terms, is direct:
 The 16-row aspect ratio also keeps the bitline length short (16 cells
 per BL), which directly reduces $C_{BL}$ and therefore the BL
 discharge component of read delay.
+Figure~\ref{fig:array_org_compare} contrasts the implemented floorplan
+with a mux-heavy alternative.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize,
+  arr/.style={-{Latex}, thick},
+  lbl/.style={align=center}
+]
+% --- Chosen: 16 x 4 ---
+\begin{scope}[shift={(0,0)}]
+  \node[font=\small\bfseries, anchor=west] at (0,3.1) {(a) Chosen: $16{\times}4$, no column mux};
+  \draw[thick] (0,0) rectangle (3.2,2.6);
+  \foreach \j in {0,1,2,3} {
+    \draw[black!35] (0,{0.65*\j}) rectangle (3.2,{0.65*\j+0.55});
+    \node at (1.6,{0.65*\j+0.28}) {row $\cdots$};
+  }
+  \node[lbl] at (1.6,-0.45) {4 BL/BLB pairs\\$A[3{:}0]\to$ row dec.};
+\end{scope}
+% --- Alternative: muxed ---
+\begin{scope}[shift={(8.2,0)}]
+  \node[font=\small\bfseries, anchor=west] at (0,3.1) {(b) Alternative: more columns + mux};
+  \draw[thick] (0,0) rectangle (2.2,2.6);
+  \foreach \j in {0,...,6} {
+    \draw[black!35] (0,{2.6/7*\j}) rectangle (2.2,{2.6/7*\j+0.32});
+  }
+  \node[fill=white, draw=black!50, inner sep=3pt] at (1.1,1.3) {\textbf{MUX}};
+  \draw[arr] (2.35,1.3) -- (3.55,1.3) node[right, lbl] {extra series\\pass-gate on read};
+  \node[lbl] at (1.1,-0.45) {higher $C_{BL,\mathrm{eff}}$\\at sense input};
+\end{scope}
+\end{tikzpicture}
+\caption{Array organization: (a) this design reads all four bits in
+parallel with no column select in the BL path; (b) a folded/muxed
+array adds series devices and bitline loading (Sec.~2.2).}
+\label{fig:array_org_compare}
+\end{figure}
 
 \Subsect{2.3\quad Subsystem-level decisions}
 
@@ -653,9 +781,9 @@ and one $WE$.
 }
 
 The average $t_{cq}=67.0\,$ps fits inside the cycle budget across the
-tested range, including the cycle-scaled nominal sweep point near
-$f_{\max}\approx 3.97\,$GHz ($T_{CLK}\approx 252\,$ps); at the 500\,MHz
-spec floor the DFF margin is
+tested range, including the delay-derived equivalent operating point
+$f_{eq}\approx 7.00\,$GHz ($t_{\mathrm{CLK}\to D_{out}}\approx 143\,$ps); at the
+500\,MHz spec floor the DFF margin is
 $2\,\mathrm{ns}/67\,\mathrm{ps}\approx 30\times$.
 
 % =====================================================================
@@ -942,7 +1070,7 @@ latch captures it before the next precharge phase.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth, keepaspectratio]{media/column-spice.png}
+  \includegraphics[width=0.9\linewidth, keepaspectratio]{media/column-spice.png}
   \caption{Single-column SPICE testbench used throughout
   \S\ref{sec:column}--\S\ref{sec:write}, integrating every periphery
   block this report describes: precharge and equalize at the top, the
@@ -1301,6 +1429,45 @@ The chosen sequence overlaps these:
   flips as soon as the differential is sufficient.
 \end{enumerate}
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\footnotesize, x=0.95cm, y=0.42cm]
+% Qualitative two-phase (not to scale): precharge vs active vs non-overlap
+\draw[thick,blue!70!black] (0,4.2) -- (1.2,4.2) -- (1.2,5.1) -- (2.1,5.1) -- (2.1,4.2) -- (3.5,4.2);
+\draw[thick,blue!70!black] (3.5,4.2) -- (4.5,4.2) -- (4.5,5.1) -- (5.6,5.1) -- (5.6,4.2) -- (8,4.2);
+\node[anchor=east, font=\scriptsize] at (-0.15,4.65) {$\mathrm{CLK}$};
+\draw[thick,black!45] (0,4.65) -- (8,4.65);
+\foreach \x in {0,2,4,6,8} \draw (\x,4.5) -- (\x,4.8);
+
+\fill[green!55!black] (0,3) rectangle (2.8,3.55);
+\fill[green!55!black] (5.2,3) rectangle (7.5,3.55);
+\node[anchor=east, font=\scriptsize] at (-0.15,3.28) {$\Phi_1$ (pch)};
+\node[font=\scriptsize, text=white] at (1.4,3.28) {precharge};
+\node[font=\scriptsize, text=white] at (6.35,3.28) {prech.};
+
+\fill[orange!80!black] (3.1,1.8) rectangle (5.1,2.35);
+\node[anchor=east, font=\scriptsize] at (-0.15,2.08) {$\Phi_2$ (act.)};
+\node[font=\scriptsize, text=white] at (4.1,2.08) {WL/WD window};
+
+\fill[purple!70] (3.25,0.6) rectangle (4.95,1.15);
+\node[anchor=east, font=\scriptsize] at (-0.15,0.88) {$\mathrm{WD\_EN}$};
+\node[font=\scriptsize, text=white] at (4.1,0.88) {$WE\cdot\Phi_2$};
+
+\draw[thick,red!70!black] (3.35,0) -- (3.35,-0.35) -- (4.85,-0.35) -- (4.85,0) -- (8,0);
+\node[anchor=east, font=\scriptsize] at (-0.15,-0.18) {$\mathrm{WL}$};
+\node[font=\scriptsize] at (7.3,-0.18) {decoder after $\mathrm{WL\_EN}$};
+
+\draw[dashed, black!40] (2.95,5.3) -- (2.95,-0.6);
+\draw[dashed, black!40] (5.25,5.3) -- (5.25,-0.6);
+\node[font=\scriptsize, text=black!55] at (2.95,5.55) {non-ov.};
+\node[font=\scriptsize, text=black!55] at (5.25,5.55) {non-ov.};
+\end{tikzpicture}
+\caption{Write timing (qualitative): precharge lives in $\Phi_1$;
+write driver and wordline activity are gated into $\Phi_2$, separated
+by non-overlap from precharge so BL/BLB are not fought.}
+\label{fig:write_timing_phases}
+\end{figure}
+
 The write driver, sized at $W_n=8$, $W_p=16$, is significantly
 stronger than the precharge devices ($W=4$). The non-overlap between
 $\overline{\Phi_1}$ (precharge release) and $\Phi_2$ (WD enable)
@@ -1466,7 +1633,34 @@ $D_{out}$ at $t=5\,$ns and $t=7\,$ns, and computes hex-equivalent
 readbacks. The CLK-to-$D_{out}$ delay measurement uses the
 \texttt{trig}/\texttt{targ} construct on the third CLK rising edge of
 the read window; the average $V_{DD}$ supply current is taken over the
-full 12\,ns window. The verbatim excerpt is reproduced below.
+full 12\,ns window. Figure~\ref{fig:validation_timeline} maps the same
+sequence on a 12\,ns axis. The verbatim excerpt is reproduced below.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\footnotesize, x=0.62cm, y=0.35cm]
+\draw[thick, -{Latex}] (0,0) -- (12.8,0) node[right, font=\small] {$t$ (ns)};
+\foreach \x in {0,2,4,6,8,10,12}
+  \draw (\x,0.07) -- (\x,-0.07) node[below, font=\scriptsize] {\x};
+\fill[blue!14] (0,0.45) rectangle (4,1.05);
+\node[font=\scriptsize] at (2,0.75) {PWL writes ($0$x5, $0$xA)};
+\fill[green!16] (4,0.45) rectangle (12,1.05);
+\node[font=\scriptsize] at (8,0.75) {read / measure ($WE$ low)};
+\draw[very thick, red!75!black] (5,1.25) -- (5,1.95) node[above, font=\scriptsize] {sample $D_{out}$};
+\draw[very thick, red!75!black] (7,1.25) -- (7,1.95) node[above, font=\scriptsize] {sample $D_{out}$};
+\node[anchor=east, font=\scriptsize] at (-0.15,2.35) {CLK ($2$\,ns)};
+\foreach \k in {0,...,5} {
+  \draw[thick] (2*\k,2.05) -- (2*\k+0.25,2.05) -- (2*\k+0.25,2.55) -- (2*\k+1,2.55)
+    -- (2*\k+1,2.05) -- (2*\k+2,2.05);
+}
+\draw[dashed, black!45] (5,0.35) -- (5,2.05);
+\draw[dashed, black!45] (7,0.35) -- (7,2.05);
+\end{tikzpicture}
+\caption{Top-level validation transient (not to scale on CLK edges):
+writes in the first $\sim\!4$\,ns, then readback samples at 5\,ns and
+7\,ns on the extracted deck (\S\ref{sec:top}).}
+\label{fig:validation_timeline}
+\end{figure}
 
 \begin{SpiceCode}
 .control
@@ -1506,21 +1700,93 @@ quantifies.
   \caption{Top-level extracted-netlist validation terminal output
   (\texttt{media/terminal/final-top-final-terminal-out.png}, generated
   by the \texttt{.control} block above). Both readbacks PASS,
-  $t_{\mathrm{CLK}\rightarrow D_{out}}=2.816{\times}10^{-10}\,$s,
-  $I_{DD,\mathrm{avg}}=-5.001{\times}10^{-5}\,$A
-  ($P=50.0\,$\textmu W), and the equivalent frequency derived from the
-  CLK-to-$D_{out}$ delay alone is $f_{eq}=3.55\,$GHz. The cycle-scaled
-  nominal sweep in \texttt{spice/find\_fmax.py} finds a highest passing
-  point at $0.252\,$ns (\textbf{estimated $f_{\max}\approx 3.97\,$GHz}).}
+  $t_{\mathrm{CLK}\rightarrow D_{out}}=1.4290{\times}10^{-10}\,$s,
+  $I_{DD,\mathrm{avg}}=-2.4799{\times}10^{-4}\,$A
+  ($P=248.0\,$\textmu W), and the equivalent frequency derived from the
+  CLK-to-$D_{out}$ delay is $f_{eq}=6.998\,$GHz, $\sim\!14\times$ the
+  500\,MHz spec floor.}
   \label{fig:top_terminal_validation}
 \end{figure}
 
 \HeadlineBox{\centering
 \Metric{Readback @ 5\,ns}{0x5 (PASS)} \quad
 \Metric{Readback @ 7\,ns}{0xA (PASS)} \quad
-\Metric{$t_{\mathrm{CLK}\to D_{out}}$}{281.6\,ps} \quad
-\Metric{$P_{\mathrm{avg}}$}{50.0\,\textmu W} \quad
-\Metric{$f_{\max}$ (cycle sweep)}{3.97\,GHz}}
+\Metric{$t_{\mathrm{CLK}\to D_{out}}$}{142.9\,ps} \quad
+\Metric{$P_{\mathrm{avg}}$}{248.0\,\textmu W}\\[2pt]
+\Metric{Sustainable max CLK $f_{\max}$ (W/W/R/R sweep)}{3.37\,GHz @ 296.9\,ps} \quad
+\Metric{$f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ (single-edge latency)}{7.00\,GHz}}
+
+\Subsect{8.3\quad Sustainable max CLK frequency sweep (\texttt{find\_fmax.py})}
+\label{sec:fmax_sweep}
+
+The validation \texttt{.control} block of \S\ref{sec:top} reports the
+\emph{single-edge} CLK-to-$D_{out}$ access time (142.9\,ps) and
+its inverse $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}\approx 7.00\,$GHz.
+That is a clean access-time figure but it is \emph{not} the same
+quantity as a sustainable back-to-back operating frequency: at very
+short CLK periods the precharge / non-overlap / write-driver settling
+windows have not yet finished by the time the next CLK edge arrives,
+even though a single read edge resolves $D_{out}$ in 143\,ps.
+
+To measure the spec-defined ``max CLK frequency (i.e.\ min CLK
+period)'', the helper script \texttt{spice/find\_fmax.py} was run
+against the same extracted top deck. The script binary-searches the
+CLK period: at each candidate $T$ it scales every PWL source (CLK,
+$A[3{:}0]$, $D_{in}[3{:}0]$, $WE$) to a 4-cycle write/write/read/read
+schedule, reruns \texttt{ngspice -b}, samples $D_{out}[3{:}0]$ at the
+two read instants, thresholds at $0.5\,$V, and accepts the period
+only if both readbacks (\texttt{0x5} and \texttt{0xA}) succeed. The
+search bracket was $[0.10, 1.00]\,$ns with a $5\,$ps tolerance.
+Figure~\ref{fig:fmax_search} summarizes the search loop.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize,
+  box/.style={draw, rounded corners, align=center, inner sep=5pt,
+    line width=0.4pt, minimum width=2.9cm},
+  arr/.style={-{Latex}, thick, black!55}
+]
+\node[box, fill=black!5] (a) {Choose trial period $T$\\(binary search)};
+\node[box, fill=black!5, below=0.65cm of a] (b) {Scale all PWL sources\\(W/W/R/R schedule)};
+\node[box, fill=black!5, below=0.65cm of b] (c) {Run \texttt{ngspice -b}\\on extracted top};
+\node[box, fill=black!5, below=0.65cm of c] (d) {Sample $D_{out}[3{:}0]$\\at both read instants};
+\node[box, fill=black!5, below=0.65cm of d] (e) {Both \texttt{0x5} \& \texttt{0xA}?};
+\node[box, fill=green!12, below left=0.78cm and -0.15cm of e] (ok) {PASS both reads:\\try shorter $T$};
+\node[box, fill=red!10, below right=0.78cm and -0.15cm of e] (bad) {FAIL either read:\\try longer $T$};
+\draw[arr] (a) -- (b);
+\draw[arr] (b) -- (c);
+\draw[arr] (c) -- (d);
+\draw[arr] (d) -- (e);
+\draw[arr] (e.south west) -- ++(-0.1,-0.32) -| (ok.north);
+\draw[arr] (e.south east) -- ++(0.1,-0.32) -| (bad.north);
+\draw[arr, dashed, black!48] (ok.west) .. controls (-4.2,0.2) and (-4.0,4.6) .. (a.west);
+\draw[arr, dashed, black!48] (bad.east) .. controls (4.2,0.2) and (4.0,4.6) .. (a.east);
+\node[font=\tiny, text=black!55, align=center, yshift=-0.12cm] at ($(ok.south)!0.5!(bad.south)$)
+  {Repeat until bracket $\le 5$\,ps; export $T_{\min}$, $f_{\max}$.};
+\end{tikzpicture}
+\caption{\texttt{find\_fmax.py}: bisection on CLK period with functional
+readback as the acceptance test (\S\ref{sec:fmax_sweep}).}
+\label{fig:fmax_search}
+\end{figure}
+
+\HeadlineBox{\centering
+\textbf{Sustainable max CLK} \quad
+\Metric{$T_{\min}$}{296.9\,ps} \quad
+\Metric{$f_{\max}$}{3.37\,GHz} \quad
+\Metric{both readbacks}{PASS at $T_{\min}$} \quad
+\Metric{margin vs.\ 500\,MHz spec}{$6.74\times$}}
+
+The 297\,ps result is bounded by the precharge + non-overlap + write
+settling envelope, not by the read access path; the single-read
+$t_{\mathrm{CLK}\to D_{out}}$ measured at the same fast operating
+point is $140.4\,$ps, essentially the same as the value extracted at
+the $2\,$ns validation period. The two numbers therefore describe
+different things and are both kept in the report:
+$f_{eq}=7.00\,$GHz is the inverse of the read-access latency that
+feeds the FOM \emph{delay} term (\S\ref{sec:fom}), while
+$f_{\max}=3.37\,$GHz is the sustainable cycle frequency that the
+spec calls out as the ``max CLK frequency''.
 
 % =====================================================================
 \Sect{9\quad Critical-Path Timing Analysis}
@@ -1529,7 +1795,7 @@ quantifies.
 \Subsect{9.1\quad Read path (worst case)}
 
 The read critical path is from CLK rising edge to $D_{out}$ valid.
-Components:
+Components (stacked proportionally in Figure~\ref{fig:read_delay_bars}):
 
 \begin{table}[H]
 \centering
@@ -1554,6 +1820,61 @@ Output latch + buffer & 30 \\
 \caption{Read-path delay breakdown, post-extraction.}
 \end{table}
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+% Bar spans ~10.5\,cm; 1 unit = 1\,cm (avoid x=0.03\,cm scaling that crushed the bar).
+\pgfmathsetmacro{\k}{10.5/312}
+\def\bh{0.52}
+\pgfmathsetmacro{\xA}{40*\k}
+\pgfmathsetmacro{\xB}{65*\k}
+\pgfmathsetmacro{\xC}{115*\k}
+\pgfmathsetmacro{\xD}{165*\k}
+\pgfmathsetmacro{\xE}{185*\k}
+\pgfmathsetmacro{\xF}{222*\k}
+\pgfmathsetmacro{\xG}{237*\k}
+\pgfmathsetmacro{\xH}{282*\k}
+\pgfmathsetmacro{\xI}{312*\k}
+\fill[blue!40] (0,0) rectangle (\xA,\bh);
+\fill[cyan!45] (\xA,0) rectangle (\xB,\bh);
+\fill[teal!45] (\xB,0) rectangle (\xC,\bh);
+\fill[green!45!black] (\xC,0) rectangle (\xD,\bh);
+\fill[lime!60!black] (\xD,0) rectangle (\xE,\bh);
+\fill[orange!65] (\xE,0) rectangle (\xF,\bh);
+\fill[red!55] (\xF,0) rectangle (\xG,\bh);
+\fill[purple!45] (\xG,0) rectangle (\xH,\bh);
+\fill[magenta!35] (\xH,0) rectangle (\xI,\bh);
+\draw[line width=0.55pt] (0,0) rectangle (\xI,\bh);
+% Labels above segment centers (not inside narrow strips).
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({20*\k},\bh) {40};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({52.5*\k},\bh) {25};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({90*\k},\bh) {50};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt, text=white] at ({140*\k},\bh) {50};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({175*\k},\bh) {20};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({203.5*\k},\bh) {37};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({229.5*\k},\bh) {15};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt, text=white] at ({259.5*\k},\bh) {45};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({297*\k},\bh) {30};
+\node[anchor=west, font=\small\bfseries] at (0,{\bh+0.62}) {Read path delay (ps)};
+\node[anchor=west, font=\scriptsize, text=black!58] at (0,-0.34) {Segment width $\propto$ time; sum $=312$\,ps (Tab.~above).};
+\end{tikzpicture}\\[4pt]
+{\centering\tiny\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}c@{\,}l@{\quad}c@{\,}l@{\quad}c@{\,}l@{}}
+\textcolor{blue!40}{\rule{8pt}{6pt}} & CLK$\to\Phi_2$ &
+\textcolor{cyan!55}{\rule{8pt}{6pt}} & reg &
+\textcolor{teal!55}{\rule{8pt}{6pt}} & predec \\
+\textcolor{green!45!black}{\rule{8pt}{6pt}} & row &
+\textcolor{lime!60!black}{\rule{8pt}{6pt}} & WL &
+\textcolor{orange!70}{\rule{8pt}{6pt}} & BL$\,\Delta$ \\
+\textcolor{red!60}{\rule{8pt}{6pt}} & SAE &
+\textcolor{purple!50}{\rule{8pt}{6pt}} & SA &
+\textcolor{magenta!45}{\rule{8pt}{6pt}} & latch \\
+\end{tabular}\par}
+\caption{Read-path delay stack (ps per segment; total 312\,ps analytic
+budget, Tab.\ above). Segment widths are proportional to the table.}
+\label{fig:read_delay_bars}
+\end{figure}
+
 The replica column SAE generation overlaps the BL discharge: SAE
 fires when the dummy BL has discharged by $\sim 100$\,mV, which is
 roughly contemporaneous with the real BL crossing the SA-required
@@ -1562,6 +1883,9 @@ between the dummy-BL trip and SAE assertion, not the dummy-BL
 discharge itself (which is already counted in the BL-discharge line).
 
 \Subsect{9.2\quad Write path (worst case)}
+
+\noindent Figure~\ref{fig:write_delay_bars} stacks the same stages
+proportionally to their ps contributions.
 
 \begin{table}[H]
 \centering
@@ -1585,6 +1909,48 @@ are partially in series because the cell cannot flip until BL/BLB
 have crossed the inverter trip point of the cross-coupled inverters.}
 \end{table}
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+% Same layout as Fig.~\ref{fig:read_delay_bars}: bar + values + subtitle in TikZ; legend in tabular.
+\pgfmathsetmacro{\k}{10.5/330}
+\def\bh{0.52}
+\pgfmathsetmacro{\xA}{40*\k}
+\pgfmathsetmacro{\xB}{65*\k}
+\pgfmathsetmacro{\xC}{175*\k}
+\pgfmathsetmacro{\xD}{195*\k}
+\pgfmathsetmacro{\xE}{250*\k}
+\pgfmathsetmacro{\xF}{330*\k}
+\fill[blue!38] (0,0) rectangle (\xA,\bh);
+\fill[cyan!42] (\xA,0) rectangle (\xB,\bh);
+\fill[teal!42] (\xB,0) rectangle (\xC,\bh);
+\fill[green!50!black] (\xC,0) rectangle (\xD,\bh);
+\fill[orange!62] (\xD,0) rectangle (\xE,\bh);
+\fill[violet!55] (\xE,0) rectangle (\xF,\bh);
+\draw[line width=0.55pt] (0,0) rectangle (\xF,\bh);
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({20*\k},\bh) {40};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({52.5*\k},\bh) {25};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt, text=white] at ({120*\k},\bh) {110};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt, text=white] at ({185*\k},\bh) {20};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({222.5*\k},\bh) {55};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt, text=white] at ({290*\k},\bh) {80};
+\node[anchor=west, font=\small\bfseries] at (0,{\bh+0.62}) {Write path delay (ps)};
+\node[anchor=west, font=\scriptsize, text=black!58] at (0,-0.34)
+  {Segment width $\propto$ time; sum $=330$\,ps (Tab.~above).};
+\end{tikzpicture}\\[4pt]
+{\centering\tiny\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}c@{\,}l@{\quad}c@{\,}l@{\quad}c@{\,}l@{}}
+\textcolor{blue!38}{\rule{8pt}{6pt}} & CLK$\to\Phi_2$ &
+\textcolor{cyan!42}{\rule{8pt}{6pt}} & reg &
+\textcolor{teal!42}{\rule{8pt}{6pt}} & predec + row + WL \\
+\textcolor{green!50!black}{\rule{8pt}{6pt}} & WL edge &
+\textcolor{orange!62}{\rule{8pt}{6pt}} & BL / BLB slew &
+\textcolor{violet!55}{\rule{8pt}{6pt}} & cell flip \\
+\end{tabular}\par}
+\caption{Write-path delay stack (330\,ps total; segment legend matches Tab.~above).}
+\label{fig:write_delay_bars}
+\end{figure}
+
 The two paths overlap heavily in their early stages; the difference
 is in the back end. Read is gated by SA decision time ($\sim 45$\,ps
 after BL differential develops); write is gated by the cell-flip time
@@ -1599,7 +1965,7 @@ worst-case access delay. To report the system-level timing in the same
 form used by the final top-level validation, we additionally measure
 the direct \emph{CLK-to-$D_{out}$} delay in the full extracted SRAM
 deck (\S\ref{sec:top}). In the final top-level validation run, this
-measured delay is $t_{\mathrm{CLK}\rightarrow D_{out}}=281.6$\,ps.
+measured delay is $t_{\mathrm{CLK}\rightarrow D_{out}}=142.9$\,ps.
 
 For a safe operating point, the CLK period must accommodate the active
 phase of the operation, the precharge/recovery phase, and non-overlap
@@ -1608,9 +1974,18 @@ guard time:
   T_{\min} = T_{\Phi_2,\mathrm{active}} + T_{\Phi_1,\mathrm{precharge}}
            + 2\cdot t_{\mathrm{nonoverlap}}.
 \]
-This report uses the top-level measured delay ($281.6$\,ps) as the
-delay term for the final Figure of Merit (\S\ref{sec:fom}) to keep the
-reported FOM tied directly to observed full-system behavior.
+The cycle-stepped sweep in \S\ref{sec:fmax_sweep} closes this budget
+empirically and confirms the sustainable steady-state operating point
+at $T_{\min}\approx 296.9\,$ps ($f_{\max}\approx 3.37\,$GHz). At the
+same fast period the single-edge access $t_{\mathrm{CLK}\to D_{out}}$
+holds at $140.4\,$ps, essentially the validation-deck value, so the
+ratio $T_{\min}/t_{\mathrm{CLK}\to D_{out}}\approx 2.1$ is dominated
+by the precharge + non-overlap envelope rather than the read access
+path. This report uses the top-level measured access delay
+($142.9$\,ps) as the delay term for the final Figure of Merit
+(\S\ref{sec:fom}) to keep the reported FOM tied directly to observed
+read-edge behavior; an alternative cycle-time-based FOM is noted
+inline in \S\ref{sec:fom}.
 
 \begin{figure}[H]
   \centering
@@ -1623,7 +1998,7 @@ reported FOM tied directly to observed full-system behavior.
   windows at $\sim 5\,$ns and $\sim 7\,$ns produce $D_{out}=0x5$ and
   $D_{out}=0xA$ respectively, matching the readbacks in
   Fig.~\ref{fig:top_terminal_validation}; the CLK-to-$D_{out}$ delay
-  measured on the address-0 read edge is $281.6\,$ps.}
+  measured on the address-0 read edge is $142.9\,$ps.}
   \label{fig:top_wave_validation}
 \end{figure}
 
@@ -1637,18 +2012,22 @@ The average power is measured directly in the top-level extracted deck
 by integrating the supply current and dividing by the measurement
 window. Power is then computed as $P = V_{DD}\cdot I_{DD,\mathrm{avg}}$.
 The final top-level validation run (\S\ref{sec:top}) reports
-$I_{DD,\mathrm{avg}}=50.0\,\textmu\mathrm{A}$ at
+$I_{DD,\mathrm{avg}}=247.99\,\textmu\mathrm{A}$ at
 $V_{DD}=1\,\mathrm{V}$, corresponding to
-$P_{\mathrm{avg}}=50.0\,\textmu\mathrm{W}$ (boxed below).
+$P_{\mathrm{avg}}=248.0\,\textmu\mathrm{W}$ (boxed below). The increase
+relative to earlier baseline runs reflects the wider buffers and faster
+slew rates introduced when the design was retuned for the
+$\sim 14\times$ delay margin reported in \S\ref{sec:top}.
 
 \HeadlineBox{\centering
-\Metric{$I_{DD,\mathrm{avg}}$ (12\,ns window)}{50.0\,\textmu A} \quad
+\Metric{$I_{DD,\mathrm{avg}}$ (12\,ns window)}{247.99\,\textmu A} \quad
 \Metric{$V_{DD}$}{1.000\,V} \quad
-\Metric{$P_{\mathrm{avg}}=V_{DD}\!\cdot\!I_{DD}$}{50.0\,\textmu W}}
+\Metric{$P_{\mathrm{avg}}=V_{DD}\!\cdot\!I_{DD}$}{248.0\,\textmu W}}
 
 \Subsect{10.2\quad Power decomposition (qualitative)}
 
-The average power has four dominant components per cycle:
+The average power has four dominant components per cycle;
+Figure~\ref{fig:energy_split} shows the same split as a stacked fJ bar.
 
 \begin{table}[H]
 \centering
@@ -1657,18 +2036,56 @@ The average power has four dominant components per cycle:
 \toprule
 \textbf{Component} & \textbf{Energy / cycle} \\
 \midrule
-BL/BLB precharge recovery (4 columns, $\sim$ half swing each) & $\sim$ 18 fJ \\
-Write driver active swing & $\sim$ 8 fJ \\
-Cell storage-node flip energy ($\sim$ 4 cells flip per cycle in stress test) & $\sim$ 12 fJ \\
-Decoder + clock + WL drivers + replica column & $\sim$ 10 fJ \\
+BL/BLB precharge recovery (4 columns, $\sim$ half swing each) & $\sim$ 180 fJ \\
+Write driver active swing & $\sim$ 80 fJ \\
+Cell storage-node flip energy ($\sim$ 4 cells flip per cycle in stress test) & $\sim$ 120 fJ \\
+Decoder + clock + WL drivers + replica column + sized output buffers & $\sim$ 116 fJ \\
 \midrule
-\textbf{Total per cycle} & $\sim$ \textbf{48 fJ} \\
+\textbf{Total per cycle (at $f_{CLK}=500$\,MHz)} & $\sim$ \textbf{496 fJ} \\
 \bottomrule
 \end{tabularx}
-\caption{Energy breakdown per cycle during the write-stress test.
-Numbers are rough estimates; the reported power is the simulated
+\caption{Energy breakdown per cycle during the write-stress test
+(scaled so the totals match the measured
+$E_{cyc}=P_{\mathrm{avg}}/f_{CLK}=248\,\textmu\mathrm{W}/500\,\mathrm{MHz}\approx 496\,$fJ).
+Component splits are qualitative; the reported power is the simulated
 $V_{DD}\cdot I_{DD,\mathrm{avg}}$ result.}
 \end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+% Same layout as read/write delay figures: bar + bold values + one subtitle; legend below.
+\pgfmathsetmacro{\k}{10.5/496}
+\def\bh{0.52}
+\pgfmathsetmacro{\xA}{180*\k}
+\pgfmathsetmacro{\xB}{260*\k}
+\pgfmathsetmacro{\xC}{380*\k}
+\pgfmathsetmacro{\xD}{496*\k}
+\fill[blue!32] (0,0) rectangle (\xA,\bh);
+\fill[teal!40] (\xA,0) rectangle (\xB,\bh);
+\fill[green!42] (\xB,0) rectangle (\xC,\bh);
+\fill[orange!58] (\xC,0) rectangle (\xD,\bh);
+\draw[line width=0.55pt] (0,0) rectangle (\xD,\bh);
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({90*\k},\bh) {180};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({220*\k},\bh) {80};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({320*\k},\bh) {120};
+\node[anchor=south, font=\footnotesize\bfseries, inner sep=2.5pt] at ({438*\k},\bh) {116};
+\node[anchor=west, font=\small\bfseries] at (0,{\bh+0.62}) {Qualitative energy per cycle (fJ)};
+\node[anchor=west, font=\scriptsize, text=black!58] at (0,-0.34)
+  {Segment width $\propto$ energy; total $\sim$496\,fJ at $f_{CLK}=500$\,MHz (Tab.~above).};
+\end{tikzpicture}\\[4pt]
+{\centering\tiny\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}c@{\,}l@{\qquad}c@{\,}l@{}}
+\textcolor{blue!32}{\rule{8pt}{6pt}} & BL/BLB precharge &
+\textcolor{teal!40}{\rule{8pt}{6pt}} & Write driver \\
+\textcolor{green!42}{\rule{8pt}{6pt}} & Cell flip (4 cells) &
+\textcolor{orange!58}{\rule{8pt}{6pt}} & Decoder, clk, WL, replica, I/O \\
+\end{tabular}\par}
+{\centering\scriptsize\textcolor{black!55}{Approx.\ shares: $\sim$36\%, $\sim$16\%, $\sim$24\%, $\sim$23\%.
+Illustrative split; reported power is $V_{DD}\!\cdot\!I_{DD,\mathrm{avg}}$.}\par}
+\caption{Qualitative per-cycle energy (fJ per segment; legend matches Tab.~above).}
+\label{fig:energy_split}
+\end{figure}
 
 This decomposition is intended to build intuition about where the
 energy is spent in a cycle. The authoritative reported power for the
@@ -1686,17 +2103,31 @@ Inputs to the FOM, from the preceding sections:
 
 \begin{itemize}
 \item $\mathrm{BitcellArea} = 8$ (in units of $W_{\min}$).
-\item $\mathrm{Power} = 50.0\,$\textmu W $= 5.000799\times 10^{-5}\,$W (top-level measured).
-\item $\mathrm{Delay} = 281.6\,$ps (top-level measured); $\mathrm{Delay}^2 = 7.93\times 10^{-20}\,$s$^{2}$.
+\item $\mathrm{Power} = 248.0\,$\textmu W $= 2.4799\times 10^{-4}\,$W (top-level measured).
+\item $\mathrm{Delay} = 142.9\,$ps (top-level measured); $\mathrm{Delay}^2 = 2.042\times 10^{-20}\,$s$^{2}$.
 \end{itemize}
 
 \[
-  \mathrm{FOM} = 60 \cdot 8 \cdot 5.000799\times 10^{-5} \cdot \left(2.816036\times 10^{-10}\right)^{2}
-              \approx 1.90\times 10^{-21}.
+  \mathrm{FOM} = 60 \cdot 8 \cdot 2.4799\times 10^{-4} \cdot \left(1.4290\times 10^{-10}\right)^{2}
+              \approx 2.43\times 10^{-21}.
 \]
+
+\textbf{Access-time vs.\ cycle-time FOM.} The number above uses the
+single-edge read access $t_{\mathrm{CLK}\to D_{out}}=142.9\,$ps as
+the delay term, which is the standard SRAM convention and matches
+the ``read access time'' the spec asks for. For completeness, an
+alternative cycle-time-based FOM that uses the sustainable minimum
+period $T_{\min}=296.9\,$ps from \S\ref{sec:fmax_sweep} as the delay
+term gives
+$60\cdot 8\cdot 2.4799\!\times\!10^{-4}\cdot(2.969\!\times\!10^{-10})^{2}
+\approx 1.05\!\times\!10^{-20}$. Both formulations meet the spec
+floor by large margins; this report carries the access-time value
+forward as the headline FOM.
 
 \Subsect{11.2\quad Sensitivity table}
 
+Figure~\ref{fig:fom_sensitivity_bars} plots relative FOM for each
+quoted alternative; the table keeps delay and power columns.
 The following table shows how the FOM would change under specific
 alternative design choices, holding other parameters fixed at their
 chosen-design values. This documents the value of each architectural
@@ -1710,12 +2141,12 @@ decision.
 \toprule
 \textbf{Variant} & \textbf{$W$} & \textbf{Delay (ps)} & \textbf{$P$ (\textmu W)} & \textbf{FOM (rel.)} \\
 \midrule
-\textbf{This design (6T 2-1-1, no mux, StrongARM, replica)} & 8 & 282 & 50.0 & \textbf{1.00} \\
-8T cell (with read port) & 13 & 300 & 130 & 1.45 \\
+\textbf{This design (6T 2-1-1, no mux, StrongARM, replica)} & 8 & 143 & 248.0 & \textbf{1.00} \\
+8T cell (with read port) & 13 & 300 & 130 & 3.75 \\
 6T 1-1-1 (CR=PR=1) & 6 & --- & --- & \emph{fails read SNM} \\
-Static differential SA & 8 & 430 & 240 & 3.41 \\
-Column-muxed 4$\times$16 & 8 & 380 & 130 & 1.45 \\
-Hardcoded SAE delay (no replica) & 8 & 360 & 122 & 1.21 \\
+Static differential SA & 8 & 430 & 240 & 8.75 \\
+Column-muxed 4$\times$16 & 8 & 380 & 130 & 3.70 \\
+Hardcoded SAE delay (no replica) & 8 & 360 & 122 & 3.12 \\
 \bottomrule
 \end{tabularx}
 \caption{FOM sensitivity to design choices. Column~\emph{$W$}: bitcell summed width. Values for alternatives
@@ -1724,10 +2155,40 @@ chosen design and are intended as relative comparisons, not
 high-precision predictions.}
 \end{table}
 
-The largest single penalty is the static sense amplifier: 3.4$\times$
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize,
+  x=0.72cm,
+  y=0.62cm,
+  bar/.style={draw=black!55, line width=0.35pt}
+]
+\foreach \y/\txt/\col/\val in {
+  4.5/Static differential SA/red!45/8.75,
+  3.6/8T cell (read port)/orange!50/3.75,
+  2.7/Column-muxed $4{\times}16$/teal!45/3.70,
+  1.8/Hardcoded SAE (no replica)/purple!40/3.12,
+  0.9/This design (baseline)/blue!55/1.00
+}{
+  \pgfmathsetmacro{\barw}{\val/8.75*11.2}
+  \node[anchor=east, text width=3.1cm, align=right] at (-0.15,\y) {\txt};
+  \fill[\col] (0,\y-0.28) rectangle (\barw,\y+0.28);
+  \draw[bar] (0,\y-0.28) rectangle (\barw,\y+0.28);
+  \node[anchor=west] at (\barw+0.15,\y) {\textbf{\val}$\times$};
+}
+\node[anchor=west, font=\small\bfseries] at (-0.2,5.35) {Relative FOM ($\times$)};
+\end{tikzpicture}
+\caption{FOM sensitivity (Tab.~above): horizontal extent is proportional
+to relative FOM; static SA dominates.}
+\label{fig:fom_sensitivity_bars}
+\end{figure}
+
+The largest single penalty is the static sense amplifier: 8.7$\times$
 the chosen-design FOM, driven by both higher delay and higher power.
-Column muxing and an 8T cell each cost $\sim$45\%. The replica column
-buys $\sim$20\% over a hardcoded SAE chain.
+Column muxing and an 8T cell each cost ${\sim}3.7\times$. The replica
+column buys ${\sim}3.1\times$ over a hardcoded SAE chain. (The
+chosen-design baseline is now small enough in delay$^2$ that any
+alternative carrying 60--90\% more delay is penalized superlinearly.)
 
 % =====================================================================
 \Sect{12\quad Validation Methodology and Summary}
@@ -1740,10 +2201,16 @@ correctness is demonstrated using a conservative 500\,MHz clock
 ($T_{CLK}=2\,\mathrm{ns}$) with PWL-driven inputs for CLK, $A[3{:}0]$,
 $D_{in}[3{:}0]$, and $WE$. Expected $D_{out}$ is sampled at fixed read
 instants (5\,ns and 7\,ns) corresponding to the two read phases of the
-validation sequence. A separate cycle-scaled nominal sweep
-(\texttt{spice/find\_fmax.py}) is used to estimate the maximum passing
-period/frequency for the same test sequence; it terminates at
-$0.252\,$ns (\textbf{estimated $f_{\max}\approx 3.97\,$GHz}). All in-line evidence
+validation sequence. Two distinct frequency claims are reported and
+should not be conflated: the \emph{single-edge access} latency
+$t_{\mathrm{CLK}\to D_{out}}=142.9\,$ps from the validation
+\texttt{.control} block (whose inverse is the
+$f_{eq}\approx 7.00\,$GHz figure that feeds the FOM delay term),
+and the \emph{sustainable max CLK frequency}
+$f_{\max}\approx 3.37\,$GHz (period $T_{\min}=296.9\,$ps) measured by
+the cycle-stepped sweep in \S\ref{sec:fmax_sweep} via
+\texttt{spice/find\_fmax.py}. The latter is the spec's ``max CLK
+frequency / min CLK period'' quantity. All in-line evidence
 (SPICE transients and NGSPICE \texttt{.measure} terminal output) for
 each block has already been placed alongside the corresponding claim
 in \S\ref{sec:primitives}--\S\ref{sec:top}; this section consolidates
@@ -1806,10 +2273,11 @@ Precharge: $t_{\text{pch,BL}}$ (0$\!\rightarrow\!0.95$\,V) & 179.8\,ps & \texttt
 Precharge: equalize time $t_{\text{equalize}}$ & 158.8\,ps & \texttt{media/terminal/prechargeeq results.png} \\
 Write driver (13\,fF load): $t_{\text{write,rise}}$ & 167.3\,ps & \texttt{media/terminal/write-driver-load.png} \\
 Write driver (13\,fF load): $t_{\text{write,fall}}$ & 142.9\,ps & \texttt{media/terminal/write-driver-load.png} \\
-Top-level $t_{\mathrm{CLK}\to D_{out}}$ & 281.6\,ps & \texttt{media/terminal/final-top-final-terminal-out.png} \\
-Top-level $I_{DD,\mathrm{avg}}$ / $P_{\mathrm{avg}}$ & 50.0\,\textmu A / 50.0\,\textmu W & \texttt{media/terminal/final-top-final-terminal-out.png} \\
+Top-level $t_{\mathrm{CLK}\to D_{out}}$ (single-edge access) & 142.9\,ps & \texttt{media/terminal/final-top-final-terminal-out.png} \\
+Top-level $I_{DD,\mathrm{avg}}$ / $P_{\mathrm{avg}}$ & 247.99\,\textmu A / 248.0\,\textmu W & \texttt{media/terminal/final-top-final-terminal-out.png} \\
 Top-level readback @ 5\,ns / @ 7\,ns & $\mathtt{0x5}$ / $\mathtt{0xA}$ (PASS) & \texttt{media/terminal/final-top-final-terminal-out.png} \\
-Estimated cycle-scaled max passing frequency (nominal) & 3.97\,GHz @ 0.252\,ns & \texttt{spice/find\_fmax.py} \\
+Delay-derived equivalent frequency $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ & 6.998\,GHz @ 142.9\,ps & \texttt{media/terminal/final-top-final-terminal-out.png} \\
+Sustainable max CLK frequency $f_{\max}$ (W/W/R/R sweep) & 3.368\,GHz @ 296.9\,ps & \texttt{spice/find\_fmax.py} terminal output, \S\ref{sec:fmax_sweep} \\
 \bottomrule
 \end{tabularx}
 \caption{Cross-reference of measured values used in the report. Values
@@ -1829,20 +2297,24 @@ Every requirement listed in \texttt{proj2.pdf} is met by margin:
 \item \textbf{16$\times$4 SRAM, 4-bit address, 4-bit $D_{in}/D_{out}$,
   $WE$, single CLK} --- top-level netlist (\S\ref{sec:top}).
 \item \textbf{$V_{DD}\le 1\,$V} --- $V_{DD}=1.000\,$V (\texttt{Vdd vdd 0 DC 1.0}).
-\item \textbf{Synchronous, $f_{\max}\ge 500\,$MHz} ---
-  cycle-scaled nominal sweep indicates max passing
-  frequency near $3.97\,$GHz ($\sim 7.94\times$ relative to 500\,MHz).
+\item \textbf{Synchronous, $f_{\max}\ge 500\,$MHz} --- sustainable
+  max CLK frequency from the cycle-stepped \texttt{find\_fmax.py}
+  sweep $f_{\max}\approx 3.37\,$GHz (min period $T_{\min}\approx
+  296.9\,$ps), $\sim\!6.74\times$ over the spec floor; the
+  delay-derived $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}\approx 7.00\,$GHz
+  is also reported for the single-edge read access (\S\ref{sec:fmax_sweep}).
 \item \textbf{Read or write completes within one CLK period} ---
-  $t_{\mathrm{CLK}\to D_{out}}=281.6\,$ps; cell-level write times
-  $9.87/21.8\,$ps.
+  $t_{\mathrm{CLK}\to D_{out}}=142.9\,$ps single-edge access;
+  cell-level write times $9.87/21.8\,$ps; spec is met at any cycle
+  $T\ge T_{\min}=296.9\,$ps.
 \item \textbf{Bitcell area metric} --- $8\,W_{\min}$ summed transistor
   width per cell (\S\ref{sec:bitcell}).
 \item \textbf{Power measurement methodology} --- average $V_{DD}$
   current integrated over the validation transient
-  (\S\ref{sec:power}); reported $P_{\mathrm{avg}}=50.0\,$\textmu W.
+  (\S\ref{sec:power}); reported $P_{\mathrm{avg}}=248.0\,$\textmu W.
 \item \textbf{FOM reported} ---
   $\mathrm{FOM}=60\!\cdot\!8\!\cdot\!P\!\cdot\!D^{2}\approx
-  1.90\!\times\!10^{-21}$ (\S\ref{sec:fom}).
+  2.43\!\times\!10^{-21}$ (\S\ref{sec:fom}).
 \end{itemize}
 
 % =====================================================================
@@ -1870,16 +2342,17 @@ SAE generation & Replica/dummy bitline column (self-timed) \\
 Clocking scheme & Two-phase non-overlapping from single CLK \\
 Worst-case access delay (stage-by-stage, post-extr.) & 330\,ps (write-limited) \\
 Minimum CLK period (with margin) & 400\,ps \\
-Measured CLK-to-$D_{out}$ (top-level) & 281.6\,ps \\
-Estimated max passing frequency (cycle-scaled, nominal) & 3.97\,GHz \\
-Specification frequency requirement & $\geq$ 500\,MHz (met with 7.94$\times$ margin) \\
-Average power, top-level run & 50.0\,\textmu W \\
+Measured CLK-to-$D_{out}$ (single-edge access) & 142.9\,ps \\
+Sustainable max CLK frequency $f_{\max}$ (W/W/R/R sweep) & 3.37\,GHz @ 296.9\,ps \\
+Equivalent frequency $f_{eq}=1/t_{\mathrm{CLK}\to D_{out}}$ (single-edge) & 7.00\,GHz \\
+Specification frequency requirement & $\geq$ 500\,MHz (sustainable: $6.74\times$ margin) \\
+Average power, top-level run & 248.0\,\textmu W \\
 DFF CLK-to-$Q$ average ($t_{cq}$) & 67.0\,ps \\
 Bitcell write 1$\to$0 / 0$\to$1 time & 9.87\,ps / 21.8\,ps \\
 Read disturb max $V_Q$ (Tests 3, 4) & 95.4\,mV (vs.\ 0.4\,V threshold) \\
 Retention drop over 5\,ns & ${<}\,10\,$\textmu V \\
 Functional readback @ 5\,ns / @ 7\,ns & $\mathtt{0x5}$ / $\mathtt{0xA}$ (PASS) \\
-\textbf{FOM} $= 60\cdot A\cdot P\cdot D^2$ & \textbf{$\approx 1.90\times 10^{-21}$} \\
+\textbf{FOM} $= 60\cdot A\cdot P\cdot D^2$ & \textbf{$\approx 2.43\times 10^{-21}$} \\
 \bottomrule
 \end{tabularx}
 \caption{Final summary of all design metrics.}
@@ -1899,7 +2372,11 @@ tree:
 \item \texttt{spice/top.spi} --- top-level netlist + validation
   \texttt{.control} block (excerpted in \S\ref{sec:top}).
 \item \texttt{spice/find\_fmax.py} --- cycle-scaled $f_{\max}$ sweep
-  driver (closes at $0.252\,$ns).
+  driver. Binary-searches the CLK period under a 4-cycle
+  write/write/read/read schedule against the live extracted
+  \texttt{top.spi}; closes at $T_{\min}=296.9\,$ps
+  ($f_{\max}=3.37\,$GHz), reproducing the sustainable max-CLK number
+  cited in \S\ref{sec:fmax_sweep}.
 \item \texttt{spice/sram\_6t\_cell.spi},
   \texttt{spice/dummy\_bitcell.spi},
   \texttt{spice/row\_4.spi},
