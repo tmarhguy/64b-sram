@@ -11,12 +11,16 @@ The **required course work** is **Project 2** itself: a 16x4 SRAM design, analys
 
 **This GitHub repository is not the official assignment submission.** It exists for documentation, and personal record-keeping: LaTeX source, figures, SPICE decks, Electric exports, validation evidence, and a CI-built PDF.
 
+**Course assignment (instructor handout):** The Spring 2026 Project 2 specification—requirements, figure of merit, and what counts as the assigned work—is published by Penn Engineering for ESE 3700 here: [Project 2 handout (PDF)](https://www.seas.upenn.edu/~ese3700/spring2026/handouts/proj2.pdf). That PDF is **course material**, not something I wrote and **not** what this repository is hosting; it is linked only so readers can see the official brief. **This repo** is my own implementation, simulations, and write-up **for** that assignment.
+
 **Author:** Tyrone Marhguy (contact links at the end of this page).
 
 ---
 
 <p align="center">
-  <img src="media/top-schematic.png" alt="Top-level 16x4 SRAM schematic" width="88%" />
+  <img src="media/readme/fig1.png" alt="Figure 1: Required vs delivered headline metrics" width="100%" />
+  <br />
+  <em>Figure 1 — Required vs. delivered headline metrics (from the LaTeX report).</em>
 </p>
 
 <p align="center">
@@ -51,41 +55,39 @@ Because delay is squared, the final architecture spends complexity in the periph
 | Clocking | Two-phase non-overlapping internal clocks from one external `CLK` |
 | Array choice | No column mux; all four addressed bits are read/written in parallel |
 
+<p align="center">
+  <img src="media/sram_6t.png" alt="6T SRAM bitcell" width="56%" />
+  <br />
+  <em>6T bitcell (<code>CR = 2</code>, <code>PR = 1</code>) — full sizing context is in the PDF.</em>
+</p>
+
 ## Key Results
 
 All headline numbers below come from the LaTeX report and its cited SPICE evidence.
 
 | Metric | Result |
 |--------|--------|
-| Maximum validated frequency | **3.97 GHz** |
+| Sustainable max CLK frequency `fmax` (W/W/R/R sweep) | **3.37 GHz @ 296.9 ps** |
+| Equivalent frequency `feq = 1 / (CLK -> Dout)` (single-edge) | **7.00 GHz** |
+| Top-level `CLK` to `Dout` (single read access) | **142.9 ps** |
 | Frequency requirement | 500 MHz |
-| Frequency margin | **7.94x** |
-| Top-level `CLK` to `Dout` | **281.6 ps** |
-| Average top-level power | **50.0 uW** |
+| Sustainable frequency margin | **6.74x** |
+| Average top-level power | **248.0 uW** |
 | Functional readback at 5 ns | **0x5 PASS** |
 | Functional readback at 7 ns | **0xA PASS** |
 | Bitcell write `1 -> 0` | **9.87 ps** |
 | Bitcell write `0 -> 1` | **21.8 ps** |
 | Read disturb maximum storage-node rise | **95.4 mV** |
-| Final FOM | **~1.90e-21** |
+| Final FOM (access-time delay) | **~2.43e-21** |
+
+> Two distinct frequency claims and they are not the same number:
+> - **`fmax = 3.37 GHz`** is the sustainable steady-state CLK from the cycle-stepped sweep in `spice/find_fmax.py` (write-write-read-read at every period, both readbacks must pass). This is the spec's "max CLK frequency / min CLK period".
+> - **`feq = 7.00 GHz = 1 / 142.9 ps`** is the inverse of the single-edge CLK -> Dout access time reported by the `.control` block in `spice/top.spi`. This is the access-time figure that feeds the FOM delay term.
+> Sources: [`spice/find_fmax.py`](spice/find_fmax.py) terminal output and [media/terminal/final-top-final-terminal-out.png](media/terminal/final-top-final-terminal-out.png).
 
 ## Architecture
 
 The top level registers all inputs, decodes the 4-bit address into sixteen wordlines, activates four identical column slices, and uses a replica column to time the read decision.
-
-```mermaid
-flowchart LR
-  Inputs["A[3:0], Din[3:0], WE, CLK"] --> InputRegs[Input DFFs]
-  InputRegs --> Decoder[4-to-16 Row Decoder]
-  InputRegs --> ClockGen[Two-Phase Clock Generator]
-  Decoder --> Array[16x4 6T SRAM Array]
-  ClockGen --> Array
-  Array --> Columns[4 Parallel Column Slices]
-  Decoder --> Replica[Replica Bitline Column]
-  Replica --> SAE[Self-Timed SAE]
-  SAE --> Columns
-  Columns --> Dout["Dout[3:0]"]
-```
 
 Key architectural choices:
 
@@ -95,30 +97,56 @@ Key architectural choices:
 - **Replica timing:** tracks real bitline discharge better than a fixed inverter-chain delay.
 - **Two-phase clocking:** separates precharge from active wordline/write/sense windows to reduce contention.
 
+<br />
+<br />
+
+<h3 align="center">Top-level macro</h3>
+
+<p align="center">
+  <img src="media/top-schematic.png" alt="Top-level 16x4 SRAM schematic" width="88%" />
+  <br />
+  <em>Electric export; PNG flattened on white.</em>
+</p>
+
+## Diagrams from the LaTeX report
+
+Screenshots of PDF figures live under [`media/readme/`](media/readme/) as **`figN.png`** (printed **Figure N** in [`ESE3700_Proj2_Marhguy.pdf`](ESE3700_Proj2_Marhguy.pdf)). **Figure 1** is already at the top of this page; the full TikZ / methodology figures are in the report—below are only a couple of extras worth scrolling on GitHub.
+
+> Decoder / SA / write paths **do not** add to the bitcell-area FOM term—only the repeated 6T width does ([§2 in the PDF](ESE3700_Proj2_Marhguy.pdf)).
+
+### Highlights
+
+**Figure 38 — `find_fmax.py` sweep** (`fig:fmax_search`)
+
+<p align="center">
+  <img src="media/readme/fig38.png" alt="Figure 38: find_fmax.py binary search flowchart" width="72%" />
+</p>
+
+**Figure 43 — FOM sensitivity** (`fig:fom_sensitivity_bars`)
+
+<p align="center">
+  <img src="media/readme/fig43.png" alt="Figure 43: FOM sensitivity bar chart" width="90%" />
+</p>
+
+### Other README snapshots (same folder)
+
+| Fig | File |
+|-----|------|
+| 2 — Report flow | [`fig2.png`](media/readme/fig2.png) |
+| 3 — FOM pipeline | [`fig3.png`](media/readme/fig3.png) |
+| 4 — Array organization | [`fig4.png`](media/readme/fig4.png) |
+| 39 — Read delay stack | [`fig39.png`](media/readme/fig39.png) |
+| 40 — Write delay stack | [`fig40.png`](media/readme/fig40.png) |
+| 42 — Energy split | [`fig42.png`](media/readme/fig42.png) |
+
 ## Figures
 
-<p align="center">
-  <img src="media/sram_6t.png" alt="6T SRAM bitcell" width="72%" />
-  <br />
-  <em>6T SRAM bitcell with asymmetric sizing for read stability and writeability.</em>
-</p>
-
-<p align="center">
-  <img src="media/precharge-eq.png" alt="Precharge and equalize circuit" width="78%" />
-  <br />
-  <em>Precharge and equalize network for differential bitlines.</em>
-</p>
-
-<p align="center">
-  <img src="media/sense_amp.png" alt="StrongARM sense amplifier" width="78%" />
-  <br />
-  <em>Clocked StrongARM sense amplifier used in each column slice.</em>
-</p>
+The [**PDF report**](ESE3700_Proj2_Marhguy.pdf) contains the complete schematic set (column slice, precharge, sense amp, decoder, etc.). Top-level behavioral simulation:
 
 <p align="center">
   <img src="media/waveforms/sram_full_validation.png" alt="Full SRAM validation waveform" width="88%" />
   <br />
-  <em>Top-level validation waveform: writes followed by successful reads of 0x5 and 0xA.</em>
+  <em>Top-level validation: writes then reads <code>0x5</code> and <code>0xA</code>.</em>
 </p>
 
 ## Repository Layout
@@ -128,6 +156,7 @@ Key architectural choices:
 | [ESE3700_Proj2_Marhguy.tex](ESE3700_Proj2_Marhguy.tex) | LaTeX source for the full report |
 | [ESE3700_Proj2_Marhguy.pdf](ESE3700_Proj2_Marhguy.pdf) | Compiled report PDF, produced by CI after a successful run |
 | [media/](media/) | Figures, schematics, waveform PNGs, and terminal captures cited by the report |
+| [media/readme/](media/readme/) | README diagrams: **`figN.png`** = PDF Figure *N* (screenshots of report figures) |
 | [spice/](spice/) | SPICE netlists, Electric libraries, simulation helpers, and SVG waveform masters |
 | [spice/find_fmax.py](spice/find_fmax.py) | Cycle-scaled maximum-frequency sweep driver |
 | [.github/workflows/](.github/workflows/) | GitHub Actions workflow for building and committing the report PDF |
@@ -163,8 +192,8 @@ The SPICE decks are exported from Electric VLSI and use a PTM-style 22 nm HP mod
 
 Important entry points:
 
-- [spice/top.spi](spice/top.spi): top-level netlist and validation driver.
-- [spice/find_fmax.py](spice/find_fmax.py): frequency sweep used for the reported `fmax`.
+- [spice/top.spi](spice/top.spi): top-level netlist and validation driver. The embedded `.control` block prints the headline `t_clk_to_dout` (single-edge access), `iavg_vdd`, `pavg_mw`, and `f_eq_ghz = 1 / t_clk_to_dout` used in the report.
+- [spice/find_fmax.py](spice/find_fmax.py): cycle-stepped `fmax` sweep driver. Binary-searches the CLK period under a 4-cycle write/write/read/read schedule against the live `top.spi`; closes at `T_min = 296.9 ps` (`fmax = 3.37 GHz`), the sustainable-cycle quantity the spec asks for.
 - [spice/sram_6t_cell.spi](spice/sram_6t_cell.spi): repeated 6T memory bitcell.
 - [spice/column_slice.spi](spice/column_slice.spi): precharge, write driver, sense amp, and output latch integration.
 - [spice/replica_column.spi](spice/replica_column.spi): dummy-column timing path for self-timed `SAE`.
